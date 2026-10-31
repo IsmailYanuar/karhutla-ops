@@ -5,11 +5,13 @@ import { getHotspotData, countByProvince, CONFIDENCE, formatDate } from '../serv
 
 const mapEl = ref(null)
 const data = ref(null)
+const loading = ref(true)
 const error = ref('')
 const province = ref('')
 const confidence = ref('')
 let map = null
 let layer = null
+let currentRadius = null
 
 const all = computed(() => data.value?.hotspots ?? [])
 const provinces = computed(() => countByProvince(all.value).map((p) => p.province).sort())
@@ -22,22 +24,27 @@ function radiusForZoom(z) {
   return z <= 5 ? 1.8 : z <= 6 ? 2.5 : z <= 8 ? 3.5 : 5
 }
 
+function popupHtml(h) {
+  const c = CONFIDENCE[h.confidence]
+  return `<strong>${h.province}</strong><br>Kepercayaan: ${c.label}<br>Satelit: ${h.satellite}<br>${formatDate(h.detectedAt)}`
+}
+
 function draw() {
   if (!map) return
   layer.clearLayers()
-  const r = radiusForZoom(map.getZoom())
+  currentRadius = radiusForZoom(map.getZoom())
   const order = { low: 0, nominal: 1, high: 2 }
   const sorted = [...filtered.value].sort((a, b) => order[a.confidence] - order[b.confidence])
   for (const h of sorted) {
-    const c = CONFIDENCE[h.confidence]
-    L.circleMarker([h.lat, h.lng], { radius: r, stroke: false, fillColor: c.color, fillOpacity: 0.65 })
-      .bindPopup(`<strong>${h.province}</strong><br>Kepercayaan: ${c.label}<br>Satelit: ${h.satellite}<br>${formatDate(h.detectedAt)}`)
-      .addTo(layer)
+    L.circleMarker([h.lat, h.lng], {
+      radius: currentRadius, stroke: false, fillColor: CONFIDENCE[h.confidence].color, fillOpacity: 0.65, hotspot: h,
+    }).addTo(layer)
   }
 }
 
 function fitToData() {
-  if (filtered.value.length) map.fitBounds(L.latLngBounds(filtered.value.map((h) => [h.lat, h.lng])).pad(0.2), { maxZoom: 8 })
+  if (!filtered.value.length) return
+  map.fitBounds(L.latLngBounds(filtered.value.map((h) => [h.lat, h.lng])).pad(0.2), { maxZoom: 8, animate: false })
 }
 
 onMounted(async () => {
@@ -46,18 +53,31 @@ onMounted(async () => {
     attribution: '&copy; OpenStreetMap contributors',
     maxZoom: 18,
   }).addTo(map)
-  layer = L.layerGroup().addTo(map)
-  map.on('zoomend', draw)
+
+  layer = L.featureGroup().addTo(map)
+  layer.on('click', (e) => {
+    L.popup().setLatLng(e.latlng).setContent(popupHtml(e.layer.options.hotspot)).openOn(map)
+  })
+
+  map.on('zoomend', () => {
+    if (radiusForZoom(map.getZoom()) !== currentRadius) draw()
+  })
+
   try {
-    data.value = await getHotspotData()
-    fitToData()
-    draw()
+    data.value = await getHotspotData() 
   } catch (e) {
     error.value = e.message
+  } finally {
+    loading.value = false
   }
 })
 
-watch(filtered, () => { fitToData(); draw() })
+watch(filtered, () => {
+  if (!map) return
+  fitToData()
+  draw()
+})
+
 onBeforeUnmount(() => map?.remove())
 
 function reset() {
@@ -97,8 +117,14 @@ function reset() {
     </div>
 
     <div class="mt-6 grid gap-6 lg:grid-cols-[1fr_300px]">
+      <!-- Peta -->
       <div class="min-w-0">
-        <div ref="mapEl" class="h-[460px] w-full overflow-hidden rounded-lg border border-ash-200 md:h-[560px]"></div>
+        <div class="relative">
+          <div ref="mapEl" class="h-[460px] w-full overflow-hidden rounded-lg border border-ash-200 md:h-[560px]"></div>
+          <div v-if="loading" class="absolute inset-0 z-[500] grid place-items-center rounded-lg bg-ash-50/70 text-sm font-medium text-ash-700">
+            Memuat data titik panas…
+          </div>
+        </div>
         <div class="mt-3 flex flex-wrap gap-4 text-sm text-ash-700">
           <span v-for="(c, key) in CONFIDENCE" :key="key" class="flex items-center gap-2">
             <span class="h-3 w-3 rounded-full" :style="{ background: c.color }"></span>Kepercayaan {{ c.label.toLowerCase() }}
@@ -121,7 +147,7 @@ function reset() {
                 <span>{{ r.province }}</span><span class="font-mono tabular-nums">{{ r.count }}</span>
               </button>
             </li>
-            <li v-if="!ranking.length" class="text-sm text-ash-500">Tidak ada titik panas untuk filter ini.</li>
+            <li v-if="!ranking.length && !loading" class="text-sm text-ash-500">Tidak ada titik panas untuk filter ini.</li>
           </ul>
         </div>
       </aside>
