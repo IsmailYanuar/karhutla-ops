@@ -18,34 +18,46 @@ const filtered = computed(() =>
 )
 const ranking = computed(() => countByProvince(filtered.value))
 
+function radiusForZoom(z) {
+  return z <= 5 ? 1.8 : z <= 6 ? 2.5 : z <= 8 ? 3.5 : 5
+}
+
 function draw() {
   if (!map) return
   layer.clearLayers()
-  for (const h of filtered.value) {
+  const r = radiusForZoom(map.getZoom())
+  const order = { low: 0, nominal: 1, high: 2 }
+  const sorted = [...filtered.value].sort((a, b) => order[a.confidence] - order[b.confidence])
+  for (const h of sorted) {
     const c = CONFIDENCE[h.confidence]
-    L.circleMarker([h.lat, h.lng], { radius: 6, color: '#fff', weight: 1, fillColor: c.color, fillOpacity: 0.9 })
+    L.circleMarker([h.lat, h.lng], { radius: r, stroke: false, fillColor: c.color, fillOpacity: 0.65 })
       .bindPopup(`<strong>${h.province}</strong><br>Kepercayaan: ${c.label}<br>Satelit: ${h.satellite}<br>${formatDate(h.detectedAt)}`)
       .addTo(layer)
   }
+}
+
+function fitToData() {
   if (filtered.value.length) map.fitBounds(L.latLngBounds(filtered.value.map((h) => [h.lat, h.lng])).pad(0.2), { maxZoom: 8 })
 }
 
 onMounted(async () => {
-  map = L.map(mapEl.value, { scrollWheelZoom: false }).setView([-2.5, 118], 5)
+  map = L.map(mapEl.value, { scrollWheelZoom: false, preferCanvas: true }).setView([-2.5, 118], 5)
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors',
     maxZoom: 18,
   }).addTo(map)
   layer = L.layerGroup().addTo(map)
+  map.on('zoomend', draw)
   try {
     data.value = await getHotspotData()
+    fitToData()
     draw()
   } catch (e) {
     error.value = e.message
   }
 })
 
-watch(filtered, draw)
+watch(filtered, () => { fitToData(); draw() })
 onBeforeUnmount(() => map?.remove())
 
 function reset() {

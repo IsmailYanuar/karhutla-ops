@@ -7,6 +7,7 @@ const terms = [
   { term: 'Titik panas (hotspot)', text: 'Lokasi yang suhunya terdeteksi jauh lebih tinggi dari sekitarnya oleh satelit. Tidak semua titik panas adalah kebakaran, tapi menjadi tanda awal yang perlu dicek.' },
   { term: 'Tingkat kepercayaan', text: 'Seberapa yakin sistem bahwa titik panas tersebut benar-benar api. Kepercayaan tinggi berarti kemungkinan besar kebakaran nyata.' },
   { term: 'VIIRS dan MODIS', text: 'Dua jenis sensor satelit. VIIRS lebih detail (resolusi 375 m), MODIS mencakup data lebih lama (resolusi 1 km).' },
+  { term: 'Pembagian provinsi', text: 'Provinsi ditentukan dengan mencocokkan koordinat titik panas dengan peta batas wilayah (geoBoundaries, OpenStreetMap). Peta ini masih memakai 34 provinsi, sehingga wilayah Papua belum dipisah menjadi provinsi hasil pemekaran 2022.' },
 ]
 </script>
 

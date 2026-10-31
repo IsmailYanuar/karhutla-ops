@@ -1,0 +1,36 @@
+name: Perbarui data titik panas
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'   
+  workflow_dispatch:          
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Ambil dan olah data FIRMS
+        env:
+          FIRMS_MAP_KEY: ${{ secrets.FIRMS_MAP_KEY }}
+        run: node scripts/fetch-firms.mjs
+
+      - name: Simpan perubahan data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add frontend/public/data
+          if git diff --cached --quiet; then
+            echo "Tidak ada data baru."
+          else
+            git commit -m "data: perbarui titik panas FIRMS"
+            git push
+          fi
