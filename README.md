@@ -1,3 +1,5 @@
+**Demo:** https://karhutla-ops.vercel.app
+
 # KarhutlaOps
 
 Dashboard transparansi data titik panas kebakaran hutan dan lahan (karhutla) di Indonesia. KarhutlaOps mengolah data publik dari satelit menjadi peta dan statistik yang mudah dipahami masyarakat.
