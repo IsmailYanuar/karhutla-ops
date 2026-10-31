@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --color-ember-50: #fff4ed;
+  --color-ember-100: #ffe4d1;
+  --color-ember-500: #f0661a;
+  --color-ember-600: #c2410c;
+  --color-ember-700: #9a330a;
+  --color-ash-50: #f4f5f3;
+  --color-ash-100: #e8eae6;
+  --color-ash-200: #d3d7d1;
+  --color-ash-500: #6b7468;
+  --color-ash-700: #3a4139;
+  --color-ash-900: #1a1e19;
+}
+
+body {
+  @apply bg-ash-50 text-ash-900 font-sans antialiased;
+}
