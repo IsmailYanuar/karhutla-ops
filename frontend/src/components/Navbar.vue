@@ -15,7 +15,7 @@ const links = [
     <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
       <RouterLink to="/" class="flex items-center gap-2" @click="open = false">
         <span class="grid h-8 w-8 place-items-center rounded-md bg-ember-600 font-display text-lg font-extrabold text-white">K</span>
-        <span class="font-display text-xl font-extrabold tracking-tight">Karhutla<span class="text-ember-600">Ops</span></span>
+        <span class="font-display text-xl font-extrabold tracking-tight">Karhutla<span class="text-ember-600">Tracker</span></span>
       </RouterLink>
 
       <button class="rounded-md p-2 md:hidden" :aria-expanded="open" aria-label="Buka menu" @click="open = !open">

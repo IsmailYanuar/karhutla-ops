@@ -32,7 +32,7 @@ const steps = [
           Lihat di mana hutan dan lahan Indonesia sedang terbakar.
         </h1>
         <p class="mt-5 max-w-xl text-lg text-ash-200">
-          KarhutlaOps mengolah data titik panas dari satelit menjadi peta dan statistik yang mudah dipahami, supaya masyarakat bisa ikut memantau dan menuntut penanganan yang cepat.
+          KarhutlaTracker mengolah data titik panas dari satelit menjadi peta dan statistik yang mudah dipahami, supaya masyarakat bisa ikut memantau dan menuntut penanganan yang cepat.
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
           <RouterLink to="/peta" class="rounded-md bg-ember-600 px-5 py-3 font-semibold text-white hover:bg-ember-700">Buka Peta Titik Panas</RouterLink>

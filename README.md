@@ -1,8 +1,8 @@
 **Demo:** https://karhutla-ops.vercel.app
 
-# KarhutlaOps
+# KarhutlaTracker
 
-Dashboard transparansi data titik panas kebakaran hutan dan lahan (karhutla) di Indonesia. KarhutlaOps mengolah data publik dari satelit menjadi peta dan statistik yang mudah dipahami masyarakat.
+Dashboard transparansi data titik panas kebakaran hutan dan lahan (karhutla) di Indonesia. KarhutlaTracker mengolah data publik dari satelit menjadi peta dan statistik yang mudah dipahami masyarakat.
 
 **Subtema:** Open Government Data (Web In Action, MIA 2026)
 
