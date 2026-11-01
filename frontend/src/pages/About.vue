@@ -14,7 +14,7 @@ const terms = [
 <template>
   <section class="mx-auto max-w-3xl px-4 py-12">
     <h1 class="font-display text-3xl font-extrabold">Tentang Data</h1>
-    <p class="mt-3 text-lg text-ash-700">Semua angka di KarhutlaOps berasal dari data publik. Halaman ini menjelaskan sumbernya dan cara membacanya.</p>
+    <p class="mt-3 text-lg text-ash-700">Semua angka di KarhutlaTracker berasal dari data publik. Halaman ini menjelaskan sumbernya dan cara membacanya.</p>
 
     <h2 class="mt-10 font-display text-xl font-extrabold">Sumber data</h2>
     <ul class="mt-4 flex flex-col gap-4">
