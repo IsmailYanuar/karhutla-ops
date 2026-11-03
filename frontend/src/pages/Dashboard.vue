@@ -12,6 +12,7 @@ const confidence = ref('')
 let map = null
 let layer = null
 let currentRadius = null
+const INDONESIA = L.latLngBounds([-11, 95], [6, 141])
 
 const all = computed(() => data.value?.hotspots ?? [])
 const provinces = computed(() => countByProvince(all.value).map((p) => p.province).sort())
@@ -43,12 +44,17 @@ function draw() {
 }
 
 function fitToData() {
+  if (!province.value) {
+    map.fitBounds(INDONESIA, { animate: false })
+    return
+  }
   if (!filtered.value.length) return
   map.fitBounds(L.latLngBounds(filtered.value.map((h) => [h.lat, h.lng])).pad(0.2), { maxZoom: 8, animate: false })
 }
 
 onMounted(async () => {
-  map = L.map(mapEl.value, { scrollWheelZoom: false, preferCanvas: true }).setView([-2.5, 118], 5)
+  map = L.map(mapEl.value, { scrollWheelZoom: false, preferCanvas: true, zoomSnap: 0.25, minZoom: 4, maxBounds: INDONESIA.pad(0.5) })
+  map.fitBounds(INDONESIA, { animate: false })
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors',
     maxZoom: 18,
@@ -64,7 +70,7 @@ onMounted(async () => {
   })
 
   try {
-    data.value = await getHotspotData() 
+    data.value = await getHotspotData()
   } catch (e) {
     error.value = e.message
   } finally {
@@ -114,11 +120,10 @@ function reset() {
         </select>
       </label>
       <button v-if="province || confidence" class="rounded-md px-3 py-2 text-sm font-medium text-ember-700 hover:bg-ember-50" @click="reset">Reset filter</button>
-            <RouterLink v-if="province" :to="{ name: 'region', query: { p: slugify(province) } }" class="rounded-md px-3 py-2 text-sm font-semibold text-ember-700 hover:bg-ember-50">Lihat profil {{ province }}</RouterLink>
+      <RouterLink v-if="province" :to="{ name: 'region', query: { p: slugify(province) } }" class="rounded-md px-3 py-2 text-sm font-semibold text-ember-700 hover:bg-ember-50">Lihat profil {{ province }}</RouterLink>
     </div>
 
     <div class="mt-6 grid gap-6 lg:grid-cols-[1fr_300px]">
-      <!-- Peta -->
       <div class="min-w-0">
         <div class="relative">
           <div ref="mapEl" class="h-[460px] w-full overflow-hidden rounded-lg border border-ash-200 md:h-[560px]"></div>
@@ -137,15 +142,15 @@ function reset() {
       <aside class="flex flex-col gap-4">
         <div class="rounded-lg border border-ash-200 bg-white p-5">
           <p class="text-xs font-semibold uppercase tracking-wider text-ash-500">Titik panas ditampilkan</p>
-          <p class="mt-2 font-display text-4xl font-extrabold tabular-nums">{{ filtered.length }}</p>
-          <p class="text-sm text-ash-500">dari {{ all.length }} titik</p>
+          <p class="mt-2 font-display text-4xl font-extrabold tabular-nums">{{ filtered.length.toLocaleString('id-ID') }}</p>
+          <p class="text-sm text-ash-500">dari {{ all.length.toLocaleString('id-ID') }} titik</p>
         </div>
         <div class="rounded-lg border border-ash-200 bg-white p-5">
           <p class="text-xs font-semibold uppercase tracking-wider text-ash-500">Per provinsi</p>
-          <ul class="mt-3 flex flex-col gap-2">
+          <ul class="mt-3 flex max-h-80 flex-col gap-2 overflow-y-auto pr-1 md:max-h-[380px]">
             <li v-for="r in ranking" :key="r.province">
               <button class="flex w-full justify-between rounded px-2 py-1 text-left text-sm hover:bg-ash-100" @click="province = r.province">
-                <span>{{ r.province }}</span><span class="font-mono tabular-nums">{{ r.count }}</span>
+                <span>{{ r.province }}</span><span class="font-mono tabular-nums">{{ r.count.toLocaleString('id-ID') }}</span>
               </button>
             </li>
             <li v-if="!ranking.length && !loading" class="text-sm text-ash-500">Tidak ada titik panas untuk filter ini.</li>
