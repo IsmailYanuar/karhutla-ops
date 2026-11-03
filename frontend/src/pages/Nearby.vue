@@ -4,19 +4,45 @@ import L from 'leaflet'
 import { getHotspotData, CONFIDENCE, formatDate } from '../services/hotspots'
 import { getAirQuality, distanceKm, direction, ISPU_CATEGORIES } from '../services/udara'
 
-// Kota contoh, untuk dicoba jika izin lokasi ditolak atau saat demo.
 const CITIES = [
-  { name: 'Pekanbaru', lat: 0.507, lng: 101.448 },
-  { name: 'Jambi', lat: -1.61, lng: 103.613 },
-  { name: 'Palembang', lat: -2.976, lng: 104.775 },
-  { name: 'Pontianak', lat: -0.026, lng: 109.342 },
-  { name: 'Palangka Raya', lat: -2.208, lng: 113.917 },
-  { name: 'Banjarmasin', lat: -3.319, lng: 114.59 },
-  { name: 'Samarinda', lat: -0.502, lng: 117.153 },
-  { name: 'Kendari', lat: -3.997, lng: 122.513 },
-  { name: 'Kupang', lat: -10.178, lng: 123.607 },
-  { name: 'Merauke', lat: -8.493, lng: 140.401 },
-  { name: 'Jakarta', lat: -6.2, lng: 106.817 },
+  { name: 'Banda Aceh (Aceh)', lat: 5.548, lng: 95.323 },
+  { name: 'Medan (Sumatera Utara)', lat: 3.595, lng: 98.672 },
+  { name: 'Padang (Sumatera Barat)', lat: -0.947, lng: 100.417 },
+  { name: 'Pekanbaru (Riau)', lat: 0.507, lng: 101.448 },
+  { name: 'Tanjung Pinang (Kepulauan Riau)', lat: 0.918, lng: 104.459 },
+  { name: 'Jambi (Jambi)', lat: -1.61, lng: 103.613 },
+  { name: 'Bengkulu (Bengkulu)', lat: -3.8, lng: 102.266 },
+  { name: 'Palembang (Sumatera Selatan)', lat: -2.976, lng: 104.775 },
+  { name: 'Pangkal Pinang (Kep. Bangka Belitung)', lat: -2.129, lng: 106.11 },
+  { name: 'Bandar Lampung (Lampung)', lat: -5.397, lng: 105.266 },
+  { name: 'Serang (Banten)', lat: -6.12, lng: 106.15 },
+  { name: 'Jakarta (DKI Jakarta)', lat: -6.2, lng: 106.817 },
+  { name: 'Bandung (Jawa Barat)', lat: -6.917, lng: 107.619 },
+  { name: 'Semarang (Jawa Tengah)', lat: -6.967, lng: 110.417 },
+  { name: 'Yogyakarta (DI Yogyakarta)', lat: -7.797, lng: 110.37 },
+  { name: 'Surabaya (Jawa Timur)', lat: -7.257, lng: 112.752 },
+  { name: 'Denpasar (Bali)', lat: -8.65, lng: 115.217 },
+  { name: 'Mataram (Nusa Tenggara Barat)', lat: -8.583, lng: 116.117 },
+  { name: 'Kupang (Nusa Tenggara Timur)', lat: -10.178, lng: 123.607 },
+  { name: 'Pontianak (Kalimantan Barat)', lat: -0.026, lng: 109.342 },
+  { name: 'Palangka Raya (Kalimantan Tengah)', lat: -2.208, lng: 113.917 },
+  { name: 'Banjarbaru (Kalimantan Selatan)', lat: -3.442, lng: 114.833 },
+  { name: 'Samarinda (Kalimantan Timur)', lat: -0.502, lng: 117.153 },
+  { name: 'Tanjung Selor (Kalimantan Utara)', lat: 2.837, lng: 117.367 },
+  { name: 'Manado (Sulawesi Utara)', lat: 1.474, lng: 124.842 },
+  { name: 'Gorontalo (Gorontalo)', lat: 0.543, lng: 123.059 },
+  { name: 'Palu (Sulawesi Tengah)', lat: -0.898, lng: 119.87 },
+  { name: 'Mamuju (Sulawesi Barat)', lat: -2.677, lng: 118.889 },
+  { name: 'Makassar (Sulawesi Selatan)', lat: -5.148, lng: 119.432 },
+  { name: 'Kendari (Sulawesi Tenggara)', lat: -3.997, lng: 122.513 },
+  { name: 'Sofifi (Maluku Utara)', lat: 0.737, lng: 127.557 },
+  { name: 'Ambon (Maluku)', lat: -3.695, lng: 128.181 },
+  { name: 'Manokwari (Papua Barat)', lat: -0.862, lng: 134.064 },
+  { name: 'Sorong (Papua Barat Daya)', lat: -0.876, lng: 131.256 },
+  { name: 'Jayapura (Papua)', lat: -2.533, lng: 140.717 },
+  { name: 'Nabire (Papua Tengah)', lat: -3.367, lng: 135.483 },
+  { name: 'Wamena (Papua Pegunungan)', lat: -4.093, lng: 138.951 },
+  { name: 'Merauke (Papua Selatan)', lat: -8.493, lng: 140.401 },
 ]
 const RADII = [10, 25, 50]
 
@@ -27,6 +53,10 @@ const locError = ref('')
 const air = ref(null)
 const airError = ref('')
 const airLoading = ref(false)
+const query = ref('')
+const results = ref([])
+const searching = ref(false)
+const searchError = ref('')
 const mapEl = ref(null)
 let map = null
 let layer = null
@@ -58,7 +88,7 @@ const status = computed(() => {
 async function useLocation() {
   locError.value = ''
   if (!navigator.geolocation) {
-    locError.value = 'Browser Anda tidak mendukung lokasi. Pilih kota di bawah.'
+    locError.value = 'Browser Anda tidak mendukung lokasi. Cari atau pilih kota.'
     return
   }
   locating.value = true
@@ -69,10 +99,37 @@ async function useLocation() {
     },
     () => {
       locating.value = false
-      locError.value = 'Izin lokasi ditolak atau tidak tersedia. Pilih kota di bawah.'
+      locError.value = 'Izin lokasi ditolak atau tidak tersedia. Cari atau pilih kota.'
     },
     { enableHighAccuracy: false, timeout: 10000 },
   )
+}
+
+async function search() {
+  const q = query.value.trim()
+  if (q.length < 3) return
+  searching.value = true
+  searchError.value = ''
+  try {
+    const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=6&language=id&countryCode=ID`)
+    const json = await res.json()
+    results.value = (json.results ?? []).map((r) => ({
+      name: [r.name, r.admin2, r.admin1].filter((v, i, arr) => v && arr.indexOf(v) === i).join(', '),
+      lat: r.latitude,
+      lng: r.longitude,
+    }))
+    if (!results.value.length) searchError.value = `Tempat "${q}" tidak ditemukan. Coba nama kota atau kabupaten lain.`
+  } catch {
+    searchError.value = 'Pencarian gagal, coba lagi.'
+  } finally {
+    searching.value = false
+  }
+}
+
+function pick(p) {
+  results.value = []
+  query.value = ''
+  choose(p)
 }
 
 async function choose(p) {
@@ -125,14 +182,27 @@ const fmtKm = (km) => km.toLocaleString('id-ID', { maximumFractionDigits: 1 })
       <button class="rounded-md bg-ember-600 px-5 py-3 font-semibold text-white hover:bg-ember-700 disabled:opacity-60" :disabled="locating" @click="useLocation">
         {{ locating ? 'Mencari lokasi…' : 'Gunakan lokasi saya' }}
       </button>
+      <form class="flex flex-1 flex-col gap-1 text-sm font-medium sm:max-w-sm" @submit.prevent="search">
+        <label for="cari-tempat">atau cari kota / kabupaten</label>
+        <div class="flex gap-2">
+          <input id="cari-tempat" v-model="query" type="search" placeholder="contoh: Ogan Komering Ilir" class="min-w-0 flex-1 rounded-md border border-ash-200 bg-white px-3 py-2.5 font-normal" />
+          <button type="submit" class="rounded-md border border-ash-200 bg-white px-4 font-semibold hover:bg-ash-100" :disabled="searching">{{ searching ? '…' : 'Cari' }}</button>
+        </div>
+      </form>
       <label class="flex flex-col gap-1 text-sm font-medium">
-        atau pilih kota
+        atau pilih ibu kota provinsi
         <select class="rounded-md border border-ash-200 bg-white px-3 py-2.5" :value="CITIES.find((c) => c.name === place?.name)?.name ?? ''" @change="choose(CITIES.find((c) => c.name === $event.target.value))">
           <option value="" disabled>Pilih kota</option>
           <option v-for="c in CITIES" :key="c.name" :value="c.name">{{ c.name }}</option>
         </select>
       </label>
     </div>
+    <ul v-if="results.length" class="mt-3 flex max-w-xl flex-col divide-y divide-ash-100 rounded-md border border-ash-200 bg-white">
+      <li v-for="r in results" :key="r.name + r.lat">
+        <button class="w-full px-4 py-2.5 text-left text-sm hover:bg-ash-50" @click="pick(r)">{{ r.name }}</button>
+      </li>
+    </ul>
+    <p v-if="searchError" class="mt-3 text-sm text-red-700">{{ searchError }}</p>
     <p v-if="locError" class="mt-3 text-sm text-red-700">{{ locError }}</p>
     <p class="mt-2 text-xs text-ash-500">Lokasi hanya dipakai di browser Anda untuk menghitung jarak, tidak dikirim atau disimpan oleh KarhutlaTracker.</p>
 
