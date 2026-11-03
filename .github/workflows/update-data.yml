@@ -2,8 +2,13 @@ name: Perbarui data titik panas
 
 on:
   schedule:
-    - cron: '17 */6 * * *'   
-  workflow_dispatch:          
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      backfill:
+        description: 'Isi riwayat 400 hari ke belakang (cukup sekali)'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -22,6 +27,12 @@ jobs:
         env:
           FIRMS_MAP_KEY: ${{ secrets.FIRMS_MAP_KEY }}
         run: node scripts/fetch-firms.mjs
+
+      - name: Isi riwayat ke belakang
+        if: ${{ inputs.backfill }}
+        env:
+          FIRMS_MAP_KEY: ${{ secrets.FIRMS_MAP_KEY }}
+        run: node scripts/backfill-history.mjs
 
       - name: Simpan perubahan data
         run: |

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import L from 'leaflet'
-import { getHotspotData, countByProvince, CONFIDENCE, formatDate } from '../services/hotspots'
+import { getHotspotData, countByProvince, CONFIDENCE, formatDate, slugify } from '../services/hotspots'
 
 const mapEl = ref(null)
 const data = ref(null)
@@ -114,6 +114,7 @@ function reset() {
         </select>
       </label>
       <button v-if="province || confidence" class="rounded-md px-3 py-2 text-sm font-medium text-ember-700 hover:bg-ember-50" @click="reset">Reset filter</button>
+            <RouterLink v-if="province" :to="{ name: 'region', query: { p: slugify(province) } }" class="rounded-md px-3 py-2 text-sm font-semibold text-ember-700 hover:bg-ember-50">Lihat profil {{ province }}</RouterLink>
     </div>
 
     <div class="mt-6 grid gap-6 lg:grid-cols-[1fr_300px]">

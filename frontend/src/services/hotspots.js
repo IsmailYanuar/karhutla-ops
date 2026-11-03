@@ -19,7 +19,7 @@ export function countByProvince(hotspots) {
 export const CONFIDENCE = {
   high: { label: 'Tinggi', color: '#c2410c' },
   nominal: { label: 'Sedang', color: '#f0961a' },
-  low: { label: 'Rendah', color: '#d6b54a' },
+  low: { label: 'Rendah', color: '#bdb59a' },
 }
 
 export function formatDate(iso) {
@@ -27,4 +27,49 @@ export function formatDate(iso) {
     day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit',
     timeZone: 'Asia/Jakarta',
   }) + ' WIB'
+}
+
+const jsonCache = {}
+async function getJson(name) {
+  if (!jsonCache[name]) {
+    jsonCache[name] = fetch(`/data/${name}.json`).then((res) => {
+      if (!res.ok) throw new Error(`Gagal memuat data ${name}`)
+      return res.json()
+    })
+  }
+  return jsonCache[name]
+}
+
+export const getHistory = () => getJson('history')
+export const getWilayah = () => getJson('wilayah')
+
+export function addDays(dateStr, n) {
+  const d = new Date(`${dateStr}T00:00:00Z`)
+  d.setUTCDate(d.getUTCDate() + n)
+  return d.toISOString().slice(0, 10)
+}
+
+export function sumRange(days, from, to, province) {
+  let total = 0
+  let covered = 0
+  for (let d = from; d <= to; d = addDays(d, 1)) {
+    const day = days[d]
+    if (!day) continue
+    covered++
+    total += province ? day.byProvince?.[province] || 0 : day.count
+  }
+  return { total, covered }
+}
+
+export function percentChange(now, before) {
+  if (!before) return null
+  return Math.round(((now - before) / before) * 100)
+}
+
+export function formatShortDate(dateStr) {
+  return new Date(`${dateStr}T00:00:00Z`).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', timeZone: 'UTC' })
+}
+
+export function slugify(name) {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
 }

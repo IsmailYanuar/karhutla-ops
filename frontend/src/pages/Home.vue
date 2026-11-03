@@ -16,7 +16,7 @@ const highConf = computed(() => hotspots.value.filter((h) => h.confidence === 'h
 const maxCount = computed(() => ranking.value[0]?.count || 1)
 
 const steps = [
-  { title: 'Data satelit dikumpulkan', text: 'Titik panas dideteksi satelit VIIRS dan MODIS, lalu dipublikasikan NASA FIRMS beberapa kali sehari.' },
+  { title: 'Data satelit dikumpulkan', text: 'Titik panas dideteksi sensor VIIRS di satelit Suomi NPP, lalu dipublikasikan NASA FIRMS beberapa kali sehari.' },
   { title: 'Diolah otomatis', text: 'Script terjadwal menarik data terbaru, mengelompokkan per provinsi, dan menghitung tren.' },
   { title: 'Tampil untuk publik', text: 'Hasilnya disajikan dalam peta dan grafik yang bisa dipahami siapa saja, tanpa membaca tabel mentah.' },
 ]
@@ -45,7 +45,7 @@ const steps = [
         <p class="mt-1 text-xs text-ash-200/70">7 hari terakhir</p>
         <ul class="mt-4 flex flex-col gap-3">
           <li v-for="r in ranking.slice(0, 5)" :key="r.province">
-            <div class="flex justify-between text-sm"><span>{{ r.province }}</span><span class="font-mono tabular-nums">{{ r.count }}</span></div>
+            <div class="flex justify-between text-sm"><span>{{ r.province }}</span><span class="font-mono tabular-nums">{{ r.count.toLocaleString('id-ID') }}</span></div>
             <div class="mt-1 h-1.5 rounded-full bg-white/10"><div class="h-full rounded-full bg-ember-500" :style="{ width: (r.count / maxCount) * 100 + '%' }"></div></div>
           </li>
           <li v-if="!ranking.length" class="text-sm text-ash-200">{{ error || 'Memuat data…' }}</li>
