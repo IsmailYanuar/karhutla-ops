@@ -2,7 +2,7 @@ import { readFileSync, existsSync } from 'node:fs'
 
 export const PROVINCE_FILE = 'scripts/data/provinsi-indonesia.geojson'
 export const LAND_FILE = 'scripts/data/indonesia-garis-pantai.geojson'
-export const BPS_AREA_FILE = 'scripts/data/luas-bps.json'
+export const BPS_AREA_FILE = 'scripts/data/luas-resmi.json'
 
 const RENAME = { 'Daerah Istimewa Yogyakarta': 'DI Yogyakarta' }
 const EARTH_RADIUS_KM = 6371.0088
@@ -38,7 +38,7 @@ export function loadProvinces() {
       polys,
       bbox: bboxOf(polys),
       areaKm2: official ?? computed,
-      areaSource: official ? 'bps' : 'hitung',
+      areaSource: official ? 'resmi' : 'hitung',
     }
   })
 }
