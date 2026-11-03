@@ -55,6 +55,7 @@ for (let start = addDays(today, -DAYS); start < today; start = addDays(start, CH
   await sleep(1500)
 }
 
+for (const date of Object.keys(history.days)) if (history.days[date].count === 0 && !days[date]) delete history.days[date]
 for (const [date, d] of Object.entries(days)) history.days[date] = d
 history.days = Object.fromEntries(Object.keys(history.days).sort().map((k) => [k, history.days[k]]))
 history.source = 'NASA FIRMS (VIIRS_SNPP_SP untuk arsip, VIIRS_SNPP_NRT untuk data terbaru)'
