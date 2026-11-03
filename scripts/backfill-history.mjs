@@ -40,7 +40,7 @@ for (let start = addDays(today, -DAYS); start < today; start = addDays(start, CH
     console.warn(`Lewati ${iso(start)} (${source}): ${text.slice(0, 120)}`)
     continue
   }
-  for (let i = 0; i < range; i++) days[iso(addDays(start, i))] ??= { count: 0, high: 0, byProvince: {} }
+ 
   let n = 0
   for (const r of parseCsv(text)) {
     const province = findProvince(Number(r.longitude), Number(r.latitude), provinces, land)
