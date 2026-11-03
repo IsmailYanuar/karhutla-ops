@@ -51,6 +51,7 @@ function render() {
 onMounted(render)
 watch(() => [props.labels, props.series], render, { deep: true })
 onBeforeUnmount(() => chart?.destroy())
+
 </script>
 
 <template>
