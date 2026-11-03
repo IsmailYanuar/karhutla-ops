@@ -86,9 +86,9 @@ const steps = [
     <div class="flex flex-col items-start gap-4 rounded-xl bg-ember-50 p-8 md:flex-row md:items-center md:justify-between">
       <div>
         <h2 class="font-display text-2xl font-extrabold">Cek kondisi daerah Anda</h2>
-        <p class="mt-1 text-ash-700">Saring titik panas berdasarkan provinsi dan tingkat kepercayaan deteksi.</p>
+          <p class="mt-1 text-ash-700">Cari titik panas terdekat dari lokasi Anda dan cek kualitas udara hari ini.</p>
       </div>
-      <RouterLink to="/peta" class="rounded-md bg-ember-600 px-5 py-3 font-semibold text-white hover:bg-ember-700">Lihat Peta</RouterLink>
+      <RouterLink to="/sekitar" class="rounded-md bg-ember-600 px-5 py-3 font-semibold text-white hover:bg-ember-700">Cek Sekitar Saya</RouterLink>
     </div>
   </section>
 </template>

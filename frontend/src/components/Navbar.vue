@@ -6,6 +6,7 @@ const links = [
   { to: '/peta', label: 'Peta Titik Panas' },
   { to: '/tren', label: 'Tren' },
   { to: '/daerah', label: 'Profil Daerah' },
+  { to: '/sekitar', label: 'Cek Sekitar' },
   { to: '/tentang-data', label: 'Tentang Data' },
 ]
 </script>

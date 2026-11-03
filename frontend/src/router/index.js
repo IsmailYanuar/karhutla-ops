@@ -6,7 +6,8 @@ const routes = [
   { path: '/peta', name: 'dashboard', component: () => import('../pages/Dashboard.vue') },
   { path: '/tren', name: 'trends', component: () => import('../pages/Trends.vue') },
   { path: '/daerah', name: 'region', component: () => import('../pages/Region.vue') },
-  { path: '/tentang-data', name: 'about', component: () => import('../pages/About.vue') },
+  { path: '/sekitar', name: 'nearby', component: () => import('../pages/Nearby.vue') },
+  { path: '/tentang-data', name: 'about', component: () => import('../pages/About.vue') }, 
 ]
 
 export default createRouter({
