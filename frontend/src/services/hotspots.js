@@ -43,6 +43,22 @@ async function getJson(name) {
 export const getHistory = () => getJson('history')
 export const getWilayah = () => getJson('wilayah')
 
+export const getRingkasan = () => getJson('ringkasan')
+
+export function downloadCsv(hotspots, filename) {
+  const header = ['latitude', 'longitude', 'provinsi', 'kepercayaan', 'satelit', 'waktu_deteksi_utc', 'frp_mw']
+  const esc = (v) => (v == null ? '' : /[",\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : String(v))
+  const rows = hotspots.map((h) => [h.lat, h.lng, h.province, h.confidence, h.satellite, h.detectedAt, h.frp].map(esc).join(','))
+  
+  const blob = new Blob(['\ufeff' + [header.join(','), ...rows].join('\n')], { type: 'text/csv;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const a = Object.assign(document.createElement('a'), { href: url, download: filename })
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  URL.revokeObjectURL(url)
+}
+
 export function addDays(dateStr, n) {
   const d = new Date(`${dateStr}T00:00:00Z`)
   d.setUTCDate(d.getUTCDate() + n)

@@ -1,14 +1,22 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import StatCard from '../components/StatCard.vue'
-import { getHotspotData, countByProvince, formatDate } from '../services/hotspots'
+import { getHotspotData, countByProvince, formatDate, getRingkasan } from '../services/hotspots'
 
 const data = ref(null)
 const error = ref('')
+const ringkasan = ref(null)
 
 onMounted(async () => {
+  getRingkasan().then((r) => (ringkasan.value = r)).catch(() => {})
   try { data.value = await getHotspotData() } catch (e) { error.value = e.message }
 })
+
+function periode(p) {
+  const f = (s) => new Date(`${s}T00:00:00Z`).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', timeZone: 'UTC' })
+  const [a, b] = p.split(' s.d. ')
+  return `${f(a)} sampai ${f(b)}`
+}
 
 const hotspots = computed(() => data.value?.hotspots ?? [])
 const ranking = computed(() => countByProvince(hotspots.value))
@@ -51,6 +59,21 @@ const steps = [
           <li v-if="!ranking.length" class="text-sm text-ash-200">{{ error || 'Memuat data…' }}</li>
         </ul>
       </div>
+    </div>
+  </section>
+
+  <section v-if="ringkasan" class="mx-auto max-w-6xl px-4 pt-12">
+    <div class="rounded-xl border border-ash-200 bg-white p-6 md:p-8">
+      <div class="flex flex-wrap items-center gap-2">
+        <h2 class="font-display text-xl font-extrabold">Ringkasan terbaru</h2>
+        <span v-if="ringkasan.ai" class="rounded-full bg-ember-50 px-2.5 py-0.5 text-xs font-semibold text-ember-700">Dibuat AI</span>
+      </div>
+      <p class="mt-1 text-sm text-ash-500">{{ periode(ringkasan.facts.periode) }}</p>
+      <p class="mt-4 max-w-3xl text-lg leading-relaxed text-ash-900">{{ ringkasan.text }}</p>
+      <p class="mt-4 text-xs text-ash-500">
+        <template v-if="ringkasan.ai">Kalimat disusun otomatis oleh AI ({{ ringkasan.model }}) dari angka data NASA FIRMS di website ini, lalu diperbarui setiap 6 jam. Angka dihitung oleh sistem, bukan oleh AI.</template>
+        <template v-else>Disusun otomatis dari data NASA FIRMS di website ini, diperbarui setiap 6 jam.</template>
+      </p>
     </div>
   </section>
 

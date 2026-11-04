@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import L from 'leaflet'
-import { getHotspotData, countByProvince, CONFIDENCE, formatDate, slugify } from '../services/hotspots'
+import { getHotspotData, countByProvince, CONFIDENCE, formatDate, slugify, downloadCsv } from '../services/hotspots'
 
 const mapEl = ref(null)
 const data = ref(null)
@@ -86,6 +86,12 @@ watch(filtered, () => {
 
 onBeforeUnmount(() => map?.remove())
 
+function unduh() {
+  const date = new Date().toISOString().slice(0, 10)
+  const name = province.value ? slugify(province.value) : 'indonesia'
+  downloadCsv(filtered.value, `karhutlatracker-titik-panas-${name}-${date}.csv`)
+}
+
 function reset() {
   province.value = ''
   confidence.value = ''
@@ -121,6 +127,9 @@ function reset() {
       </label>
       <button v-if="province || confidence" class="rounded-md px-3 py-2 text-sm font-medium text-ember-700 hover:bg-ember-50" @click="reset">Reset filter</button>
       <RouterLink v-if="province" :to="{ name: 'region', query: { p: slugify(province) } }" class="rounded-md px-3 py-2 text-sm font-semibold text-ember-700 hover:bg-ember-50">Lihat profil {{ province }}</RouterLink>
+      <button class="ml-auto rounded-md border border-ash-200 bg-white px-4 py-2 text-sm font-semibold hover:bg-ash-100 disabled:opacity-50" :disabled="!filtered.length" @click="unduh">
+        Unduh CSV ({{ filtered.length.toLocaleString('id-ID') }} titik)
+      </button>
     </div>
 
     <div class="mt-6 grid gap-6 lg:grid-cols-[1fr_300px]">

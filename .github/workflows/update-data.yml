@@ -33,6 +33,12 @@ jobs:
         env:
           FIRMS_MAP_KEY: ${{ secrets.FIRMS_MAP_KEY }}
         run: node scripts/backfill-history.mjs
+        
+      - name: Buat ringkasan harian (AI)
+        continue-on-error: true
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: node scripts/ringkasan-ai.mjs
 
       - name: Simpan perubahan data
         run: |
