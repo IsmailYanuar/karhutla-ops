@@ -1,5 +1,5 @@
 {
-  "text": "Pada periode 29 Oktober 2026 sampai 4 November 2026 (7 hari), terdeteksi total 14.079 titik panas di Indonesia, termasuk 297 titik dengan kepercayaan tinggi. Jumlah ini turun 58% dibanding periode sebelumnya, tetapi naik 358% dibanding tahun lalu. Lokasi dengan titik panas terbanyak berada di Kalimantan Tengah (2.793 titik) dan Papua Selatan (2.155 titik).",
+  "text": "Pada periode 29 Oktober 2026 sampai 4 November 2026 (7 hari), tercatat total 14.079 titik panas di Indonesia atau turun 58% dibanding periode sebelumnya. Dari jumlah tersebut, sebanyak 297 titik panas memiliki tingkat kepercayaan tinggi. Wilayah dengan titik panas terbanyak berada di Kalimantan Tengah (2.793 titik), Papua Selatan (2.155 titik), dan Kalimantan Timur (1.267 titik).",
   "model": "gemini-3.6-flash",
   "ai": true,
   "facts": {
@@ -52,5 +52,5 @@
       }
     ]
   },
-  "generatedAt": "2026-11-04T13:13:20.997Z"
+  "generatedAt": "2026-11-04T14:40:48.197Z"
 }
