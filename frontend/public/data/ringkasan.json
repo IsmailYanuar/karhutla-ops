@@ -1,5 +1,5 @@
 {
-  "text": "Pada periode 2026-10-29 s.d. 2026-11-02, terdeteksi total 8524 titik panas di Indonesia dengan 216 titik berkepercayaan tinggi, turun 22 persen dibandingkan periode 5 hari sebelumnya namun naik 234 persen dari tahun lalu. Papua Selatan mencatatkan titik panas terbanyak yaitu 1480 titik, disusul Kalimantan Tengah sebanyak 1321 titik dan Sulawesi Tenggara sebanyak 851 titik. Kepadatan titik panas tertinggi tercatat di Sulawesi Tenggara sebesar 23,5 titik per 1000 km2, yang juga menjadi provinsi dengan kenaikan terbesar yaitu 228 tambahan titik.",
+  "text": "Pada periode 29 Oktober 2026 sampai 2 November 2026 (5 hari), terdeteksi total 8.524 titik panas di Indonesia, termasuk 216 titik panas berkepercayaan tinggi. Jumlah titik panas ini turun 22% dibandingkan periode sebelumnya, tetapi naik 234% dibandingkan tahun lalu. Wilayah dengan titik panas terbanyak tercatat di Papua Selatan (1.480 titik) dan Kalimantan Tengah (1.321 titik).",
   "model": "gemini-3.6-flash",
   "ai": true,
   "facts": {
@@ -52,5 +52,5 @@
       }
     ]
   },
-  "generatedAt": "2026-11-04T11:41:06.381Z"
+  "generatedAt": "2026-11-04T12:02:50.601Z"
 }
