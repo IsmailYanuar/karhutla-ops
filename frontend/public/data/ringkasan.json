@@ -1,56 +1,56 @@
 {
-  "text": "Pada periode 29 Oktober 2026 sampai 4 November 2026 (7 hari), tercatat total 14.079 titik panas di Indonesia atau turun 58% dibanding periode sebelumnya. Dari jumlah tersebut, sebanyak 297 titik panas memiliki tingkat kepercayaan tinggi. Wilayah dengan titik panas terbanyak berada di Kalimantan Tengah (2.793 titik), Papua Selatan (2.155 titik), dan Kalimantan Timur (1.267 titik).",
+  "text": "Selama periode 29 Oktober 2026 sampai 4 November 2026 (7 hari), terdeteksi total 15.274 titik panas di Indonesia, dengan 303 titik memiliki tingkat kepercayaan tinggi. Jumlah titik panas ini turun 55% dibanding periode sebelumnya, meski mengalami kenaikan jika dibanding tahun lalu yaitu naik 397%. Wilayah dengan jumlah titik panas terbanyak berada di Kalimantan Tengah (3.412 titik).",
   "model": "gemini-3.6-flash",
   "ai": true,
   "facts": {
     "jumlahHari": 7,
     "periode": "2026-10-29 s.d. 2026-11-04",
-    "totalTitik": 14079,
-    "kepercayaanTinggi": 297,
-    "perubahanPeriodeSebelumnyaPersen": -58,
-    "perubahanTahunLaluPersen": 358,
+    "totalTitik": 15274,
+    "kepercayaanTinggi": 303,
+    "perubahanPeriodeSebelumnyaPersen": -55,
+    "perubahanTahunLaluPersen": 397,
     "terbanyak": [
       {
         "provinsi": "Kalimantan Tengah",
-        "titik": 2793
+        "titik": 3412
       },
       {
         "provinsi": "Papua Selatan",
-        "titik": 2155
+        "titik": 2290
       },
       {
         "provinsi": "Kalimantan Timur",
-        "titik": 1267
+        "titik": 1370
       }
     ],
     "terpadat": [
       {
         "provinsi": "Sulawesi Tenggara",
-        "per1000km2": 31.8
+        "per1000km2": 32.3
       },
       {
         "provinsi": "Gorontalo",
         "per1000km2": 26.9
       },
       {
-        "provinsi": "Nusa Tenggara Timur",
-        "per1000km2": 21.9
+        "provinsi": "Kalimantan Tengah",
+        "per1000km2": 22.2
       }
     ],
     "kenaikanTerbesar": [
       {
         "provinsi": "Sulawesi Tenggara",
-        "tambahanTitik": 241
-      },
-      {
-        "provinsi": "Nusa Tenggara Timur",
-        "tambahanTitik": 78
+        "tambahanTitik": 261
       },
       {
         "provinsi": "Sulawesi Tengah",
-        "tambahanTitik": 72
+        "tambahanTitik": 110
+      },
+      {
+        "provinsi": "Nusa Tenggara Timur",
+        "tambahanTitik": 91
       }
     ]
   },
-  "generatedAt": "2026-11-04T14:40:48.197Z"
+  "generatedAt": "2026-11-04T23:41:15.674Z"
 }
