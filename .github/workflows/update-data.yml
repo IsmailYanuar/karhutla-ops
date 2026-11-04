@@ -47,7 +47,15 @@ jobs:
           git add frontend/public/data
           if git diff --cached --quiet; then
             echo "Tidak ada data baru."
-          else
-            git commit -m "data: perbarui titik panas FIRMS"
-            git push
+            exit 0
           fi
+          git commit -m "data: perbarui titik panas FIRMS"
+          # Coba push sampai 3 kali, karena server GitHub kadang error sesaat
+          # atau ada commit baru di main yang perlu digabung dulu.
+          for i in 1 2 3; do
+            if git push; then exit 0; fi
+            echo "Push gagal (percobaan $i), coba lagi..."
+            sleep $((i * 15))
+            git pull --rebase origin main || true
+          done
+          exit 1
