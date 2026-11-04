@@ -1,0 +1,56 @@
+{
+  "text": "Dalam 5 hari terakhir terdeteksi 8.524 titik panas di Indonesia, turun 22% dibanding 5 hari sebelumnya, 216 di antaranya berkepercayaan tinggi. Terbanyak di Papua Selatan (1.480), Kalimantan Tengah (1.321), Sulawesi Tenggara (851). Kenaikan terbesar terjadi di Sulawesi Tenggara (+228 titik).",
+  "model": null,
+  "ai": false,
+  "facts": {
+    "jumlahHari": 5,
+    "periode": "2026-10-29 s.d. 2026-11-02",
+    "totalTitik": 8524,
+    "kepercayaanTinggi": 216,
+    "perubahanPeriodeSebelumnyaPersen": -22,
+    "perubahanTahunLaluPersen": 234,
+    "terbanyak": [
+      {
+        "provinsi": "Papua Selatan",
+        "titik": 1480
+      },
+      {
+        "provinsi": "Kalimantan Tengah",
+        "titik": 1321
+      },
+      {
+        "provinsi": "Sulawesi Tenggara",
+        "titik": 851
+      }
+    ],
+    "terpadat": [
+      {
+        "provinsi": "Sulawesi Tenggara",
+        "per1000km2": 23.5
+      },
+      {
+        "provinsi": "Gorontalo",
+        "per1000km2": 18
+      },
+      {
+        "provinsi": "Nusa Tenggara Barat",
+        "per1000km2": 13.4
+      }
+    ],
+    "kenaikanTerbesar": [
+      {
+        "provinsi": "Sulawesi Tenggara",
+        "tambahanTitik": 228
+      },
+      {
+        "provinsi": "Kalimantan Selatan",
+        "tambahanTitik": 183
+      },
+      {
+        "provinsi": "Sulawesi Selatan",
+        "tambahanTitik": 114
+      }
+    ]
+  },
+  "generatedAt": "2026-11-04T09:30:33.360Z"
+}
