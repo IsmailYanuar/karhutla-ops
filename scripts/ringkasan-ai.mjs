@@ -68,8 +68,9 @@ function templateText(f) {
     (rise ? ` Kenaikan terbesar terjadi di ${rise.provinsi} (+${fmt(rise.tambahanTitik)} titik).` : '')
 }
 
-async function pickModel(key) {
-  if (process.env.GEMINI_MODEL) return process.env.GEMINI_MODEL
+// Daftar model Flash yang tersedia, terbaru dulu, karena nama model Gemini sering berganti.
+async function listModels(key) {
+  if (process.env.GEMINI_MODEL) return [process.env.GEMINI_MODEL]
   const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200', { headers: { 'x-goog-api-key': key } })
   if (!res.ok) throw new Error(`Gagal membaca daftar model (HTTP ${res.status})`)
   const { models = [] } = await res.json()
@@ -80,13 +81,14 @@ async function pickModel(key) {
   const version = (n) => Number(n.match(/^gemini-(\d+(?:\.\d+)?)/)[1])
   ok.sort((a, b) => version(b) - version(a) || a.includes('preview') - b.includes('preview') || a.includes('lite') - b.includes('lite'))
   if (!ok.length) throw new Error('Tidak ada model Gemini Flash yang tersedia')
-  return ok[0]
+  return ok.slice(0, 4)
 }
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
 async function aiText(f) {
   const key = process.env.GEMINI_API_KEY?.trim()
   if (!key) throw new Error('GEMINI_API_KEY belum diatur')
-  const model = await pickModel(key)
   const prompt = `Kamu menulis ringkasan harian untuk website publik KarhutlaTracker tentang titik panas kebakaran hutan dan lahan di Indonesia.
 Tulis 2 sampai 3 kalimat dalam bahasa Indonesia yang jelas untuk masyarakat umum.
 Aturan:
@@ -98,16 +100,31 @@ Aturan:
 - Tanpa judul, tanpa poin, tanpa emoji, tanpa tanda pisah panjang.
 Data:
 ${JSON.stringify(f, null, 2)}`
-  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
-    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.3 } }),
-  })
-  if (!res.ok) throw new Error(`Gemini gagal (HTTP ${res.status}): ${(await res.text()).slice(0, 200)}`)
-  const json = await res.json()
-  const text = json.candidates?.[0]?.content?.parts?.map((p) => p.text).join('').trim()
-  if (!text) throw new Error('Gemini tidak mengembalikan teks')
-  return { text: text.replace(/\s*—\s*/g, ', '), model }
+
+  // Server Gemini kadang sibuk (HTTP 503) atau kena batas kuota (429).
+  // Coba ulang beberapa kali dengan jeda, lalu pindah ke model berikutnya.
+  let lastError = 'tidak diketahui'
+  for (const model of await listModels(key)) {
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.3 } }),
+      })
+      if (res.ok) {
+        const json = await res.json()
+        const text = json.candidates?.[0]?.content?.parts?.map((p) => p.text).join('').trim()
+        if (text) return { text: text.replace(/\s*—\s*/g, ', '), model }
+        lastError = `${model} tidak mengembalikan teks`
+        break
+      }
+      lastError = `${model} HTTP ${res.status}: ${(await res.text()).slice(0, 150)}`
+      console.warn(`Percobaan ${attempt} gagal: ${lastError.slice(0, 80)}`)
+      if (![429, 500, 503].includes(res.status)) break
+      await sleep(attempt * 10000)
+    }
+  }
+  throw new Error(`Gemini gagal: ${lastError}`)
 }
 
 let result
