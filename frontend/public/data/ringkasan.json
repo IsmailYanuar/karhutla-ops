@@ -1,56 +1,56 @@
 {
-  "text": "Pada periode 29 Oktober 2026 sampai 2 November 2026 (5 hari), terdeteksi total 8.524 titik panas di Indonesia, termasuk 216 titik panas berkepercayaan tinggi. Jumlah titik panas ini turun 22% dibandingkan periode sebelumnya, tetapi naik 234% dibandingkan tahun lalu. Wilayah dengan titik panas terbanyak tercatat di Papua Selatan (1.480 titik) dan Kalimantan Tengah (1.321 titik).",
+  "text": "Pada periode 29 Oktober 2026 sampai 4 November 2026 (7 hari), terdeteksi total 14.079 titik panas di Indonesia, termasuk 297 titik dengan kepercayaan tinggi. Jumlah ini turun 58% dibanding periode sebelumnya, tetapi naik 358% dibanding tahun lalu. Lokasi dengan titik panas terbanyak berada di Kalimantan Tengah (2.793 titik) dan Papua Selatan (2.155 titik).",
   "model": "gemini-3.6-flash",
   "ai": true,
   "facts": {
-    "jumlahHari": 5,
-    "periode": "2026-10-29 s.d. 2026-11-02",
-    "totalTitik": 8524,
-    "kepercayaanTinggi": 216,
-    "perubahanPeriodeSebelumnyaPersen": -22,
-    "perubahanTahunLaluPersen": 234,
+    "jumlahHari": 7,
+    "periode": "2026-10-29 s.d. 2026-11-04",
+    "totalTitik": 14079,
+    "kepercayaanTinggi": 297,
+    "perubahanPeriodeSebelumnyaPersen": -58,
+    "perubahanTahunLaluPersen": 358,
     "terbanyak": [
       {
-        "provinsi": "Papua Selatan",
-        "titik": 1480
-      },
-      {
         "provinsi": "Kalimantan Tengah",
-        "titik": 1321
+        "titik": 2793
       },
       {
-        "provinsi": "Sulawesi Tenggara",
-        "titik": 851
+        "provinsi": "Papua Selatan",
+        "titik": 2155
+      },
+      {
+        "provinsi": "Kalimantan Timur",
+        "titik": 1267
       }
     ],
     "terpadat": [
       {
         "provinsi": "Sulawesi Tenggara",
-        "per1000km2": 23.5
+        "per1000km2": 31.8
       },
       {
         "provinsi": "Gorontalo",
-        "per1000km2": 18
+        "per1000km2": 26.9
       },
       {
-        "provinsi": "Nusa Tenggara Barat",
-        "per1000km2": 13.4
+        "provinsi": "Nusa Tenggara Timur",
+        "per1000km2": 21.9
       }
     ],
     "kenaikanTerbesar": [
       {
         "provinsi": "Sulawesi Tenggara",
-        "tambahanTitik": 228
+        "tambahanTitik": 241
       },
       {
-        "provinsi": "Kalimantan Selatan",
-        "tambahanTitik": 183
+        "provinsi": "Nusa Tenggara Timur",
+        "tambahanTitik": 78
       },
       {
-        "provinsi": "Sulawesi Selatan",
-        "tambahanTitik": 114
+        "provinsi": "Sulawesi Tengah",
+        "tambahanTitik": 72
       }
     ]
   },
-  "generatedAt": "2026-11-04T12:02:50.601Z"
+  "generatedAt": "2026-11-04T13:13:20.997Z"
 }
