@@ -86,6 +86,22 @@ async function listModels(key) {
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
+function forAi(f) {
+  const tgl = (s) => new Date(`${s}T00:00:00Z`).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
+  const [a, b] = f.periode.split(' s.d. ')
+  const n = (v) => (v == null ? null : v.toLocaleString('id-ID'))
+  return {
+    periode: `${tgl(a)} sampai ${tgl(b)} (${f.jumlahHari} hari)`,
+    totalTitik: n(f.totalTitik),
+    kepercayaanTinggi: n(f.kepercayaanTinggi),
+    perubahanDibandingPeriodeSebelumnya: f.perubahanPeriodeSebelumnyaPersen == null ? null : `${f.perubahanPeriodeSebelumnyaPersen > 0 ? 'naik' : 'turun'} ${Math.abs(f.perubahanPeriodeSebelumnyaPersen)}%`,
+    perubahanDibandingTahunLalu: f.perubahanTahunLaluPersen == null ? null : `${f.perubahanTahunLaluPersen > 0 ? 'naik' : 'turun'} ${Math.abs(f.perubahanTahunLaluPersen)}%`,
+    terbanyak: f.terbanyak.map((t) => `${t.provinsi} (${n(t.titik)} titik)`),
+    terpadat: f.terpadat.map((t) => `${t.provinsi} (${n(t.per1000km2)} titik per 1.000 km²)`),
+    kenaikanTerbesar: f.kenaikanTerbesar.map((t) => `${t.provinsi} (bertambah ${n(t.tambahanTitik)} titik)`),
+  }
+}
+
 async function aiText(f) {
   const key = process.env.GEMINI_API_KEY?.trim()
   if (!key) throw new Error('GEMINI_API_KEY belum diatur')
@@ -97,12 +113,13 @@ Aturan:
 - Nada netral dan informatif, tanpa menyalahkan pihak mana pun.
 - Jika nilai perubahan null, jangan bahas perubahan itu.
 - Perubahan dibandingkan dengan periode sebelumnya yang panjangnya sama (jumlahHari).
+- Tulis angka dan tanggal persis seperti di data (sudah diformat).
+- Cukup bahas 3 sampai 4 fakta terpenting, jangan semua.
 - Tanpa judul, tanpa poin, tanpa emoji, tanpa tanda pisah panjang.
 Data:
-${JSON.stringify(f, null, 2)}`
+${JSON.stringify(forAi(f), null, 2)}`
 
-  // Server Gemini kadang sibuk (HTTP 503) atau kena batas kuota (429).
-  // Coba ulang beberapa kali dengan jeda, lalu pindah ke model berikutnya.
+
   let lastError = 'tidak diketahui'
   for (const model of await listModels(key)) {
     for (let attempt = 1; attempt <= 3; attempt++) {
