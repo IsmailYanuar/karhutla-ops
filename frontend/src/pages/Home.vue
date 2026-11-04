@@ -24,7 +24,7 @@ const highConf = computed(() => hotspots.value.filter((h) => h.confidence === 'h
 const maxCount = computed(() => ranking.value[0]?.count || 1)
 
 const steps = [
-  { title: 'Data satelit dikumpulkan', text: 'Titik panas dideteksi sensor VIIRS di satelit Suomi NPP, lalu dipublikasikan NASA FIRMS beberapa kali sehari.' },
+  { title: 'Data satelit dikumpulkan', text: 'Titik panas dideteksi sensor VIIRS di tiga satelit (Suomi NPP, NOAA-20, NOAA-21), lalu dipublikasikan NASA FIRMS beberapa kali sehari.' },
   { title: 'Diolah otomatis', text: 'Script terjadwal menarik data terbaru, mengelompokkan per provinsi, dan menghitung tren.' },
   { title: 'Tampil untuk publik', text: 'Hasilnya disajikan dalam peta dan grafik yang bisa dipahami siapa saja, tanpa membaca tabel mentah.' },
 ]

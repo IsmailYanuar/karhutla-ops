@@ -2,19 +2,21 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs'
 import { loadProvinces, loadLand, findProvince, normConfidence, parseCsv, bpsMeta } from './lib/wilayah.mjs'
 
 const DAY_RANGE = Number(process.env.FIRMS_DAY_RANGE || 7)
-const SOURCE = process.env.FIRMS_SOURCE || 'VIIRS_SNPP_NRT'
 const INDONESIA_BBOX = '94,-11.5,141.5,6.5'
 const OUT_DIR = 'frontend/public/data'
 const HISTORY_KEEP_DAYS = 800
 
 const SATELLITES = { N: 'S-NPP', N20: 'NOAA-20', 1: 'NOAA-20', N21: 'NOAA-21', 2: 'NOAA-21', T: 'Terra', A: 'Aqua' }
 
-async function loadCsv() {
+const SOURCES = (process.env.FIRMS_SOURCES || 'VIIRS_SNPP_NRT,VIIRS_NOAA20_NRT,VIIRS_NOAA21_NRT').split(',')
+const SOURCE_LABEL = { VIIRS_SNPP_NRT: 'S-NPP', VIIRS_NOAA20_NRT: 'NOAA-20', VIIRS_NOAA21_NRT: 'NOAA-21' }
+
+async function loadRows() {
   const i = process.argv.indexOf('--csv')
   if (i !== -1) {
     const file = process.argv[i + 1]
     console.log(`Membaca CSV lokal: ${file}`)
-    return readFileSync(file, 'utf8')
+    return { rows: parseCsv(readFileSync(file, 'utf8')), used: ['CSV lokal'] }
   }
 
   try { process.loadEnvFile('.env') } catch { }
@@ -25,23 +27,47 @@ async function loadCsv() {
   const today = new Date()
   const dayStr = (offset) => new Date(today.getTime() - offset * 86400000).toISOString().slice(0, 10)
 
-  let header = ''
-  const lines = new Set()
-  for (let done = 0; done < DAY_RANGE; done += MAX_PER_REQUEST) {
-    const range = Math.min(MAX_PER_REQUEST, DAY_RANGE - done)
-    const startDate = dayStr(done + range - 1)
-    const url = `https://firms.modaps.eosdis.nasa.gov/api/area/csv/${key}/${SOURCE}/${INDONESIA_BBOX}/${range}/${startDate}`
-    console.log(`Mengunduh ${SOURCE}: ${range} hari mulai ${startDate}...`)
-    const res = await fetch(url)
-    const text = await res.text()
-    if (!res.ok || !text.startsWith('latitude')) {
-      throw new Error(`Gagal mengambil data FIRMS (HTTP ${res.status}): ${text.slice(0, 200)}`)
+  const rows = []
+  const used = []
+  for (const source of SOURCES) {
+    try {
+      const before = rows.length
+      for (let done = 0; done < DAY_RANGE; done += MAX_PER_REQUEST) {
+        const range = Math.min(MAX_PER_REQUEST, DAY_RANGE - done)
+        const startDate = dayStr(done + range - 1)
+        const url = `https://firms.modaps.eosdis.nasa.gov/api/area/csv/${key}/${source}/${INDONESIA_BBOX}/${range}/${startDate}`
+        const res = await fetch(url)
+        const text = await res.text()
+        if (!res.ok || !text.startsWith('latitude')) throw new Error(`HTTP ${res.status}: ${text.slice(0, 150)}`)
+        for (const r of parseCsv(text)) rows.push({ ...r, _src: source })
+      }
+      const got = rows.slice(before)
+      const latest = got.map((r) => r.acq_date).sort().at(-1) ?? '-'
+      console.log(`${source}: ${got.length} titik, deteksi terakhir ${latest}`)
+      if (got.length) used.push(SOURCE_LABEL[source] || source)
+    } catch (e) {
+      console.warn(`${source} dilewati: ${e.message}`)
     }
-    const [h, ...rest] = text.trim().split(/\r?\n/)
-    header = h
-    for (const line of rest) if (line) lines.add(line)
   }
-  return [header, ...lines].join('\n')
+  if (!used.length) throw new Error('Semua sumber FIRMS gagal atau kosong.')
+  return { rows, used }
+}
+
+function onePerDay(rows) {
+  const count = {}
+  for (const r of rows) {
+    const d = (count[r.acq_date] ??= {})
+    d[r._src] = (d[r._src] || 0) + 1
+  }
+  const chosen = {}
+  for (const [date, bySrc] of Object.entries(count)) {
+    const primary = bySrc[SOURCES[0]] || 0
+    const [bestSrc, bestN] = Object.entries(bySrc).sort((a, b) => b[1] - a[1])[0]
+    chosen[date] = primary >= bestN * 0.6 ? SOURCES[0] : bestSrc
+  }
+  const fallbackDays = Object.entries(chosen).filter(([, src]) => src !== SOURCES[0]).map(([d, src]) => `${d} (${SOURCE_LABEL[src] || src})`)
+  if (fallbackDays.length) console.log(`Memakai satelit cadangan untuk: ${fallbackDays.join(', ')}`)
+  return rows.filter((r) => chosen[r.acq_date] === r._src)
 }
 
 function toIso(date, time) {
@@ -49,8 +75,9 @@ function toIso(date, time) {
   return `${date}T${t.slice(0, 2)}:${t.slice(2)}:00Z`
 }
 
-const csv = await loadCsv()
-const rows = parseCsv(csv)
+const { rows: rawRows, used: fetched } = await loadRows()
+const rows = rawRows[0]?._src ? onePerDay(rawRows) : rawRows
+const used = rawRows[0]?._src ? [...new Set(rows.map((r) => SOURCE_LABEL[r._src] || r._src))] : fetched
 const provinces = loadProvinces()
 const land = loadLand()
 
@@ -91,7 +118,7 @@ const byDate = Object.values(byDateMap).sort((a, b) => a.date.localeCompare(b.da
 
 mkdirSync(OUT_DIR, { recursive: true })
 writeFileSync(`${OUT_DIR}/hotspots.json`, JSON.stringify({
-  source: `NASA FIRMS (${SOURCE})`,
+  source: `NASA FIRMS (VIIRS ${used.join(', ')})`,
   sourceUrl: 'https://firms.modaps.eosdis.nasa.gov/',
   updatedAt: new Date().toISOString(),
   dayRange: DAY_RANGE,
@@ -109,7 +136,7 @@ const history = existsSync(historyFile) ? JSON.parse(readFileSync(historyFile, '
 for (const d of byDate) history.days[d.date] = { count: d.count, high: d.high, byProvince: d.byProvince }
 const dates = Object.keys(history.days).sort().slice(-HISTORY_KEEP_DAYS)
 history.days = Object.fromEntries(dates.map((d) => [d, history.days[d]]))
-history.source = `NASA FIRMS (${SOURCE})`
+history.source = `NASA FIRMS (VIIRS ${used.join(', ')})`
 history.updatedAt = new Date().toISOString()
 writeFileSync(historyFile, JSON.stringify(history))
 

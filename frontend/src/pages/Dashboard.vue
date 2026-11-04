@@ -21,6 +21,8 @@ const filtered = computed(() =>
 )
 const ranking = computed(() => countByProvince(filtered.value))
 
+const lastDetected = computed(() => all.value.reduce((m, h) => (h.detectedAt > m ? h.detectedAt : m), '') || null)
+
 function radiusForZoom(z) {
   return z <= 5 ? 1.8 : z <= 6 ? 2.5 : z <= 8 ? 3.5 : 5
 }
@@ -104,7 +106,7 @@ function reset() {
       <div>
         <h1 class="font-display text-3xl font-extrabold">Peta Titik Panas</h1>
         <p class="mt-1 text-ash-500">
-          Deteksi satelit 7 hari terakhir<span v-if="data"> · diperbarui {{ formatDate(data.updatedAt) }}</span>
+          Deteksi satelit 7 hari terakhir<span v-if="lastDetected"> · deteksi terakhir {{ formatDate(lastDetected) }}</span><span v-if="data"> · data diambil {{ formatDate(data.updatedAt) }}</span>
         </p>
       </div>
       <p v-if="data?.source?.startsWith('DATA CONTOH')" class="rounded bg-ember-50 px-2 py-1 text-xs font-medium text-ember-700">Masih memakai data contoh</p>
