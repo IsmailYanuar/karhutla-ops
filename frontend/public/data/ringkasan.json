@@ -1,56 +1,56 @@
 {
-  "text": "Selama periode 29 Oktober 2026 sampai 4 November 2026 (7 hari), terdeteksi total 15.274 titik panas di Indonesia, dengan 303 titik memiliki tingkat kepercayaan tinggi. Jumlah titik panas ini turun 55% dibanding periode sebelumnya, meski mengalami kenaikan jika dibanding tahun lalu yaitu naik 397%. Wilayah dengan jumlah titik panas terbanyak berada di Kalimantan Tengah (3.412 titik).",
+  "text": "Pada periode 30 Oktober 2026 sampai 4 November 2026 (6 hari), terdeteksi sebanyak 12.762 titik panas di Indonesia dengan 218 titik berkategori kepercayaan tinggi. Jumlah titik panas ini turun 5% dibanding periode sebelumnya, namun naik 385% dibanding tahun lalu. Wilayah dengan titik panas terbanyak mencakup Kalimantan Tengah (2.962 titik), Papua Selatan (1.769 titik), dan Kalimantan Timur (1.132 titik).",
   "model": "gemini-3.6-flash",
   "ai": true,
   "facts": {
-    "jumlahHari": 7,
-    "periode": "2026-10-29 s.d. 2026-11-04",
-    "totalTitik": 15274,
-    "kepercayaanTinggi": 303,
-    "perubahanPeriodeSebelumnyaPersen": -55,
-    "perubahanTahunLaluPersen": 397,
+    "jumlahHari": 6,
+    "periode": "2026-10-30 s.d. 2026-11-04",
+    "totalTitik": 12762,
+    "kepercayaanTinggi": 218,
+    "perubahanPeriodeSebelumnyaPersen": -5,
+    "perubahanTahunLaluPersen": 385,
     "terbanyak": [
       {
         "provinsi": "Kalimantan Tengah",
-        "titik": 3412
+        "titik": 2962
       },
       {
         "provinsi": "Papua Selatan",
-        "titik": 2290
+        "titik": 1769
       },
       {
         "provinsi": "Kalimantan Timur",
-        "titik": 1370
+        "titik": 1132
       }
     ],
     "terpadat": [
       {
         "provinsi": "Sulawesi Tenggara",
-        "per1000km2": 32.3
+        "per1000km2": 25
       },
       {
-        "provinsi": "Gorontalo",
-        "per1000km2": 26.9
+        "provinsi": "Nusa Tenggara Timur",
+        "per1000km2": 20.6
       },
       {
         "provinsi": "Kalimantan Tengah",
-        "per1000km2": 22.2
+        "per1000km2": 19.3
       }
     ],
     "kenaikanTerbesar": [
       {
-        "provinsi": "Sulawesi Tenggara",
-        "tambahanTitik": 261
+        "provinsi": "Kalimantan Tengah",
+        "tambahanTitik": 1188
       },
       {
-        "provinsi": "Sulawesi Tengah",
-        "tambahanTitik": 110
+        "provinsi": "Jambi",
+        "tambahanTitik": 306
       },
       {
         "provinsi": "Nusa Tenggara Timur",
-        "tambahanTitik": 91
+        "tambahanTitik": 249
       }
     ]
   },
-  "generatedAt": "2026-11-04T23:41:15.674Z"
+  "generatedAt": "2026-11-05T06:47:43.141Z"
 }
