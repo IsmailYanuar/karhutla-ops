@@ -1,15 +1,24 @@
-@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
-  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --font-sans: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+
+  --color-night: #0c1310;   
+  --color-smoke: #141d19;   
+  --color-paper: #edf2ee;   
+  --color-mist: #9fb0a6;    
+  --color-line: rgb(232 240 234 / 0.1);
+  --color-flare: #ffc27a;   
+
   --color-ember-50: #fff4ed;
   --color-ember-100: #ffe4d1;
+  --color-ember-400: #ff7a2f;
   --color-ember-500: #f0661a;
-  --color-ember-600: #c2410c;
-  --color-ember-700: #9a330a;
+  --color-ember-600: #e0531a;
+  --color-ember-700: #b8400f;
+
   --color-ash-50: #f4f5f3;
   --color-ash-100: #e8eae6;
   --color-ash-200: #d3d7d1;
@@ -18,6 +27,92 @@
   --color-ash-900: #1a1e19;
 }
 
+html { background: var(--color-night); color-scheme: dark; }
+
 body {
-  @apply bg-ash-50 text-ash-900 font-sans antialiased;
+  @apply bg-night text-paper font-sans antialiased;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(50rem 30rem at 0% 100%, rgb(224 83 26 / 0.16), transparent 70%),
+    radial-gradient(40rem 26rem at 100% 0%, rgb(56 120 100 / 0.14), transparent 70%);
+}
+
+h1, h2, h3 { text-wrap: balance; }
+
+::selection { background: rgb(255 122 47 / 0.35); }
+
+:focus-visible { outline: 2px solid var(--color-flare); outline-offset: 2px; border-radius: 6px; }
+
+@layer components {
+  .glass {
+    background: rgb(20 29 25 / 0.62);
+    border: 1px solid var(--color-line);
+    border-radius: 1.25rem;
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.05);
+  }
+  .glass-sm {
+    background: rgb(255 255 255 / 0.04);
+    border: 1px solid var(--color-line);
+    border-radius: 0.875rem;
+  }
+
+  .btn-ember {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 font-semibold text-night transition;
+    background: linear-gradient(180deg, #ff8f4d, #e0531a);
+    box-shadow: 0 0 0 1px rgb(255 160 100 / 0.35), 0 10px 30px -10px rgb(255 110 40 / 0.7);
+  }
+  .btn-ember:hover { filter: brightness(1.08); }
+  .btn-ember:disabled { opacity: 0.6; }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border px-5 py-3 font-semibold text-paper transition;
+    border-color: rgb(232 240 234 / 0.2);
+    background: rgb(255 255 255 / 0.03);
+  }
+  .btn-ghost:hover { background: rgb(255 255 255 / 0.08); }
+  .btn-ghost:disabled { opacity: 0.5; }
+
+  .field {
+    @apply rounded-xl border px-3.5 py-2.5 text-paper;
+    border-color: var(--color-line);
+    background: rgb(12 19 16 / 0.7);
+  }
+  .field:focus { border-color: rgb(255 122 47 / 0.6); outline: none; }
+  .field option { background: #141d19; color: #edf2ee; }
+
+  .page { @apply mx-auto max-w-6xl px-4 py-10 md:py-14; }
+  .page-title { @apply font-display text-4xl font-extrabold tracking-tight md:text-5xl; }
+  .lede { @apply mt-3 max-w-2xl text-lg text-mist; }
+  .label { @apply text-sm font-medium text-mist; }
+}
+
+.leaflet-container.leaflet-container { background: #0c1310; font-family: var(--font-sans); }
+.leaflet-popup-content-wrapper, .leaflet-popup-tip {
+  background: #141d19;
+  color: #edf2ee;
+  border: 1px solid rgb(232 240 234 / 0.12);
+  box-shadow: 0 12px 30px rgb(0 0 0 / 0.5);
+}
+.leaflet-popup-content { font-size: 0.875rem; line-height: 1.5; }
+.leaflet-bar a { background: #141d19; color: #edf2ee; border-color: rgb(232 240 234 / 0.12); }
+.leaflet-bar a:hover { background: #1d2924; }
+.leaflet-control-attribution { background: rgb(12 19 16 / 0.7) !important; color: #9fb0a6; }
+.leaflet-control-attribution a { color: #ffc27a; }
+.page-enter-active, .page-leave-active { transition: opacity 0.25s ease, transform 0.25s ease; }
+.page-enter-from { opacity: 0; transform: translateY(8px); }
+.page-leave-to { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }

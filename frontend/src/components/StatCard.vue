@@ -1,11 +1,17 @@
 <script setup>
-defineProps({ label: String, value: [String, Number], note: String })
+import { computed } from 'vue'
+import { useCountUp } from '../composables/useCountUp'
+
+const props = defineProps({ label: String, value: [String, Number], note: String })
+const shown = useCountUp(computed(() => props.value))
 </script>
 
 <template>
-  <div class="rounded-lg border border-ash-200 bg-white p-5">
-    <p class="text-xs font-semibold uppercase tracking-wider text-ash-500">{{ label }}</p>
-    <p class="mt-2 font-display text-3xl font-extrabold tabular-nums">{{ typeof value === 'number' ? value.toLocaleString('id-ID') : value }}</p>
-    <p v-if="note" class="mt-1 text-sm text-ash-500">{{ note }}</p>
+  <div class="glass p-5 md:p-6">
+    <p class="label">{{ label }}</p>
+    <p class="mt-2 font-display text-4xl font-extrabold tabular-nums tracking-tight">
+      {{ typeof shown === 'number' ? shown.toLocaleString('id-ID') : shown }}
+    </p>
+    <p v-if="note" class="mt-1 text-sm text-mist">{{ note }}</p>
   </div>
 </template>

@@ -35,14 +35,14 @@ function render() {
       animation: false,
       interaction: { mode: 'index', intersect: false },
       plugins: {
-        legend: { display: props.series.length > 1, position: 'top', align: 'start', labels: { boxWidth: 12, boxHeight: 2, color: '#3a4139' } },
+        legend: { display: props.series.length > 1, position: 'top', align: 'start', labels: { boxWidth: 12, boxHeight: 2, color: '#9fb0a6' } },
         tooltip: {
           callbacks: { label: (c) => ` ${c.dataset.label}: ${c.parsed.y == null ? 'tidak ada data' : c.parsed.y.toLocaleString('id-ID')} titik` },
         },
       },
       scales: {
-        x: { grid: { display: false }, ticks: { color: '#6b7468', maxRotation: 0, autoSkipPadding: 16 } },
-        y: { beginAtZero: true, grid: { color: '#e8eae6' }, border: { display: false }, ticks: { color: '#6b7468', callback: (v) => v.toLocaleString('id-ID') } },
+        x: { grid: { display: false }, ticks: { color: '#9fb0a6', maxRotation: 0, autoSkipPadding: 16 } },
+        y: { beginAtZero: true, grid: { color: 'rgba(232,240,234,0.08)' }, border: { display: false }, ticks: { color: '#9fb0a6', callback: (v) => v.toLocaleString('id-ID') } },
       },
     },
   })

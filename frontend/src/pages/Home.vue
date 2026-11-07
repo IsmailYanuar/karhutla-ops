@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import StatCard from '../components/StatCard.vue'
+import HotspotSky from '../components/HotspotSky.vue'
 import { getHotspotData, countByProvince, formatDate, getRingkasan } from '../services/hotspots'
 
 const data = ref(null)
@@ -12,106 +13,131 @@ onMounted(async () => {
   try { data.value = await getHotspotData() } catch (e) { error.value = e.message }
 })
 
+const tgl = (s, year = false) => new Date(`${s}T00:00:00Z`).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', ...(year && { year: 'numeric' }), timeZone: 'UTC' })
 function periode(p) {
-  const f = (s) => new Date(`${s}T00:00:00Z`).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', timeZone: 'UTC' })
   const [a, b] = p.split(' s.d. ')
-  return `${f(a)} sampai ${f(b)}`
+  return `${tgl(a)} sampai ${tgl(b, true)}`
 }
 
 const hotspots = computed(() => data.value?.hotspots ?? [])
 const ranking = computed(() => countByProvince(hotspots.value))
 const highConf = computed(() => hotspots.value.filter((h) => h.confidence === 'high').length)
 const maxCount = computed(() => ranking.value[0]?.count || 1)
+const range = computed(() => {
+  const d = data.value?.summary?.byDate
+  return d?.length ? `${tgl(d[0].date)} sampai ${tgl(d.at(-1).date, true)}` : ''
+})
 
 const steps = [
-  { title: 'Data satelit dikumpulkan', text: 'Titik panas dideteksi sensor VIIRS di tiga satelit (Suomi NPP, NOAA-20, NOAA-21), lalu dipublikasikan NASA FIRMS beberapa kali sehari.' },
-  { title: 'Diolah otomatis', text: 'Script terjadwal menarik data terbaru, mengelompokkan per provinsi, dan menghitung tren.' },
-  { title: 'Tampil untuk publik', text: 'Hasilnya disajikan dalam peta dan grafik yang bisa dipahami siapa saja, tanpa membaca tabel mentah.' },
+  { title: 'Satelit memotret panas', text: 'Sensor VIIRS di satelit Suomi NPP, NOAA-20, dan NOAA-21 menangkap titik yang jauh lebih panas dari sekitarnya, siang dan malam.' },
+  { title: 'Diolah otomatis', text: 'Setiap 6 jam, data NASA FIRMS ditarik, dicocokkan ke 38 provinsi, dan dihitung kepadatannya dengan luas resmi BIG.' },
+  { title: 'Siap dibaca publik', text: 'Hasilnya tampil sebagai peta, ringkasan, dan cek lokasi yang bisa dipahami siapa saja tanpa membaca tabel mentah.' },
 ]
 </script>
 
 <template>
-  <section class="relative overflow-hidden bg-ash-900 text-white">
-    <div class="pointer-events-none absolute inset-0 opacity-60" style="background: radial-gradient(60% 80% at 85% 20%, rgba(240,102,26,.45), transparent 60%), radial-gradient(40% 60% at 10% 100%, rgba(194,65,12,.35), transparent 60%)"></div>
-    <div class="relative mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-[1.2fr_1fr] md:py-24">
-      <div>
-        <p class="text-sm font-semibold uppercase tracking-widest text-ember-500">Transparansi data karhutla</p>
-        <h1 class="mt-4 font-display text-4xl font-extrabold leading-tight text-balance md:text-6xl">
-          Lihat di mana hutan dan lahan Indonesia sedang terbakar.
-        </h1>
-        <p class="mt-5 max-w-xl text-lg text-ash-200">
-          KarhutlaTracker mengolah data titik panas dari satelit menjadi peta dan statistik yang mudah dipahami, supaya masyarakat bisa ikut memantau dan menuntut penanganan yang cepat.
-        </p>
-        <div class="mt-8 flex flex-wrap gap-3">
-          <RouterLink to="/peta" class="rounded-md bg-ember-600 px-5 py-3 font-semibold text-white hover:bg-ember-700">Buka Peta Titik Panas</RouterLink>
-          <RouterLink to="/tentang-data" class="rounded-md border border-white/30 px-5 py-3 font-semibold text-white hover:bg-white/10">Dari mana datanya?</RouterLink>
+  <div>
+    <section class="relative">
+      <div class="mx-auto max-w-6xl px-4 pt-12 md:pt-20">
+        <div class="grid items-end gap-8 md:grid-cols-[1.25fr_1fr]">
+          <h1 class="font-display text-5xl font-extrabold leading-[0.95] tracking-tight md:text-7xl">
+            Titik api Indonesia, terpantau dari orbit.
+          </h1>
+          <div>
+            <p class="text-lg text-mist">
+              Setiap titik oranye di bawah adalah panas yang ditangkap satelit dalam 7 hari terakhir. KarhutlaTracker mengubahnya jadi peta, tren, dan peringatan yang bisa dibaca siapa saja.
+            </p>
+            <div class="mt-6 flex flex-wrap gap-3">
+              <RouterLink to="/peta" class="btn-ember">Buka peta titik panas</RouterLink>
+              <RouterLink to="/sekitar" class="btn-ghost">Cek sekitar saya</RouterLink>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="self-end rounded-xl border border-white/15 bg-white/5 p-5 backdrop-blur">
-        <p class="text-xs font-semibold uppercase tracking-wider text-ash-200">Provinsi dengan titik panas terbanyak</p>
-        <p class="mt-1 text-xs text-ash-200/70">7 hari terakhir</p>
-        <ul class="mt-4 flex flex-col gap-3">
-          <li v-for="r in ranking.slice(0, 5)" :key="r.province">
-            <div class="flex justify-between text-sm"><span>{{ r.province }}</span><span class="font-mono tabular-nums">{{ r.count.toLocaleString('id-ID') }}</span></div>
-            <div class="mt-1 h-1.5 rounded-full bg-white/10"><div class="h-full rounded-full bg-ember-500" :style="{ width: (r.count / maxCount) * 100 + '%' }"></div></div>
-          </li>
-          <li v-if="!ranking.length" class="text-sm text-ash-200">{{ error || 'Memuat data…' }}</li>
-        </ul>
+      <div class="relative mx-auto mt-10 aspect-[2/1] max-w-7xl md:aspect-[21/9]">
+        <HotspotSky :hotspots="hotspots" />
+        <div class="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-night to-transparent"></div>
+        <p v-if="range" class="glass-sm absolute left-4 top-0 max-w-[calc(100%-2rem)] px-3 py-1.5 text-xs text-mist sm:text-sm md:left-8 md:top-4">
+          <span class="font-semibold text-paper">{{ hotspots.length.toLocaleString('id-ID') }} titik panas</span>, {{ range }}
+        </p>
+        <p v-else class="absolute inset-0 grid place-items-center text-mist">{{ error || 'Memuat data satelit…' }}</p>
       </div>
-    </div>
-  </section>
 
-  <section v-if="ringkasan" class="mx-auto max-w-6xl px-4 pt-12">
-    <div class="rounded-xl border border-ash-200 bg-white p-6 md:p-8">
-      <div class="flex flex-wrap items-center gap-2">
-        <h2 class="font-display text-xl font-extrabold">Ringkasan terbaru</h2>
-        <span v-if="ringkasan.ai" class="rounded-full bg-ember-50 px-2.5 py-0.5 text-xs font-semibold text-ember-700">Dibuat AI</span>
+      <div class="relative mx-auto -mt-2 grid max-w-6xl gap-4 px-4 sm:grid-cols-3 md:-mt-24">
+        <StatCard label="Total titik panas" :value="hotspots.length" note="Seluruh Indonesia, 7 hari terakhir" />
+        <StatCard label="Kepercayaan tinggi" :value="highConf" note="Hampir pasti kebakaran nyata" />
+        <StatCard label="Provinsi terdampak" :value="ranking.length" :note="ranking[0] ? `Terbanyak di ${ranking[0].province}` : ''" />
       </div>
-      <p class="mt-1 text-sm text-ash-500">{{ periode(ringkasan.facts.periode) }}</p>
-      <p class="mt-4 max-w-3xl text-lg leading-relaxed text-ash-900">{{ ringkasan.text }}</p>
-      <p class="mt-4 text-xs text-ash-500">
-        <template v-if="ringkasan.ai">Kalimat disusun otomatis oleh AI ({{ ringkasan.model }}) dari angka data NASA FIRMS di website ini, lalu diperbarui setiap 6 jam. Angka dihitung oleh sistem, bukan oleh AI.</template>
-        <template v-else>Disusun otomatis dari data NASA FIRMS di website ini, diperbarui setiap 6 jam.</template>
-      </p>
-    </div>
-  </section>
+    </section>
 
-  <section class="mx-auto max-w-6xl px-4 py-12">
-    <div class="flex flex-wrap items-baseline justify-between gap-2">
-      <h2 class="font-display text-2xl font-extrabold">Ringkasan 7 hari terakhir</h2>
-      <p v-if="data" class="text-sm text-ash-500">Diperbarui {{ formatDate(data.updatedAt) }}</p>
-    </div>
-    <p v-if="data?.source?.startsWith('DATA CONTOH')" class="mt-2 inline-block rounded bg-ember-50 px-2 py-1 text-xs font-medium text-ember-700">Masih memakai data contoh</p>
-    <div class="mt-6 grid gap-4 sm:grid-cols-3">
-      <StatCard label="Total titik panas" :value="hotspots.length" note="Seluruh Indonesia" />
-      <StatCard label="Kepercayaan tinggi" :value="highConf" note="Kemungkinan besar kebakaran nyata" />
-      <StatCard label="Provinsi terdampak" :value="ranking.length" :note="ranking[0] ? `Terbanyak: ${ranking[0].province}` : ''" />
-    </div>
-  </section>
-
-  <section class="border-y border-ash-200 bg-white">
-    <div class="mx-auto max-w-6xl px-4 py-12">
-      <h2 class="font-display text-2xl font-extrabold">Bagaimana data sampai ke layar Anda</h2>
-      <ol class="mt-8 grid gap-6 md:grid-cols-3">
-        <li v-for="(s, i) in steps" :key="s.title" class="flex gap-4">
-          <span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-ember-50 font-mono font-medium text-ember-700">{{ i + 1 }}</span>
-          <div>
-            <h3 class="font-semibold">{{ s.title }}</h3>
-            <p class="mt-1 text-ash-500">{{ s.text }}</p>
+    <section class="mx-auto mt-10 grid max-w-6xl gap-4 px-4 lg:grid-cols-[1.4fr_1fr]">
+      <article v-if="ringkasan" class="glass relative overflow-hidden p-6 md:p-8">
+        <div class="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-ember-500/20 blur-3xl"></div>
+        <div class="relative">
+          <div class="flex flex-wrap items-center gap-3">
+            <h2 class="font-display text-2xl font-bold">Ringkasan terbaru</h2>
+            <span v-if="ringkasan.ai" class="rounded-full border border-ember-400/40 bg-ember-400/10 px-2.5 py-0.5 text-xs font-semibold text-flare">Dibuat AI</span>
           </div>
+          <p class="mt-1 text-sm text-mist">{{ periode(ringkasan.facts.periode) }}</p>
+          <p class="mt-5 max-w-[62ch] text-xl leading-relaxed text-paper">{{ ringkasan.text }}</p>
+          <p class="mt-5 text-xs text-mist">
+            <template v-if="ringkasan.ai">Kalimat disusun AI ({{ ringkasan.model }}) dari angka data NASA FIRMS dan diperbarui setiap 6 jam. Semua angka dihitung sistem, bukan AI.</template>
+            <template v-else>Disusun otomatis dari data NASA FIRMS dan diperbarui setiap 6 jam.</template>
+          </p>
+        </div>
+      </article>
+
+      <aside class="glass p-6 md:p-8">
+        <h2 class="font-display text-2xl font-bold">Provinsi terbanyak</h2>
+        <p v-if="data" class="mt-1 text-sm text-mist">Data diambil {{ formatDate(data.updatedAt) }}</p>
+        <ol class="mt-5 flex flex-col gap-4">
+          <li v-for="r in ranking.slice(0, 5)" :key="r.province">
+            <div class="flex justify-between gap-3">
+              <span>{{ r.province }}</span>
+              <span class="font-display font-bold tabular-nums">{{ r.count.toLocaleString('id-ID') }}</span>
+            </div>
+            <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
+              <div class="bar h-full rounded-full" :style="{ width: (r.count / maxCount) * 100 + '%' }"></div>
+            </div>
+          </li>
+          <li v-if="!ranking.length" class="text-mist">{{ error || 'Memuat data…' }}</li>
+        </ol>
+        <RouterLink to="/peta" class="mt-6 inline-block font-semibold text-flare hover:underline">Lihat semua provinsi di peta</RouterLink>
+      </aside>
+    </section>
+
+    <section class="mx-auto mt-20 max-w-6xl px-4">
+      <h2 class="font-display text-3xl font-extrabold tracking-tight md:text-4xl">Dari orbit ke layar Anda</h2>
+      <ol class="mt-8 grid gap-4 md:grid-cols-3">
+        <li v-for="(s, i) in steps" :key="s.title" class="glass p-6">
+          <span class="font-display text-5xl font-extrabold text-ember-400/80">{{ i + 1 }}</span>
+          <h3 class="mt-3 font-display text-xl font-bold">{{ s.title }}</h3>
+          <p class="mt-2 text-mist">{{ s.text }}</p>
         </li>
       </ol>
-    </div>
-  </section>
+    </section>
 
-  <section class="mx-auto max-w-6xl px-4 py-12">
-    <div class="flex flex-col items-start gap-4 rounded-xl bg-ember-50 p-8 md:flex-row md:items-center md:justify-between">
-      <div>
-        <h2 class="font-display text-2xl font-extrabold">Cek kondisi daerah Anda</h2>
-          <p class="mt-1 text-ash-700">Cari titik panas terdekat dari lokasi Anda dan cek kualitas udara hari ini.</p>
+    <section class="mx-auto mt-20 max-w-6xl px-4">
+      <div class="glass relative overflow-hidden p-8 md:p-12">
+        <div class="pointer-events-none absolute -bottom-32 left-1/3 h-72 w-[36rem] rounded-full bg-ember-500/25 blur-3xl"></div>
+        <div class="relative flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h2 class="font-display text-3xl font-extrabold tracking-tight md:text-4xl">Ada titik panas di dekat Anda?</h2>
+            <p class="mt-2 max-w-xl text-lg text-mist">Cek titik panas dalam radius 50 km dan kualitas udara hari ini menurut standar ISPU.</p>
+          </div>
+          <RouterLink to="/sekitar" class="btn-ember shrink-0">Cek sekitar saya</RouterLink>
+        </div>
       </div>
-      <RouterLink to="/sekitar" class="rounded-md bg-ember-600 px-5 py-3 font-semibold text-white hover:bg-ember-700">Cek Sekitar Saya</RouterLink>
-    </div>
-  </section>
+    </section>
+  </div>
 </template>
+
+<style scoped>
+.bar {
+  background: linear-gradient(90deg, #e0531a, #ffb26b);
+  transform-origin: left;
+  animation: grow 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes grow { from { transform: scaleX(0); } }
+</style>

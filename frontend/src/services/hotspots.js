@@ -17,9 +17,18 @@ export function countByProvince(hotspots) {
 }
 
 export const CONFIDENCE = {
-  high: { label: 'Tinggi', color: '#c2410c' },
-  nominal: { label: 'Sedang', color: '#f0961a' },
-  low: { label: 'Rendah', color: '#bdb59a' },
+  high: { label: 'Tinggi', color: '#ff5a1f' },
+  nominal: { label: 'Sedang', color: '#ffa640' },
+  low: { label: 'Rendah', color: '#8e9a92' },
+}
+
+export const BASEMAP = {
+  url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+  options: {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 19,
+  },
 }
 
 export function formatDate(iso) {
