@@ -151,7 +151,7 @@ async function choose(p) {
 function drawMap() {
   if (!mapEl.value) return
   if (!map) {
-    map = L.map(mapEl.value, { scrollWheelZoom: false, preferCanvas: true })
+    map = L.map(mapEl.value, { scrollWheelZoom: true, wheelPxPerZoomLevel: 120, wheelDebounceTime: 20, preferCanvas: true, zoomSnap: 0.25 })
     L.tileLayer(BASEMAP.url, BASEMAP.options).addTo(map)
     layer = L.featureGroup().addTo(map)
   }

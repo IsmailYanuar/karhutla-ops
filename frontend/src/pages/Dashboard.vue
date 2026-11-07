@@ -55,7 +55,15 @@ function fitToData() {
 }
 
 onMounted(async () => {
-  map = L.map(mapEl.value, { scrollWheelZoom: false, preferCanvas: true, zoomSnap: 0.25, minZoom: 4, maxBounds: INDONESIA.pad(0.5) })
+  map = L.map(mapEl.value, {
+  scrollWheelZoom: true,     
+  wheelPxPerZoomLevel: 120,  
+  wheelDebounceTime: 20,
+  preferCanvas: true,
+  zoomSnap: 0.25,
+  minZoom: 4,
+  maxBounds: INDONESIA.pad(0.5),
+})
   map.fitBounds(INDONESIA, { animate: false })
   L.tileLayer(BASEMAP.url, BASEMAP.options).addTo(map)
 
