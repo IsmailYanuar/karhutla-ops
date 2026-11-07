@@ -98,6 +98,7 @@ h1, h2, h3 { text-wrap: balance; }
 }
 
 .leaflet-container.leaflet-container { background: #0c1310; font-family: var(--font-sans); }
+.leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.8) contrast(0.9) saturate(0.35); }
 .leaflet-popup-content-wrapper, .leaflet-popup-tip {
   background: #141d19;
   color: #edf2ee;

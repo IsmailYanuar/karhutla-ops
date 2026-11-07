@@ -23,10 +23,9 @@ export const CONFIDENCE = {
 }
 
 export const BASEMAP = {
-  url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+  url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
   options: {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-    subdomains: 'abcd',
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     maxZoom: 19,
   },
 }
