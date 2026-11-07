@@ -1,56 +1,56 @@
 {
-  "text": "Pada periode 1 November 2026 sampai 7 November 2026 (7 hari), terdeteksi sebanyak 15.945 titik panas di Indonesia, yang tercatat naik 15% dibandingkan periode sebelumnya. Dari jumlah tersebut, sebanyak 354 titik panas memiliki tingkat kepercayaan tinggi, dengan wilayah sebaran terbanyak berada di Papua Selatan (4.285 titik).",
+  "text": "Pada periode 1 November 2026 sampai 7 November 2026 (7 hari), terdeteksi sebanyak 16.816 titik panas di Indonesia, dengan 327 titik di antaranya memiliki tingkat kepercayaan tinggi. Jumlah tersebut mencatat kenaikan sebesar naik 21% dibandingkan periode 7 hari sebelumnya. Wilayah dengan jumlah titik panas terbanyak berada di Papua Selatan sebanyak 4.145 titik, diikuti oleh Kalimantan Tengah sebanyak 3.784 titik.",
   "model": "gemini-3.8-flash",
   "ai": true,
   "facts": {
     "jumlahHari": 7,
     "periode": "2026-11-01 s.d. 2026-11-07",
-    "totalTitik": 15945,
-    "kepercayaanTinggi": 354,
-    "perubahanPeriodeSebelumnyaPersen": 15,
-    "perubahanTahunLaluPersen": 579,
+    "totalTitik": 16816,
+    "kepercayaanTinggi": 327,
+    "perubahanPeriodeSebelumnyaPersen": 21,
+    "perubahanTahunLaluPersen": 616,
     "terbanyak": [
       {
         "provinsi": "Papua Selatan",
-        "titik": 4285
+        "titik": 4145
       },
       {
         "provinsi": "Kalimantan Tengah",
-        "titik": 3554
+        "titik": 3784
       },
       {
         "provinsi": "Kalimantan Timur",
-        "titik": 1033
+        "titik": 1143
       }
     ],
     "terpadat": [
       {
         "provinsi": "Papua Selatan",
-        "per1000km2": 36.4
+        "per1000km2": 35.2
       },
       {
         "provinsi": "Sulawesi Tenggara",
-        "per1000km2": 25.8
+        "per1000km2": 29.5
       },
       {
         "provinsi": "Kalimantan Tengah",
-        "per1000km2": 23.2
+        "per1000km2": 24.7
       }
     ],
     "kenaikanTerbesar": [
       {
         "provinsi": "Kalimantan Tengah",
-        "tambahanTitik": 2402
+        "tambahanTitik": 2632
       },
       {
         "provinsi": "Papua Selatan",
-        "tambahanTitik": 990
+        "tambahanTitik": 850
       },
       {
         "provinsi": "Jambi",
-        "tambahanTitik": 287
+        "tambahanTitik": 292
       }
     ]
   },
-  "generatedAt": "2026-11-07T12:58:36.444Z"
+  "generatedAt": "2026-11-07T21:52:09.218Z"
 }
