@@ -68,6 +68,17 @@ node scripts/ringkasan-ai.mjs
 ```
 File `.env` jangan di-commit. Di GitHub, kedua key disimpan di **Settings > Secrets and variables > Actions**.
 
+## Progress
+- ✅ Pipeline data otomatis NASA FIRMS lewat GitHub Actions (setiap 6 jam, 3 satelit VIIRS)
+- ✅ Riwayat harian 400 hari dan luas resmi provinsi dari BIG
+- ✅ Beranda dengan animasi titik panas dan ringkasan AI harian
+- ✅ Peta Titik Panas dengan filter provinsi dan tingkat kepercayaan
+- ✅ Halaman Tren (perbandingan mingguan dan tahunan, tabel 38 provinsi)
+- ✅ Cek Sekitar (titik panas radius 50 km dan kualitas udara ISPU)
+- ✅ Unduh data (CSV) dari Peta dan Tren
+- ✅ Desain ulang tampilan dan responsif di HP
+- ⬜ Profil Daerah dengan ringkasan AI per provinsi
+
 ## Tim
 - Ismail Yanuar Anwas: Ketua, Developer
 - Muhammad Falah Marzuq: Dokumentasi, Developer
