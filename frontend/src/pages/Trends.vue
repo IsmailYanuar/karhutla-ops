@@ -33,7 +33,7 @@ onMounted(async () => {
 const days = computed(() => history.value?.days ?? {})
 const dates = computed(() => Object.keys(days.value))
 const firstDate = computed(() => dates.value[0])
-const anchor = computed(() => dates.value[dates.value.length - 1])
+const anchor = computed(() => dates.value.at(-2) ?? dates.value.at(-1))
 
 const win = (end, n) => ({ from: addDays(end, -(n - 1)), to: end })
 const total = (r, province) => sumRange(days.value, r.from, r.to, province).total
@@ -51,7 +51,7 @@ function change(now, before) {
 
 function dayValue(date) {
   if (date < firstDate.value) return null
-  return days.value[date]?.count ?? 0
+  return days.value[date]?.count ?? null
 }
 
 const cur7 = computed(() => win(anchor.value, 7))
