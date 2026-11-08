@@ -78,6 +78,8 @@ File `.env` jangan di-commit. Di GitHub, kedua key disimpan di **Settings > Secr
 - ✅ Unduh data (CSV) dari Peta dan Tren
 - ✅ Desain ulang tampilan dan responsif di HP
 - ⬜ Profil Daerah dengan ringkasan AI per provinsi
+- ✅ Siaga Asap: panduan perlindungan diri sesuai ISPU, pertolongan pertama, dan nomor darurat
+- ✅ Tema terang dan gelap, dengan animasi saat scroll
 
 ## Tim
 - Ismail Yanuar Anwas: Ketua, Developer
