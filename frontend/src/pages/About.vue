@@ -32,7 +32,7 @@ const terms = [
     </ul>
 
     <h2 class="mt-12 font-display text-2xl font-bold">Cara membaca data</h2>
-    <dl class="glass mt-4 divide-y divide-white/5">
+    <dl class="glass mt-4 divide-y divide-veil/5">
       <div v-for="t in terms" :key="t.term" class="grid gap-1 p-5 md:grid-cols-[220px_1fr] md:gap-6">
         <dt class="font-semibold">{{ t.term }}</dt>
         <dd class="text-mist">{{ t.text }}</dd>

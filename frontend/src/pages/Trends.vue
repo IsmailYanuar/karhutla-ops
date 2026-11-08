@@ -12,12 +12,12 @@ const query = ref('')
 
 const RANGES = [30, 90, 365]
 
-const TONE = { up: 'text-ember-400', down: 'text-[#6fd3a8]', flat: 'text-mist', na: 'text-mist' }
+const TONE = { up: 'text-ember-400', down: 'text-emerald-300', flat: 'text-mist', na: 'text-mist' }
 const CHIP = {
   up: 'bg-ember-500/15 text-ember-400',
-  down: 'bg-[#6fd3a8]/15 text-[#6fd3a8]',
-  flat: 'bg-white/5 text-mist',
-  na: 'bg-white/5 text-mist',
+  down: 'bg-emerald-300/15 text-emerald-300',
+  flat: 'bg-veil/5 text-mist',
+  na: 'bg-veil/5 text-mist',
 }
 const ARROW = { up: '▲', down: '▼', flat: '', na: '' }
 const BAR = 'linear-gradient(90deg, #e0531a, #ffc27a)'
@@ -348,7 +348,7 @@ const COLUMNS = [
                 <span class="truncate font-semibold">{{ r.province }}</span>
                 <span class="shrink-0 font-display text-lg font-bold tabular-nums text-ember-400">+{{ fmt(r.diff) }}</span>
               </div>
-              <div class="mt-1.5 h-2 overflow-hidden rounded-full bg-white/10">
+              <div class="mt-1.5 h-2 overflow-hidden rounded-full bg-veil/10">
                 <div class="h-full rounded-full" :style="{ width: Math.max(4, (r.diff / maxDiff) * 100) + '%', background: BAR }"></div>
               </div>
               <div class="mt-1 flex justify-between text-xs text-mist">
@@ -400,11 +400,11 @@ const COLUMNS = [
               </tr>
             </thead>
             <tbody>
-              <tr v-for="r in filteredRows" :key="r.province" class="border-b border-line/60 transition last:border-0 hover:bg-white/5">
+              <tr v-for="r in filteredRows" :key="r.province" class="border-b border-line/60 transition last:border-0 hover:bg-veil/5">
                 <td class="px-4 py-2.5 font-medium">{{ r.province }}</td>
                 <td class="px-4 py-2.5">
                   <div class="flex items-center justify-end gap-3 tabular-nums">
-                    <span class="hidden h-1.5 w-24 overflow-hidden rounded-full bg-white/10 sm:block">
+                    <span class="hidden h-1.5 w-24 overflow-hidden rounded-full bg-veil/10 sm:block">
                       <span class="block h-full rounded-full" :style="{ width: (r.w / maxWeek) * 100 + '%', background: BAR }"></span>
                     </span>
                     <span class="w-14 text-right">{{ fmt(r.w) }}</span>

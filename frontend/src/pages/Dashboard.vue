@@ -133,8 +133,8 @@ function reset() {
           <option v-for="(c, key) in CONFIDENCE" :key="key" :value="key">{{ c.label }}</option>
         </select>
       </label>
-      <button v-if="province || confidence" class="rounded-full px-4 py-2.5 text-sm font-semibold text-flare hover:bg-white/5" @click="reset">Reset filter</button>
-      <RouterLink v-if="province" :to="{ name: 'region', query: { p: slugify(province) } }" class="rounded-full px-4 py-2.5 text-sm font-semibold text-flare hover:bg-white/5">Lihat profil {{ province }}</RouterLink>
+      <button v-if="province || confidence" class="rounded-full px-4 py-2.5 text-sm font-semibold text-flare hover:bg-veil/5" @click="reset">Reset filter</button>
+      <RouterLink v-if="province" :to="{ name: 'region', query: { p: slugify(province) } }" class="rounded-full px-4 py-2.5 text-sm font-semibold text-flare hover:bg-veil/5">Lihat profil {{ province }}</RouterLink>
       <button class="btn-ghost ml-auto !py-2.5 text-sm" :disabled="!filtered.length" @click="unduh">
         Unduh CSV ({{ filtered.length.toLocaleString('id-ID') }} titik)
       </button>
@@ -167,7 +167,7 @@ function reset() {
           <p class="label">Per provinsi, klik untuk menyaring</p>
           <ul class="mt-3 flex max-h-80 flex-col gap-0.5 overflow-y-auto pr-1 md:max-h-[420px]">
             <li v-for="r in ranking" :key="r.province">
-              <button class="flex w-full justify-between rounded-lg px-2.5 py-1.5 text-left text-sm transition hover:bg-white/5" :class="province === r.province && 'bg-ember-400/10 text-flare'" @click="province = r.province">
+              <button class="flex w-full justify-between rounded-lg px-2.5 py-1.5 text-left text-sm transition hover:bg-veil/5" :class="province === r.province && 'bg-ember-400/10 text-flare'" @click="province = r.province">
                 <span>{{ r.province }}</span><span class="font-semibold tabular-nums">{{ r.count.toLocaleString('id-ID') }}</span>
               </button>
             </li>

@@ -1,8 +1,9 @@
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, nextTick, watch } from 'vue'
 import L from 'leaflet'
 import { getHotspotData, CONFIDENCE, BASEMAP, formatDate } from '../services/hotspots'
 import { getAirQuality, distanceKm, direction, ISPU_CATEGORIES } from '../services/udara'
+import { theme, cssColor } from '../composables/useTheme'
 
 const CITIES = [
   { name: 'Banda Aceh (Aceh)', lat: 5.548, lng: 95.323 },
@@ -47,7 +48,7 @@ const CITIES = [
 const RADII = [10, 25, 50]
 
 const data = ref(null)
-const place = ref(null) // { name, lat, lng }
+const place = ref(null) 
 const locating = ref(false)
 const locError = ref('')
 const air = ref(null)
@@ -158,7 +159,7 @@ function drawMap() {
   layer.clearLayers()
   const { lat, lng } = place.value
   for (const r of [25, 50]) {
-    L.circle([lat, lng], { radius: r * 1000, color: '#ffc27a', opacity: 0.5, weight: 1, dashArray: '4 6', fill: false }).addTo(layer)
+    L.circle([lat, lng], { radius: r * 1000, color: cssColor('--color-flare'), opacity: 0.6, weight: 1, dashArray: '4 6', fill: false }).addTo(layer)
   }
   for (const h of nearby.value) {
     L.circleMarker([h.lat, h.lng], { radius: 4, stroke: false, fillColor: CONFIDENCE[h.confidence].color, fillOpacity: 0.8 })
@@ -169,6 +170,7 @@ function drawMap() {
   map.fitBounds(L.latLng(lat, lng).toBounds(110000), { animate: false })
 }
 
+watch(theme, () => { if (place.value) drawMap() })
 const fmtKm = (km) => km.toLocaleString('id-ID', { maximumFractionDigits: 1 })
 </script>
 
@@ -197,9 +199,9 @@ const fmtKm = (km) => km.toLocaleString('id-ID', { maximumFractionDigits: 1 })
         </select>
       </label>
     </div>
-    <ul v-if="results.length" class="glass-sm mt-3 flex max-w-xl flex-col divide-y divide-white/5 overflow-hidden">
+    <ul v-if="results.length" class="glass-sm mt-3 flex max-w-xl flex-col divide-y divide-veil/5 overflow-hidden">
       <li v-for="r in results" :key="r.name + r.lat">
-        <button class="w-full px-4 py-3 text-left text-sm hover:bg-white/5" @click="pick(r)">{{ r.name }}</button>
+        <button class="w-full px-4 py-3 text-left text-sm hover:bg-veil/5" @click="pick(r)">{{ r.name }}</button>
       </li>
     </ul>
     <p v-if="searchError" class="mt-3 text-sm text-red-300">{{ searchError }}</p>
@@ -244,6 +246,9 @@ const fmtKm = (km) => km.toLocaleString('id-ID', { maximumFractionDigits: 1 })
               <ul class="mt-3 list-disc pl-5 text-sm text-mist">
                 <li v-for="a in air.category.advice" :key="a">{{ a }}</li>
               </ul>
+              <RouterLink :to="{ name: 'siaga', query: { ispu: air.category.slug } }" class="btn-ghost mt-4 w-full !py-2.5 text-sm">
+                Panduan Siaga Asap untuk kategori ini
+              </RouterLink>
               <p class="mt-4 text-xs text-mist">
                 PM2.5 rata-rata 24 jam {{ air.pm25.toLocaleString('id-ID') }} µg/m³. Angka ini perkiraan model (Copernicus CAMS via Open-Meteo), bukan stasiun pemantau resmi.
               </p>
@@ -254,7 +259,7 @@ const fmtKm = (km) => km.toLocaleString('id-ID', { maximumFractionDigits: 1 })
             <p class="label">Kategori ISPU menurut PermenLHK P.14/2020</p>
             <ul class="mt-3 flex flex-col gap-2 text-sm">
               <li v-for="(c, i) in ISPU_CATEGORIES" :key="c.label" class="flex items-center gap-3">
-                <span class="h-3 w-3 rounded-full ring-1 ring-white/20" :style="{ background: c.color }"></span>
+                <span class="h-3 w-3 rounded-full ring-1 ring-veil/20" :style="{ background: c.color }"></span>
                 <span class="flex-1">{{ c.label }}</span>
                 <span class="tabular-nums text-mist">{{ i === 0 ? '0' : ISPU_CATEGORIES[i - 1].max + 1 }}{{ c.max === Infinity ? '+' : '–' + c.max }}</span>
               </li>

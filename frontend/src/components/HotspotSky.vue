@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
+import { theme } from '../composables/useTheme'
 
 const props = defineProps({ hotspots: { type: Array, default: () => [] } })
 const wrap = ref(null)
@@ -54,8 +55,9 @@ function drawCoast() {
   coast.height = h * dpr
   const g = coast.getContext('2d')
   g.scale(dpr, dpr)
-  g.strokeStyle = 'rgba(159,176,166,0.22)'
-  g.fillStyle = 'rgba(159,176,166,0.035)'
+  const light = theme.value === 'light'
+  g.strokeStyle = light ? 'rgba(22,32,27,0.22)' : 'rgba(159,176,166,0.22)'
+  g.fillStyle = light ? 'rgba(22,32,27,0.04)' : 'rgba(159,176,166,0.035)'
   g.lineWidth = 0.7
   for (const f of geo?.features ?? []) {
     const polys = f.geometry.type === 'Polygon' ? [f.geometry.coordinates] : f.geometry.coordinates
@@ -107,7 +109,7 @@ function frame(now) {
   ctx.clearRect(0, 0, w, h)
   ctx.drawImage(coast, 0, 0, w, h)
 
-  ctx.globalCompositeOperation = 'lighter'
+  ctx.globalCompositeOperation = theme.value === 'light' ? 'source-over' : 'lighter'
   for (const d of dots) {
     if (d.x > sweepX) break
     const [r, g, b] = COLORS[d.c]
@@ -120,7 +122,7 @@ function frame(now) {
     for (const p of pulses) {
       const k = (Math.sin(now / 1000 * p.speed + p.phase) + 1) / 2
       const s = (6 + k * 14) * Math.min(1, w / 1000) 
-      ctx.globalAlpha = 0.25 + k * 0.5
+      ctx.globalAlpha = (0.25 + k * 0.5) * (theme.value === 'light' ? 0.45 : 1)
       ctx.drawImage(glowSprite, p.x - s / 2, p.y - s / 2, s, s)
     }
     ctx.globalAlpha = 1
@@ -170,6 +172,7 @@ onMounted(() => {
 })
 
 watch(() => props.hotspots, (v) => { if (v.length && ctx) start() })
+watch(theme, () => { if (geo && ctx) { drawCoast(); if (reduce) frame(performance.now()) } })
 
 onBeforeUnmount(() => { cancelAnimationFrame(raf); ro?.disconnect() })
 </script>

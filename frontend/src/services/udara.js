@@ -8,29 +8,49 @@ const PM25 = [
 
 export const ISPU_CATEGORIES = [
   {
-    max: 50, label: 'Baik', color: '#16a34a', text: '#ffffff',
+    max: 50, slug: 'baik', label: 'Baik', color: '#16a34a', text: '#ffffff',
     meaning: 'Kualitas udara sangat baik dan tidak berdampak buruk bagi kesehatan.',
-    advice: ['Aman untuk beraktivitas di luar ruangan.'],
+    advice: [
+      'Aman untuk beraktivitas di luar ruangan.',
+      'Tetap pantau ISPU setiap hari, karena asap bisa datang cepat saat arah angin berubah.',
+    ],
   },
   {
-    max: 100, label: 'Sedang', color: '#2563eb', text: '#ffffff',
+    max: 100, slug: 'sedang', label: 'Sedang', color: '#2563eb', text: '#ffffff',
     meaning: 'Kualitas udara masih dapat diterima, tapi bisa berdampak pada kelompok rentan.',
-    advice: ['Anak, lansia, ibu hamil, dan penderita gangguan pernapasan sebaiknya mengurangi aktivitas berat di luar ruangan.'],
+    advice: [
+      'Anak, lansia, ibu hamil, dan penderita asma, penyakit paru, atau jantung sebaiknya mengurangi aktivitas berat di luar ruangan.',
+      'Siapkan masker dan stok obat rutin, terutama bagi yang punya penyakit bawaan.',
+    ],
   },
   {
-    max: 200, label: 'Tidak Sehat', color: '#eab308', text: '#1a1e19',
+    max: 200, slug: 'tidak-sehat', label: 'Tidak Sehat', color: '#eab308', text: '#1a1e19',
     meaning: 'Kualitas udara mulai merugikan kesehatan, terutama bagi kelompok rentan.',
-    advice: ['Kurangi aktivitas di luar ruangan.', 'Gunakan masker saat keluar rumah.', 'Kelompok rentan sebaiknya tetap di dalam ruangan.'],
+    advice: [
+      'Kurangi aktivitas di luar ruangan dan jangan berolahraga berat di luar.',
+      'Gunakan masker yang pas dan terpasang rapat saat keluar rumah.',
+      'Tutup pintu dan jendela saat asap pekat di luar.',
+      'Kelompok rentan sebaiknya tetap di dalam ruangan.',
+    ],
   },
   {
-    max: 300, label: 'Sangat Tidak Sehat', color: '#dc2626', text: '#ffffff',
+    max: 300, slug: 'sangat-tidak-sehat', label: 'Sangat Tidak Sehat', color: '#dc2626', text: '#ffffff',
     meaning: 'Risiko gangguan kesehatan meningkat bagi sebagian besar orang.',
-    advice: ['Hindari aktivitas di luar ruangan.', 'Tutup jendela dan pintu.', 'Gunakan masker yang rapat (misalnya N95) bila harus keluar.'],
+    advice: [
+      'Hindari aktivitas di luar ruangan. Jika tidak ada keperluan mendesak, tetap di rumah.',
+      'Tutup pintu dan jendela rapat, dan jangan merokok di dalam rumah.',
+      'Jika terpaksa keluar, gunakan masker yang rapat seperti N95.',
+      'Perhatikan gejala sesak napas, batuk terus-menerus, atau nyeri dada.',
+    ],
   },
   {
-    max: Infinity, label: 'Berbahaya', color: '#1a1e19', text: '#ffffff',
+    max: Infinity, slug: 'berbahaya', label: 'Berbahaya', color: '#1a1e19', text: '#ffffff',
     meaning: 'Kualitas udara sangat berbahaya dan dapat menyebabkan dampak kesehatan serius.',
-    advice: ['Tetap di dalam ruangan.', 'Ikuti arahan pemerintah daerah dan BPBD.', 'Segera ke fasilitas kesehatan bila sesak napas.'],
+    advice: [
+      'Tetap di dalam ruangan dengan pintu dan jendela tertutup.',
+      'Ikuti arahan pemerintah daerah dan BPBD setempat.',
+      'Segera ke puskesmas atau rumah sakit bila sesak napas, nyeri dada, atau pusing yang makin berat.',
+    ],
   },
 ]
 

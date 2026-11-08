@@ -97,7 +97,7 @@ const steps = [
               <span>{{ r.province }}</span>
               <span class="font-display font-bold tabular-nums">{{ r.count.toLocaleString('id-ID') }}</span>
             </div>
-            <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
+            <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-veil/10">
               <div class="bar h-full rounded-full" :style="{ width: (r.count / maxCount) * 100 + '%' }"></div>
             </div>
           </li>

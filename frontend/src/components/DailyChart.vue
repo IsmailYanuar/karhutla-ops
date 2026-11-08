@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
+import { theme, cssColor } from '../composables/useTheme'
 import { Chart, LineController, LineElement, PointElement, LinearScale, CategoryScale, Tooltip, Legend, Filler } from 'chart.js'
 
 Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Tooltip, Legend, Filler)
@@ -12,7 +13,7 @@ function datasets() {
   return props.series.map((s, i) => ({
     label: s.label,
     data: s.values,
-    borderColor: s.color,
+    borderColor: s.color === '#9fb0a6' ? cssColor('--color-mist') : s.color,
     backgroundColor: i === 0 ? s.color + '1f' : 'transparent',
     fill: i === 0,
     borderWidth: 2,
@@ -26,6 +27,8 @@ function datasets() {
 
 function render() {
   chart?.destroy()
+  const mist = cssColor('--color-mist') || '#9fb0a6'
+  const grid = theme.value === 'light' ? 'rgba(22,32,27,0.08)' : 'rgba(232,240,234,0.08)'
   chart = new Chart(canvas.value, {
     type: 'line',
     data: { labels: props.labels, datasets: datasets() },
@@ -35,14 +38,14 @@ function render() {
       animation: false,
       interaction: { mode: 'index', intersect: false },
       plugins: {
-        legend: { display: props.series.length > 1, position: 'top', align: 'start', labels: { boxWidth: 12, boxHeight: 2, color: '#9fb0a6' } },
+        legend: { display: props.series.length > 1, position: 'top', align: 'start', labels: { boxWidth: 12, boxHeight: 2, color: mist } },
         tooltip: {
           callbacks: { label: (c) => ` ${c.dataset.label}: ${c.parsed.y == null ? 'tidak ada data' : c.parsed.y.toLocaleString('id-ID')} titik` },
         },
       },
       scales: {
-        x: { grid: { display: false }, ticks: { color: '#9fb0a6', maxRotation: 0, autoSkipPadding: 16 } },
-        y: { beginAtZero: true, grid: { color: 'rgba(232,240,234,0.08)' }, border: { display: false }, ticks: { color: '#9fb0a6', callback: (v) => v.toLocaleString('id-ID') } },
+        x: { grid: { display: false }, ticks: { color: mist, maxRotation: 0, autoSkipPadding: 16 } },
+        y: { beginAtZero: true, grid: { color: grid }, border: { display: false }, ticks: { color: mist, callback: (v) => v.toLocaleString('id-ID') } },
       },
     },
   })
@@ -50,6 +53,7 @@ function render() {
 
 onMounted(render)
 watch(() => [props.labels, props.series], render, { deep: true })
+watch(theme, render)
 onBeforeUnmount(() => chart?.destroy())
 
 </script>
