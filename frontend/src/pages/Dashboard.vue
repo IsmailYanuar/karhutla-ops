@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import L from 'leaflet'
-import { getHotspotData, countByProvince, CONFIDENCE, BASEMAP, formatDate, slugify, downloadCsv } from '../services/hotspots'
+import { getHotspotData, getWilayah, countByProvince, CONFIDENCE, BASEMAP, formatDate, slugify, downloadCsv } from '../services/hotspots'
 
 const mapEl = ref(null)
 const data = ref(null)
@@ -15,10 +15,17 @@ let currentRadius = null
 const INDONESIA = L.latLngBounds([-11, 95], [6, 141])
 
 const all = computed(() => data.value?.hotspots ?? [])
-const provinces = computed(() => countByProvince(all.value).map((p) => p.province).sort())
+const wilayah = ref(null)
+const counts = computed(() => Object.fromEntries(countByProvince(all.value).map((p) => [p.province, p.count])))
+const provinces = computed(() => {
+  const names = wilayah.value?.provinsi.map((p) => p.name) ?? Object.keys(counts.value)
+  return [...names].sort((a, b) => a.localeCompare(b, 'id')).map((name) => ({ name, n: counts.value[name] ?? 0 }))
+})
+
 const filtered = computed(() =>
   all.value.filter((h) => (!province.value || h.province === province.value) && (!confidence.value || h.confidence === confidence.value)),
 )
+
 const ranking = computed(() => countByProvince(filtered.value))
 
 const lastDetected = computed(() => all.value.reduce((m, h) => (h.detectedAt > m ? h.detectedAt : m), '') || null)
@@ -50,7 +57,7 @@ function fitToData() {
     map.fitBounds(INDONESIA, { animate: false })
     return
   }
-  if (!filtered.value.length) return
+  if (!filtered.value.length) return map.fitBounds(INDONESIA, { animate: false })
   map.fitBounds(L.latLngBounds(filtered.value.map((h) => [h.lat, h.lng])).pad(0.2), { maxZoom: 8, animate: false })
 }
 
@@ -75,6 +82,8 @@ onMounted(async () => {
   map.on('zoomend', () => {
     if (radiusForZoom(map.getZoom()) !== currentRadius) draw()
   })
+
+  getWilayah().then((w) => (wilayah.value = w)).catch(() => {})
 
   try {
     data.value = await getHotspotData()
@@ -123,7 +132,7 @@ function reset() {
         <span class="label">Provinsi</span>
         <select id="filter-province" v-model="province" class="field">
           <option value="">Semua provinsi</option>
-          <option v-for="p in provinces" :key="p" :value="p">{{ p }}</option>
+          <option v-for="p in provinces" :key="p.name" :value="p.name">{{ p.name }} ({{ p.n.toLocaleString('id-ID') }})</option>
         </select>
       </label>
       <label class="flex flex-col gap-1.5">
