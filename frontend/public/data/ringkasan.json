@@ -1,56 +1,56 @@
 {
-  "text": "Pada periode 2 November 2026 sampai 8 November 2026 (7 hari), tercatat sebanyak 14.954 titik panas dengan 282 titik berada pada tingkat kepercayaan tinggi. Jumlah titik panas ini mengalami perubahan naik 5% dibandingkan periode sebelumnya. Wilayah yang mencatatkan jumlah titik panas terbanyak adalah Papua Selatan dengan 3.823 titik.",
-  "model": "gemini-3.8-flash",
-  "ai": true,
+  "text": "Dalam 7 hari terakhir terdeteksi 16.035 titik panas di Indonesia, naik 13% dibanding 7 hari sebelumnya, 320 di antaranya berkepercayaan tinggi. Terbanyak di Papua Selatan (4.139), Kalimantan Tengah (3.415), Kalimantan Timur (1.119). Kenaikan terbesar terjadi di Kalimantan Tengah (+1.995 titik).",
+  "model": null,
+  "ai": false,
   "facts": {
     "jumlahHari": 7,
     "periode": "2026-11-02 s.d. 2026-11-08",
-    "totalTitik": 14954,
-    "kepercayaanTinggi": 282,
-    "perubahanPeriodeSebelumnyaPersen": 5,
-    "perubahanTahunLaluPersen": 660,
+    "totalTitik": 16035,
+    "kepercayaanTinggi": 320,
+    "perubahanPeriodeSebelumnyaPersen": 13,
+    "perubahanTahunLaluPersen": 715,
     "terbanyak": [
       {
         "provinsi": "Papua Selatan",
-        "titik": 3823
+        "titik": 4139
       },
       {
         "provinsi": "Kalimantan Tengah",
-        "titik": 3301
+        "titik": 3415
       },
       {
         "provinsi": "Kalimantan Timur",
-        "titik": 1031
+        "titik": 1119
       }
     ],
     "terpadat": [
       {
         "provinsi": "Papua Selatan",
-        "per1000km2": 32.4
+        "per1000km2": 35.1
       },
       {
         "provinsi": "Sulawesi Tenggara",
-        "per1000km2": 24.4
+        "per1000km2": 28
       },
       {
         "provinsi": "Kalimantan Tengah",
-        "per1000km2": 21.5
+        "per1000km2": 22.3
       }
     ],
     "kenaikanTerbesar": [
       {
         "provinsi": "Kalimantan Tengah",
-        "tambahanTitik": 1881
+        "tambahanTitik": 1995
       },
       {
         "provinsi": "Papua Selatan",
-        "tambahanTitik": 410
+        "tambahanTitik": 726
       },
       {
-        "provinsi": "Jambi",
-        "tambahanTitik": 220
+        "provinsi": "Sumatera Selatan",
+        "tambahanTitik": 242
       }
     ]
   },
-  "generatedAt": "2026-11-08T05:59:20.902Z"
+  "generatedAt": "2026-11-08T13:26:16.017Z"
 }
