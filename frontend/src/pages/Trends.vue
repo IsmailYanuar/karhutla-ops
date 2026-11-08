@@ -158,6 +158,7 @@ const rows = computed(() =>
       weekPct: percentChange(w, pw),
       weekChange: change(w, pw),
       d30,
+      y30,
       yearPct: y30 == null ? null : percentChange(d30, y30),
       yearChange: change(d30, y30),
     }
@@ -204,6 +205,41 @@ const arrow = (key) => (sortKey.value === key ? (sortDir.value === 'asc' ? ' ▲
 const ariaSort = (key) =>
   sortKey.value === key ? (sortDir.value === 'asc' ? 'ascending' : 'descending') : 'none'
 
+function saveCsv(header, rows, filename) {
+  const esc = (v) => (v == null ? '' : /[",\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : String(v))
+  const text = [header, ...rows].map((r) => r.map(esc).join(',')).join('\n')
+  const url = URL.createObjectURL(new Blob(['\ufeff' + text], { type: 'text/csv;charset=utf-8' }))
+  const a = Object.assign(document.createElement('a'), { href: url, download: filename })
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  URL.revokeObjectURL(url)
+}
+
+function downloadDaily() {
+  saveCsv(
+    ['tanggal', 'titik_panas', 'titik_panas_tahun_lalu'],
+    rangeDates.value.map((d) => [d, dayValue(d), dayValue(addDays(d, -365))]),
+    `karhutlatracker-tren-harian-${range.value}hari-sampai-${anchor.value}.csv`,
+  )
+}
+
+function downloadProvinces() {
+  saveCsv(
+    [
+      'provinsi',
+      `titik_7_hari (${cur7.value.from} s.d. ${cur7.value.to})`,
+      `titik_7_hari_sebelumnya (${prev7.value.from} s.d. ${prev7.value.to})`,
+      'perubahan_mingguan_persen',
+      `titik_30_hari (${cur30.value.from} s.d. ${cur30.value.to})`,
+      `titik_30_hari_tahun_lalu (${year30.value.from} s.d. ${year30.value.to})`,
+      'perubahan_tahunan_persen',
+    ],
+    filteredRows.value.map((r) => [r.province, r.w, r.pw, r.weekPct, r.d30, r.y30, r.yearPct]),
+    `karhutlatracker-tren-provinsi-sampai-${anchor.value}.csv`,
+  )
+}
+
 const COLUMNS = [
   { key: 'province', label: 'Provinsi', align: 'text-left' },
   { key: 'w', label: '7 hari', align: 'text-right' },
@@ -249,18 +285,21 @@ const COLUMNS = [
             <h2 class="font-display text-xl font-bold tracking-tight">Titik panas per hari</h2>
             <p class="label">Data sampai {{ formatShortDate(anchor) }}</p>
           </div>
-          <div class="glass-sm inline-flex gap-1 rounded-full p-1" role="group" aria-label="Rentang waktu">
-            <button
-              v-for="r in RANGES"
-              :key="r"
-              type="button"
-              class="rounded-full px-4 py-1.5 text-sm font-semibold transition"
-              :class="range === r ? 'bg-ember-500 text-night' : 'text-mist hover:text-paper'"
-              :aria-pressed="range === r"
-              @click="range = r"
-            >
-              {{ r }} hari
-            </button>
+          <div class="flex flex-wrap items-center gap-2">
+            <div class="glass-sm inline-flex gap-1 rounded-full p-1" role="group" aria-label="Rentang waktu">
+              <button
+                v-for="r in RANGES"
+                :key="r"
+                type="button"
+                class="rounded-full px-4 py-1.5 text-sm font-semibold transition"
+                :class="range === r ? 'bg-ember-500 text-night' : 'text-mist hover:text-paper'"
+                :aria-pressed="range === r"
+                @click="range = r"
+              >
+                {{ r }} hari
+              </button>
+            </div>
+            <button type="button" class="btn-ghost !px-4 !py-2 text-sm" @click="downloadDaily">Unduh CSV</button>
           </div>
         </div>
 
@@ -328,13 +367,18 @@ const COLUMNS = [
             <h2 class="font-display text-xl font-bold tracking-tight">Semua provinsi</h2>
             <p class="label">{{ filteredRows.length }} dari {{ rows.length }} provinsi · klik judul kolom untuk mengurutkan</p>
           </div>
-          <input
-            v-model="query"
-            type="search"
-            class="field w-full sm:w-64"
-            placeholder="Cari provinsi…"
-            aria-label="Cari provinsi"
-          />
+          <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+            <input
+              v-model="query"
+              type="search"
+              class="field w-full sm:w-64"
+              placeholder="Cari provinsi…"
+              aria-label="Cari provinsi"
+            />
+            <button type="button" class="btn-ghost !px-4 !py-2.5 text-sm" :disabled="!filteredRows.length" @click="downloadProvinces">
+              Unduh CSV ({{ filteredRows.length }} provinsi)
+            </button>
+          </div>
         </div>
 
         <div class="mt-4 max-h-[34rem] overflow-auto rounded-xl border border-line">
