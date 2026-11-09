@@ -1,56 +1,56 @@
 {
-  "text": "Pada periode 3 November 2026 sampai 9 November 2026 (7 hari), terdeteksi total 14.332 titik panas di Indonesia dengan 289 titik berada pada tingkat kepercayaan tinggi. Jumlah titik panas ini tercatat naik 2% dibandingkan periode sebelumnya serta naik 901% jika dibandingkan tahun lalu. Wilayah dengan sebaran titik panas terbanyak berada di Papua Selatan dengan 3.826 titik.",
-  "model": "gemini-3.8-flash",
-  "ai": true,
+  "text": "Dalam 7 hari terakhir terdeteksi 15.225 titik panas di Indonesia, naik 8% dibanding 7 hari sebelumnya, 321 di antaranya berkepercayaan tinggi. Terbanyak di Papua Selatan (3.934), Kalimantan Tengah (3.024), Kalimantan Timur (1.097). Kenaikan terbesar terjadi di Kalimantan Tengah (+1.213 titik).",
+  "model": null,
+  "ai": false,
   "facts": {
     "jumlahHari": 7,
     "periode": "2026-11-03 s.d. 2026-11-09",
-    "totalTitik": 14332,
-    "kepercayaanTinggi": 289,
-    "perubahanPeriodeSebelumnyaPersen": 2,
-    "perubahanTahunLaluPersen": 901,
+    "totalTitik": 15225,
+    "kepercayaanTinggi": 321,
+    "perubahanPeriodeSebelumnyaPersen": 8,
+    "perubahanTahunLaluPersen": 963,
     "terbanyak": [
       {
         "provinsi": "Papua Selatan",
-        "titik": 3826
+        "titik": 3934
       },
       {
         "provinsi": "Kalimantan Tengah",
-        "titik": 3008
+        "titik": 3024
       },
       {
         "provinsi": "Kalimantan Timur",
-        "titik": 1014
+        "titik": 1097
       }
     ],
     "terpadat": [
       {
         "provinsi": "Papua Selatan",
-        "per1000km2": 32.5
+        "per1000km2": 33.4
       },
       {
         "provinsi": "Sulawesi Tenggara",
-        "per1000km2": 25.8
+        "per1000km2": 29.1
       },
       {
         "provinsi": "Kalimantan Tengah",
-        "per1000km2": 19.6
+        "per1000km2": 19.7
       }
     ],
     "kenaikanTerbesar": [
       {
         "provinsi": "Kalimantan Tengah",
-        "tambahanTitik": 1197
+        "tambahanTitik": 1213
       },
       {
         "provinsi": "Papua Selatan",
-        "tambahanTitik": 619
+        "tambahanTitik": 727
       },
       {
-        "provinsi": "Maluku",
-        "tambahanTitik": 144
+        "provinsi": "Sumatera Selatan",
+        "tambahanTitik": 203
       }
     ]
   },
-  "generatedAt": "2026-11-09T06:25:07.814Z"
+  "generatedAt": "2026-11-09T22:23:35.104Z"
 }
