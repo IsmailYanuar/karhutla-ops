@@ -64,22 +64,43 @@ export function ispuCategory(ispu) {
   return ISPU_CATEGORIES.find((c) => ispu <= c.max)
 }
 
-export async function getAirQuality(lat, lng) {
-  const url = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lng}&hourly=pm2_5&past_days=1&forecast_days=1&timezone=GMT`
-  const res = await fetch(url)
-  if (!res.ok) throw new Error('Gagal memuat data kualitas udara')
-  const { hourly } = await res.json()
-
+function ispuFromHourly(hourly) {
   const nowHour = new Date().toISOString().slice(0, 13) + ':00'
   const idx = hourly.time.indexOf(nowHour)
   const end = idx === -1 ? hourly.time.length - 1 : idx
   const last24 = hourly.pm2_5.slice(Math.max(0, end - 23), end + 1).filter((v) => v != null)
-
-  if (last24.length < 18) throw new Error('Data kualitas udara di lokasi ini belum lengkap')
+  if (last24.length < 18) return null
 
   const pm25 = last24.reduce((a, b) => a + b, 0) / last24.length
   const ispu = pm25ToIspu(pm25)
   return { pm25: Math.round(pm25 * 10) / 10, pm25Now: hourly.pm2_5[end], ispu, category: ispuCategory(ispu) }
+}
+
+const AQ_URL = 'https://air-quality-api.open-meteo.com/v1/air-quality'
+const AQ_PARAMS = 'hourly=pm2_5&past_days=1&forecast_days=1&timezone=GMT'
+
+export async function getAirQuality(lat, lng) {
+  const res = await fetch(`${AQ_URL}?latitude=${lat}&longitude=${lng}&${AQ_PARAMS}`)
+  if (!res.ok) throw new Error('Gagal memuat data kualitas udara')
+  const result = ispuFromHourly((await res.json()).hourly)
+  if (!result) throw new Error('Data kualitas udara di lokasi ini belum lengkap')
+  return result
+}
+
+export async function getAirQualityMany(places) {
+  const lat = places.map((p) => p.lat).join(',')
+  const lng = places.map((p) => p.lng).join(',')
+  try {
+    const res = await fetch(`${AQ_URL}?latitude=${lat}&longitude=${lng}&${AQ_PARAMS}`)
+    if (!res.ok) throw new Error()
+    const json = await res.json()
+    const list = Array.isArray(json) ? json : [json]
+    return list.map((d) => (d?.hourly ? ispuFromHourly(d.hourly) : null))
+  } catch {
+    const settled = await Promise.allSettled(places.map((p) => getAirQuality(p.lat, p.lng)))
+    if (settled.every((r) => r.status === 'rejected')) throw new Error('Gagal memuat data kualitas udara')
+    return settled.map((r) => (r.status === 'fulfilled' ? r.value : null))
+  }
 }
 
 export function distanceKm(lat1, lng1, lat2, lng2) {

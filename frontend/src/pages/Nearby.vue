@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, onBeforeUnmount, nextTick, watch } from 'vue'
 import L from 'leaflet'
 import { getHotspotData, CONFIDENCE, BASEMAP, formatDate } from '../services/hotspots'
-import { getAirQuality, distanceKm, direction, ISPU_CATEGORIES } from '../services/udara'
+import { getAirQuality, getAirQualityMany, distanceKm, direction, ISPU_CATEGORIES } from '../services/udara'
 import { theme, cssColor } from '../composables/useTheme'
 
 const CITIES = [
@@ -48,7 +48,7 @@ const CITIES = [
 const RADII = [10, 25, 50]
 
 const data = ref(null)
-const place = ref(null) 
+const place = ref(null)
 const locating = ref(false)
 const locError = ref('')
 const air = ref(null)
@@ -61,10 +61,35 @@ const searchError = ref('')
 const mapEl = ref(null)
 let map = null
 let layer = null
+let request = 0
+const INDONESIA = L.latLngBounds([-11, 95], [6, 141])
+
+const cityAir = ref(null)
+const cityAirError = ref('')
+const openCategory = ref(null)
+const citiesByCategory = computed(() => {
+  const groups = Object.fromEntries(ISPU_CATEGORIES.map((c) => [c.slug, []]))
+  for (const c of cityAir.value ?? []) groups[c.category.slug].push(c)
+  for (const list of Object.values(groups)) list.sort((a, b) => b.ispu - a.ispu)
+  return groups
+})
+function toggleCategory(c) {
+  openCategory.value = openCategory.value === c.slug ? null : c.slug
+}
+async function chooseCity(c) {
+  await choose(CITIES.find((x) => x.name === c.name))
+  document.getElementById('hasil-sekitar')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
 
 onMounted(async () => {
+  getAirQualityMany(CITIES)
+    .then((list) => (cityAir.value = list.map((a, i) => a && { ...CITIES[i], ...a }).filter(Boolean)))
+    .catch(() => (cityAirError.value = 'Data kualitas udara kota belum bisa dimuat.'))
+  initMap()
   try { data.value = await getHotspotData() } catch { }
+  if (!place.value) drawMap()
 })
+
 onBeforeUnmount(() => map?.remove())
 
 const nearby = computed(() => {
@@ -133,44 +158,89 @@ function pick(p) {
   choose(p)
 }
 
-async function choose(p) {
+async function placeName(lat, lng) {
+  try {
+    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=14&accept-language=id`)
+    if (!res.ok) return null
+    const a = (await res.json()).address ?? {}
+    const parts = [a.village || a.suburb || a.town || a.city_district || a.municipality, a.city || a.county || a.regency, a.state]
+    return [...new Set(parts.filter(Boolean))].join(', ') || null
+  } catch { return null }
+}
+
+const coordText = (lat, lng) => `${Math.abs(lat).toFixed(3)}° ${lat < 0 ? 'LS' : 'LU'}, ${lng.toFixed(3)}° BT`
+
+function pickOnMap(lat, lng) {
+  choose({ name: 'Mencari nama tempat…', lat, lng }, false)
+  const id = request
+  placeName(lat, lng).then((name) => {
+    if (id === request) place.value = { ...place.value, name: name ?? `Titik pilihan (${coordText(lat, lng)})` }
+  })
+}
+
+async function choose(p, fit = true) {
+  const id = ++request
   place.value = p
   await nextTick()
-  drawMap()
+  drawMap(fit)
   air.value = null
   airError.value = ''
   airLoading.value = true
   try {
-    air.value = await getAirQuality(p.lat, p.lng)
+    const result = await getAirQuality(p.lat, p.lng)
+    if (id === request) air.value = result
   } catch (e) {
-    airError.value = e.message
+    if (id === request) airError.value = e.message
   } finally {
-    airLoading.value = false
+    if (id === request) airLoading.value = false
   }
 }
 
-function drawMap() {
-  if (!mapEl.value) return
-  if (!map) {
-    map = L.map(mapEl.value, { scrollWheelZoom: true, wheelPxPerZoomLevel: 120, wheelDebounceTime: 20, preferCanvas: true, zoomSnap: 0.25 })
-    L.tileLayer(BASEMAP.url, BASEMAP.options).addTo(map)
-    layer = L.featureGroup().addTo(map)
-  }
+function initMap() {
+  map = L.map(mapEl.value, { scrollWheelZoom: true, wheelPxPerZoomLevel: 120, wheelDebounceTime: 20, preferCanvas: true, zoomSnap: 0.25, minZoom: 4 })
+  L.tileLayer(BASEMAP.url, BASEMAP.options).addTo(map)
+  layer = L.featureGroup().addTo(map)
+  map.fitBounds(INDONESIA, { animate: false })
+  map.on('click', (e) => pickOnMap(e.latlng.lat, e.latlng.lng))
+}
+
+const PIN = L.divIcon({
+  className: '',
+  html: '<span style="display:block;width:18px;height:18px;border-radius:50%;background:#3b82f6;border:3px solid #fff;box-shadow:0 0 0 6px rgba(59,130,246,.25),0 2px 6px rgba(0,0,0,.4);cursor:grab"></span>',
+  iconSize: [18, 18],
+  iconAnchor: [9, 9],
+})
+
+function drawMap(fit = true) {
+  if (!map) return
   layer.clearLayers()
+
+  if (!place.value) {
+    for (const h of data.value?.hotspots ?? []) {
+      L.circleMarker([h.lat, h.lng], { radius: 2, stroke: false, fillColor: CONFIDENCE[h.confidence].color, fillOpacity: 0.7, interactive: false }).addTo(layer)
+    }
+    return
+  }
+
   const { lat, lng } = place.value
   for (const r of [25, 50]) {
-    L.circle([lat, lng], { radius: r * 1000, color: cssColor('--color-flare'), opacity: 0.6, weight: 1, dashArray: '4 6', fill: false }).addTo(layer)
+    L.circle([lat, lng], { radius: r * 1000, color: cssColor('--color-flare'), opacity: 0.6, weight: 1, dashArray: '4 6', fill: false, interactive: false }).addTo(layer)
   }
   for (const h of nearby.value) {
     L.circleMarker([h.lat, h.lng], { radius: 4, stroke: false, fillColor: CONFIDENCE[h.confidence].color, fillOpacity: 0.8 })
       .bindPopup(`${h.km.toFixed(1)} km ke ${direction(lat, lng, h.lat, h.lng)}<br>Kepercayaan: ${CONFIDENCE[h.confidence].label}<br>${formatDate(h.detectedAt)}`)
       .addTo(layer)
   }
-  L.circleMarker([lat, lng], { radius: 7, color: '#ffffff', weight: 2, fillColor: '#3b82f6', fillOpacity: 1 }).bindPopup(place.value.name).addTo(layer)
-  map.fitBounds(L.latLng(lat, lng).toBounds(110000), { animate: false })
+
+  L.marker([lat, lng], { icon: PIN, draggable: true, autoPan: true, keyboard: false, title: 'Geser untuk memindahkan lokasi' })
+    .on('dragend', (e) => { const p = e.target.getLatLng(); pickOnMap(p.lat, p.lng) })
+    .addTo(layer)
+  if (fit) map.fitBounds(L.latLng(lat, lng).toBounds(110000), { animate: false })
+  else if (map.getZoom() < 8) map.setView([lat, lng], 9, { animate: true })
 }
 
-watch(theme, () => { if (place.value) drawMap() })
+watch(theme, () => drawMap(false))
+const tapWord = window.matchMedia?.('(hover: none)').matches ? 'Ketuk' : 'Klik'
 const fmtKm = (km) => km.toLocaleString('id-ID', { maximumFractionDigits: 1 })
 </script>
 
@@ -206,17 +276,17 @@ const fmtKm = (km) => km.toLocaleString('id-ID', { maximumFractionDigits: 1 })
     </ul>
     <p v-if="searchError" class="mt-3 text-sm text-red-300">{{ searchError }}</p>
     <p v-if="locError" class="mt-3 text-sm text-red-300">{{ locError }}</p>
-    <p class="mt-3 text-xs text-mist">Lokasi hanya dipakai di browser Anda untuk menghitung jarak, tidak dikirim atau disimpan oleh KarhutlaTracker.</p>
+    <p class="mt-3 text-xs text-mist">Lokasi tidak disimpan oleh KarhutlaTracker. Koordinat hanya dikirim ke Open-Meteo untuk kualitas udara dan ke OpenStreetMap untuk nama tempat.</p>
+    <div id="hasil-sekitar" class="scroll-mt-24"></div>
+    <div v-if="place && status" class="mt-8 rounded-2xl border p-5" :class="status.cls">
+      <p class="font-display text-lg font-bold">{{ place.name }}</p>
+      <p class="mt-1">{{ status.text }}</p>
+    </div>
 
-    <template v-if="place">
-      <div v-if="status" class="mt-8 rounded-2xl border p-5" :class="status.cls">
-        <p class="font-display text-lg font-bold">{{ place.name }}</p>
-        <p class="mt-1">{{ status.text }}</p>
-      </div>
-
-      <div class="mt-4 grid gap-4 lg:grid-cols-[1fr_360px]">
-        <div class="glass min-w-0 p-5">
-          <h2 class="font-display text-2xl font-bold">Titik panas di sekitar</h2>
+    <div class="mt-4 grid gap-4 lg:grid-cols-[1fr_360px]" :class="!place && 'mt-8'">
+      <div class="glass min-w-0 p-5">
+        <h2 class="font-display text-2xl font-bold">{{ place ? 'Titik panas di sekitar' : 'Atau pilih langsung di peta' }}</h2>
+        <template v-if="place">
           <div class="mt-4 grid grid-cols-3 gap-3">
             <div v-for="c in counts" :key="c.r" class="glass-sm p-3 text-center">
               <p class="font-display text-3xl font-extrabold tabular-nums">{{ c.n.toLocaleString('id-ID') }}</p>
@@ -227,46 +297,91 @@ const fmtKm = (km) => km.toLocaleString('id-ID', { maximumFractionDigits: 1 })
             Terdekat <strong class="text-paper">{{ fmtKm(nearest.km) }} km</strong> ke arah {{ direction(place.lat, place.lng, nearest.lat, nearest.lng) }},
             terdeteksi {{ formatDate(nearest.detectedAt) }}, kepercayaan {{ CONFIDENCE[nearest.confidence].label.toLowerCase() }}.
           </p>
-          <div ref="mapEl" class="mt-4 h-[360px] w-full overflow-hidden rounded-xl"></div>
-          <p class="mt-2 text-xs text-mist">Garis putus-putus menandai radius 25 km dan 50 km. Titik biru adalah lokasi yang dipilih.</p>
+        </template>
+        <p v-else class="mt-1 text-sm text-mist">Titik oranye adalah titik panas 7 hari terakhir. Pilih lokasi mana saja untuk melihat kondisi di sekitarnya.</p>
+        <div class="relative mt-4">
+          <div ref="mapEl" class="h-[360px] w-full cursor-crosshair overflow-hidden rounded-xl md:h-[420px]"></div>
+          <div class="pointer-events-none absolute inset-x-0 top-3 z-[500] flex justify-center px-14">
+            <p class="map-hint flex items-center gap-2 rounded-full bg-night/85 px-3.5 py-2 text-xs font-semibold text-paper shadow-lg ring-1 ring-line backdrop-blur sm:px-4 sm:text-sm" :class="!place && 'map-hint-bounce'">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-ember-400"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21Z" /><circle cx="12" cy="9.5" r="2.5" /></svg>
+              {{ place ? `${tapWord} tempat lain atau geser titik biru` : `${tapWord} peta untuk memilih lokasi` }}
+            </p>
+          </div>
+        </div>
+        <p class="mt-2 text-xs text-mist">
+          {{ place ? 'Garis putus-putus menandai radius 25 km dan 50 km dari lokasi yang dipilih.' : 'Gunakan scroll, cubit layar, atau tombol + dan − untuk memperbesar peta.' }}
+        </p>
+      </div>
+
+      <div class="flex flex-col gap-4">
+        <div class="glass p-5">
+          <h2 class="font-display text-2xl font-bold">Kualitas udara hari ini</h2>
+          <p v-if="!place" class="mt-3 text-sm text-mist">Pilih lokasi untuk melihat kualitas udara hari ini di tempat itu.</p>
+          <p v-else-if="airLoading" class="mt-3 text-sm text-mist">Memuat kualitas udara…</p>
+          <p v-else-if="airError" class="mt-3 text-sm text-red-300">{{ airError }}</p>
+          <template v-else-if="air">
+            <div class="mt-4 rounded-xl p-5" :style="{ background: air.category.color, color: air.category.text, boxShadow: `0 10px 40px -12px ${air.category.color}` }">
+              <p class="text-sm font-medium opacity-80">ISPU PM2.5</p>
+              <p class="font-display text-6xl font-extrabold tabular-nums leading-none">{{ air.ispu }}</p>
+              <p class="mt-1 font-semibold">{{ air.category.label }}</p>
+            </div>
+            <p class="mt-4 text-sm">{{ air.category.meaning }}</p>
+            <ul class="mt-3 list-disc pl-5 text-sm text-mist">
+              <li v-for="a in air.category.advice" :key="a">{{ a }}</li>
+            </ul>
+            <RouterLink :to="{ name: 'siaga', query: { ispu: air.category.slug } }" class="btn-ghost mt-4 w-full !py-2.5 text-sm">
+              Panduan Siaga Asap untuk kategori ini
+            </RouterLink>
+            <p class="mt-4 text-xs text-mist">
+              PM2.5 rata-rata 24 jam {{ air.pm25.toLocaleString('id-ID') }} µg/m³. Angka ini perkiraan model (Copernicus CAMS via Open-Meteo), bukan stasiun pemantau resmi.
+            </p>
+          </template>
         </div>
 
-        <div class="flex flex-col gap-4">
-          <div class="glass p-5">
-            <h2 class="font-display text-2xl font-bold">Kualitas udara hari ini</h2>
-            <p v-if="airLoading" class="mt-3 text-sm text-mist">Memuat kualitas udara…</p>
-            <p v-else-if="airError" class="mt-3 text-sm text-red-300">{{ airError }}</p>
-            <template v-else-if="air">
-              <div class="mt-4 rounded-xl p-5" :style="{ background: air.category.color, color: air.category.text, boxShadow: `0 10px 40px -12px ${air.category.color}` }">
-                <p class="text-sm font-medium opacity-80">ISPU PM2.5</p>
-                <p class="font-display text-6xl font-extrabold tabular-nums leading-none">{{ air.ispu }}</p>
-                <p class="mt-1 font-semibold">{{ air.category.label }}</p>
-              </div>
-              <p class="mt-4 text-sm">{{ air.category.meaning }}</p>
-              <ul class="mt-3 list-disc pl-5 text-sm text-mist">
-                <li v-for="a in air.category.advice" :key="a">{{ a }}</li>
-              </ul>
-              <RouterLink :to="{ name: 'siaga', query: { ispu: air.category.slug } }" class="btn-ghost mt-4 w-full !py-2.5 text-sm">
-                Panduan Siaga Asap untuk kategori ini
-              </RouterLink>
-              <p class="mt-4 text-xs text-mist">
-                PM2.5 rata-rata 24 jam {{ air.pm25.toLocaleString('id-ID') }} µg/m³. Angka ini perkiraan model (Copernicus CAMS via Open-Meteo), bukan stasiun pemantau resmi.
-              </p>
-            </template>
-          </div>
-
-          <div class="glass p-5">
-            <p class="label">Kategori ISPU menurut PermenLHK P.14/2020</p>
-            <ul class="mt-3 flex flex-col gap-2 text-sm">
-              <li v-for="(c, i) in ISPU_CATEGORIES" :key="c.label" class="flex items-center gap-3">
-                <span class="h-3 w-3 rounded-full ring-1 ring-veil/20" :style="{ background: c.color }"></span>
+        <div class="glass p-5">
+          <p class="label">Kategori ISPU menurut PermenLHK P.14/2020</p>
+          <p class="mt-1 text-xs text-mist">Klik kategori untuk melihat ibu kota provinsi yang masuk kategori itu hari ini.</p>
+          <ul class="mt-3 flex flex-col gap-1 text-sm">
+            <li v-for="(c, i) in ISPU_CATEGORIES" :key="c.label">
+              <button
+                class="flex w-full items-center gap-3 rounded-lg px-2 py-1.5 text-left transition hover:bg-veil/5"
+                :class="openCategory === c.slug && 'bg-veil/5'"
+                :aria-expanded="openCategory === c.slug"
+                @click="toggleCategory(c)"
+              >
+                <span class="h-3 w-3 shrink-0 rounded-full ring-1 ring-veil/20" :style="{ background: c.color }"></span>
                 <span class="flex-1">{{ c.label }}</span>
                 <span class="tabular-nums text-mist">{{ i === 0 ? '0' : ISPU_CATEGORIES[i - 1].max + 1 }}{{ c.max === Infinity ? '+' : '–' + c.max }}</span>
-              </li>
-            </ul>
-          </div>
+                <span v-if="cityAir" class="min-w-[2.25rem] rounded-full bg-veil/10 px-2 py-0.5 text-center text-xs font-semibold tabular-nums">{{ citiesByCategory[c.slug].length }}</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" class="shrink-0 text-mist transition" :class="openCategory === c.slug && 'rotate-180'"><path d="M6 9l6 6 6-6" /></svg>
+              </button>
+              <div v-if="openCategory === c.slug" class="mb-2 ml-8 mt-1">
+                <p v-if="cityAirError" class="text-xs text-red-300">{{ cityAirError }}</p>
+                <p v-else-if="!cityAir" class="text-xs text-mist">Memuat data kota…</p>
+                <p v-else-if="!citiesByCategory[c.slug].length" class="text-xs text-mist">Tidak ada ibu kota provinsi dalam kategori ini hari ini.</p>
+                <ul v-else class="flex flex-col">
+                  <li v-for="city in citiesByCategory[c.slug]" :key="city.name">
+                    <button class="flex w-full items-center justify-between gap-3 rounded-md px-2 py-1 text-left text-xs transition hover:bg-veil/5 hover:text-flare" @click="chooseCity(city)">
+                      <span>{{ city.name }}</span>
+                      <span class="font-semibold tabular-nums">{{ city.ispu }}</span>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </li>
+          </ul>
+          <p v-if="cityAir" class="mt-3 text-xs text-mist">ISPU PM2.5 rata-rata 24 jam di {{ cityAir.length }} ibu kota provinsi, perkiraan model Copernicus CAMS.</p>
         </div>
       </div>
-    </template>
+    </div>
   </section>
 </template>
+
+
+<style scoped>
+.map-hint-bounce { animation: hint-bounce 2.4s ease-in-out infinite; }
+@keyframes hint-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(5px); }
+}
+</style>
