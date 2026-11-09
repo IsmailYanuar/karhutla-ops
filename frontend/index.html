@@ -4,10 +4,22 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0c1310" />
+    <meta name="theme-color" content="#f4f2ed" />
     <title>KarhutlaTracker · Transparansi Data Karhutla</title>
+    <meta name="description" content="Peta, tren, dan kualitas udara titik panas karhutla di 38 provinsi Indonesia, dari data satelit NASA FIRMS yang diperbarui otomatis setiap 6 jam." />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="KarhutlaTracker" />
+    <meta property="og:locale" content="id_ID" />
+    <meta property="og:url" content="https://karhutla-tracker.vercel.app/" />
+    <meta property="og:title" content="KarhutlaTracker · Titik api Indonesia, terpantau dari orbit" />
+    <meta property="og:description" content="Peta, tren, dan kualitas udara titik panas karhutla di 38 provinsi Indonesia, dari data satelit NASA FIRMS yang diperbarui otomatis setiap 6 jam." />
+    <meta property="og:image" content="https://karhutla-tracker.vercel.app/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Peta Indonesia dengan titik panas dari satelit dan tulisan KarhutlaTracker" />
+    <meta name="twitter:card" content="summary_large_image" />
     <script>
-      try { if (localStorage.getItem('karhutla-theme') === 'light') document.documentElement.dataset.theme = 'light' } catch (e) {}
+      try { document.documentElement.dataset.theme = localStorage.getItem('karhutla-theme') === 'dark' ? 'dark' : 'light' } catch (e) { document.documentElement.dataset.theme = 'light' }
     </script>
   </head>
   <body>

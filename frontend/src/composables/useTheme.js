@@ -2,7 +2,7 @@ import { ref, watch } from 'vue'
 
 const KEY = 'karhutla-theme'
 function initial() {
-  try { return localStorage.getItem(KEY) === 'light' ? 'light' : 'dark' } catch { return 'dark' }
+  try { return localStorage.getItem(KEY) === 'dark' ? 'dark' : 'light' } catch { return 'light' }
 }
 
 export const theme = ref(initial())

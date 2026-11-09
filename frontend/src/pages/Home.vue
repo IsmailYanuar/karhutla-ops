@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import StatCard from '../components/StatCard.vue'
 import HotspotSky from '../components/HotspotSky.vue'
 import { getHotspotData, countByProvince, formatDate, getRingkasan } from '../services/hotspots'
@@ -7,6 +7,18 @@ import { getHotspotData, countByProvince, formatDate, getRingkasan } from '../se
 const data = ref(null)
 const error = ref('')
 const ringkasan = ref(null)
+
+const now = ref(Date.now())
+let clock
+onMounted(() => { clock = setInterval(() => (now.value = Date.now()), 60000) })
+onBeforeUnmount(() => clearInterval(clock))
+const freshness = computed(() => {
+  const at = data.value?.updatedAt
+  if (!at) return null
+  const mins = Math.max(0, Math.round((now.value - new Date(at).getTime()) / 60000))
+  const text = mins < 60 ? `${mins} menit lalu` : mins < 48 * 60 ? `${Math.round(mins / 60)} jam lalu` : `${Math.round(mins / 1440)} hari lalu`
+  return { text, fresh: mins <= 12 * 60, at: formatDate(at) }
+})
 
 onMounted(async () => {
   getRingkasan().then((r) => (ringkasan.value = r)).catch(() => {})
@@ -55,7 +67,15 @@ const steps = [
         </div>
       </div>
 
-      <div class="mx-auto mt-10 max-w-6xl px-4">
+      <div class="mx-auto mt-10 flex max-w-6xl flex-wrap items-center gap-2 px-4">
+        <p v-if="freshness" class="glass-sm inline-flex items-center gap-2 px-3 py-1.5 text-xs sm:text-sm" :title="`Data diambil ${freshness.at}`">
+          <span class="relative flex h-2.5 w-2.5 shrink-0">
+            <span v-if="freshness.fresh" class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex h-2.5 w-2.5 rounded-full" :class="freshness.fresh ? 'bg-emerald-500' : 'bg-amber-500'"></span>
+          </span>
+          <span class="font-semibold text-paper">{{ freshness.fresh ? 'Data langsung' : 'Pembaruan tertunda' }}</span>
+          <span class="text-mist">diperbarui {{ freshness.text }} dari NASA FIRMS</span>
+        </p>
         <p class="glass-sm inline-block px-3 py-1.5 text-xs text-mist sm:text-sm">
           <template v-if="range"><span class="font-semibold text-paper">{{ hotspots.length.toLocaleString('id-ID') }} titik panas</span>, {{ range }}</template>
           <template v-else>{{ error || 'Memuat data satelit…' }}</template>

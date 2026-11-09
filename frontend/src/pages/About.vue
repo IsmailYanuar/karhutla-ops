@@ -1,4 +1,6 @@
 <script setup>
+import { ref } from 'vue'
+
 const sources = [
   { name: 'NASA FIRMS', url: 'https://firms.modaps.eosdis.nasa.gov/', text: 'Fire Information for Resource Management System. Menyediakan data titik panas dari sensor VIIRS di tiga satelit (Suomi NPP, NOAA-20, NOAA-21), diperbarui beberapa kali sehari. Ini sumber data utama website ini. Setiap hari dipakai satu satelit, dengan Suomi NPP sebagai utama, dan satelit cadangan dipakai otomatis jika data Suomi NPP tidak lengkap.' },
   { name: 'Batas 38 provinsi', url: 'https://github.com/denyherianto/indonesia-geojson-topojson-maps-with-38-provinces', text: 'Peta batas wilayah 38 provinsi, termasuk empat provinsi baru di Papua hasil pemekaran 2022 (lisensi CC BY 4.0). Dipakai untuk menentukan provinsi setiap titik panas dan menghitung luas wilayah. Garis pantai yang lebih rinci dari geoBoundaries dipakai untuk memastikan titik di pulau kecil tetap terhitung.' },
@@ -16,6 +18,19 @@ const terms = [
   { term: 'ISPU', text: 'Indeks Standar Pencemar Udara, ukuran resmi pemerintah untuk kualitas udara. Di website ini ISPU dihitung dari rata-rata PM2.5 24 jam terakhir, karena partikel halus PM2.5 adalah komponen utama asap karhutla.' },
   { term: 'Perbandingan mingguan', text: '7 hari terakhir dibanding 7 hari sebelumnya. Riwayat harian disimpan setiap kali data diperbarui, sehingga perbandingan dengan tahun lalu juga bisa dilihat di halaman Tren.' },
 ]
+
+const faqs = [
+  { q: 'Apakah setiap titik panas berarti ada kebakaran?', a: 'Belum tentu. Satelit mendeteksi tempat yang jauh lebih panas dari sekitarnya. Selain kebakaran hutan dan lahan, panas bisa berasal dari pembakaran sampah, cerobong industri, atau suar gas. Karena itu setiap titik diberi tingkat kepercayaan, dan titik berkepercayaan tinggi paling mungkin merupakan api nyata.' },
+  { q: 'Seberapa sering data diperbarui?', a: 'Sistem mengambil data NASA FIRMS secara otomatis kurang lebih setiap 6 jam. Waktu pengambilan terakhir tampil di Beranda dan di halaman Peta. Jadwal otomatis ini kadang terlambat beberapa jam; jika lebih dari 12 jam belum diperbarui, Beranda menampilkan tanda "Pembaruan tertunda".' },
+  { q: 'Kenapa angka hari ini terlihat lebih sedikit?', a: 'Satelit melintas beberapa kali sehari, jadi data untuk hari yang sedang berjalan belum lengkap. Karena itu perbandingan di halaman Tren dan Profil Daerah memakai hari lengkap terakhir, bukan hari ini.' },
+  { q: 'Kenapa jumlahnya bisa berbeda dengan SiPongi atau BMKG?', a: 'Setiap lembaga bisa memakai satelit, ambang kepercayaan, dan cara menghitung yang berbeda. KarhutlaTracker memakai satu satelit VIIRS per hari agar titik yang sama tidak terhitung dua kali. Untuk keperluan resmi, rujuk data SiPongi KLHK.' },
+  { q: 'Apakah nilai ISPU di Cek Sekitar adalah data resmi pemerintah?', a: 'Bukan. Rumus dan kategori ISPU mengikuti PermenLHK P.14/2020, tetapi angka PM2.5-nya adalah perkiraan model Copernicus CAMS, bukan hasil stasiun pemantau KLHK. Gunakan sebagai gambaran awal.' },
+  { q: 'Apakah AI yang menghitung angka di website ini?', a: 'Tidak. Semua angka dihitung oleh sistem dari data satelit dan luas resmi provinsi. AI (Google Gemini) hanya menyusun kalimat ringkasan dari angka yang sudah jadi. Jika AI gagal, ringkasan disusun otomatis dengan templat.' },
+  { q: 'Apakah lokasi saya disimpan?', a: 'Tidak. KarhutlaTracker tidak menyimpan lokasi Anda. Koordinat hanya dikirim ke Open-Meteo untuk mengambil kualitas udara dan ke OpenStreetMap untuk mencari nama tempat.' },
+  { q: 'Saya melihat api atau asap. Harus lapor ke mana?', a: 'Utamakan keselamatan dan jauhi api. Hubungi 112 (darurat) atau 113 (pemadam kebakaran). Untuk aduan ke pemerintah, gunakan SP4N-LAPOR!. Panduan lengkapnya ada di halaman Siaga Asap.' },
+  { q: 'Bisakah saya mengunduh datanya?', a: 'Bisa. Halaman Peta menyediakan unduhan CSV titik panas sesuai filter provinsi dan tingkat kepercayaan, dan halaman Tren menyediakan unduhan data harian serta tabel 38 provinsi.' },
+]
+const openFaq = ref(0)
 </script>
 
 <template>
@@ -38,5 +53,30 @@ const terms = [
         <dd class="text-mist">{{ t.text }}</dd>
       </div>
     </dl>
+
+    <h2 id="faq" class="mt-12 scroll-mt-24 font-display text-2xl font-bold">Pertanyaan yang sering diajukan</h2>
+    <div class="glass mt-4 divide-y divide-veil/5">
+      <div v-for="(f, i) in faqs" :key="f.q">
+        <button
+          class="flex w-full items-center justify-between gap-4 p-5 text-left font-semibold transition hover:text-flare"
+          :aria-expanded="openFaq === i"
+          :aria-controls="`faq-${i}`"
+          @click="openFaq = openFaq === i ? null : i"
+        >
+          {{ f.q }}
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" class="shrink-0 text-mist transition-transform duration-300" :class="openFaq === i && 'rotate-45'"><path d="M12 5v14M5 12h14" /></svg>
+        </button>
+        <div :id="`faq-${i}`" class="faq-body" :class="openFaq === i && 'faq-open'">
+          <div class="overflow-hidden">
+            <p class="px-5 pb-5 text-mist">{{ f.a }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 </template>
+
+<style scoped>
+.faq-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s ease; }
+.faq-open { grid-template-rows: 1fr; }
+</style>
