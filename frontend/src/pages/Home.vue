@@ -57,14 +57,13 @@ const steps = [
 
       <div class="relative mx-auto mt-10 aspect-[2/1] max-w-7xl md:aspect-[21/9]">
         <HotspotSky :hotspots="hotspots" />
-        <div class="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-night to-transparent"></div>
         <p v-if="range" class="glass-sm absolute left-4 top-0 max-w-[calc(100%-2rem)] px-3 py-1.5 text-xs text-mist sm:text-sm md:left-8 md:top-4">
           <span class="font-semibold text-paper">{{ hotspots.length.toLocaleString('id-ID') }} titik panas</span>, {{ range }}
         </p>
         <p v-else class="absolute inset-0 grid place-items-center text-mist">{{ error || 'Memuat data satelit…' }}</p>
       </div>
 
-      <div class="relative mx-auto -mt-2 grid max-w-6xl gap-4 px-4 sm:grid-cols-3 md:-mt-24">
+      <div class="relative mx-auto mt-4 grid max-w-6xl gap-4 px-4 sm:grid-cols-3 md:-mt-6">
         <StatCard label="Total titik panas" :value="hotspots.length" note="Seluruh Indonesia, 7 hari terakhir" />
         <StatCard label="Kepercayaan tinggi" :value="highConf" note="Hampir pasti kebakaran nyata" />
         <StatCard label="Provinsi terdampak" :value="ranking.length" :note="ranking[0] ? `Terbanyak di ${ranking[0].province}` : ''" />
