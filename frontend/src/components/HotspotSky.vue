@@ -17,13 +17,14 @@ let embers = []
 const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 
 function project(lng, lat) {
-  const pad = 0.04
-  const sx = (w * (1 - 2 * pad)) / (BOUNDS.east - BOUNDS.west)
-  const sy = (h * (1 - 2 * pad)) / (BOUNDS.north - BOUNDS.south)
-  const s = Math.min(sx, sy)
+  const { s, ox, oy } = fit()
+  return [ox + (lng - BOUNDS.west) * s, oy + (BOUNDS.north - lat) * s]
+}
+function fit() {
+  const s = Math.min(w / (BOUNDS.east - BOUNDS.west), h / (BOUNDS.north - BOUNDS.south))
   const ox = (w - s * (BOUNDS.east - BOUNDS.west)) / 2
   const oy = (h - s * (BOUNDS.north - BOUNDS.south)) / 2
-  return [ox + (lng - BOUNDS.west) * s, oy + (BOUNDS.north - lat) * s]
+  return { s, ox, oy, x1: w - ox, y1: h - oy }
 }
 
 function makeGlow() {
@@ -104,7 +105,8 @@ function resize() {
 function frame(now) {
   const t = reduce ? 1 : Math.min(1, (now - startAt) / SWEEP_MS)
   const eased = 1 - Math.pow(1 - t, 3)
-  const sweepX = eased * (w + 40) - 20
+  const box = fit()
+  const sweepX = box.ox + eased * (box.x1 - box.ox)
 
   ctx.clearRect(0, 0, w, h)
   ctx.drawImage(coast, 0, 0, w, h)
@@ -130,16 +132,16 @@ function frame(now) {
   ctx.globalCompositeOperation = 'source-over'
 
   if (t < 1) {
+    const from = Math.max(box.ox, sweepX - 90)
     const grad = ctx.createLinearGradient(sweepX - 90, 0, sweepX, 0)
     grad.addColorStop(0, 'rgba(255,194,122,0)')
     grad.addColorStop(1, 'rgba(255,194,122,0.22)')
     ctx.fillStyle = grad
-    ctx.fillRect(sweepX - 90, 0, 90, h)
+    ctx.fillRect(from, box.oy, sweepX - from, box.y1 - box.oy)
     ctx.fillStyle = 'rgba(255,214,170,0.75)'
-    ctx.fillRect(sweepX, 0, 1, h)
+    ctx.fillRect(sweepX, box.oy, 1, box.y1 - box.oy)
   }
 
-  // Bara kecil melayang naik
   if (!reduce) {
     for (const e of embers) {
       e.y -= e.v

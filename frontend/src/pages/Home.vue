@@ -55,15 +55,18 @@ const steps = [
         </div>
       </div>
 
-      <div class="relative mx-auto mt-10 aspect-[2/1] max-w-7xl md:aspect-[21/9]">
-        <HotspotSky :hotspots="hotspots" />
-        <p v-if="range" class="glass-sm absolute left-4 top-0 max-w-[calc(100%-2rem)] px-3 py-1.5 text-xs text-mist sm:text-sm md:left-8 md:top-4">
-          <span class="font-semibold text-paper">{{ hotspots.length.toLocaleString('id-ID') }} titik panas</span>, {{ range }}
+      <div class="mx-auto mt-10 max-w-6xl px-4">
+        <p class="glass-sm inline-block px-3 py-1.5 text-xs text-mist sm:text-sm">
+          <template v-if="range"><span class="font-semibold text-paper">{{ hotspots.length.toLocaleString('id-ID') }} titik panas</span>, {{ range }}</template>
+          <template v-else>{{ error || 'Memuat data satelit…' }}</template>
         </p>
-        <p v-else class="absolute inset-0 grid place-items-center text-mist">{{ error || 'Memuat data satelit…' }}</p>
       </div>
 
-      <div class="relative mx-auto mt-4 grid max-w-6xl gap-4 px-4 sm:grid-cols-3 md:-mt-6">
+      <div class="relative mx-auto mt-2 aspect-[2/1] max-w-6xl px-4 md:aspect-[21/9]">
+        <HotspotSky :hotspots="hotspots" />
+      </div>
+
+      <div class="relative mx-auto mt-4 grid max-w-6xl gap-4 px-4 sm:grid-cols-3 md:mt-2">
         <StatCard label="Total titik panas" :value="hotspots.length" note="Seluruh Indonesia, 7 hari terakhir" />
         <StatCard label="Kepercayaan tinggi" :value="highConf" note="Hampir pasti kebakaran nyata" />
         <StatCard label="Provinsi terdampak" :value="ranking.length" :note="ranking[0] ? `Terbanyak di ${ranking[0].province}` : ''" />
@@ -76,7 +79,7 @@ const steps = [
         <div class="relative">
           <div class="flex flex-wrap items-center gap-3">
             <h2 class="font-display text-2xl font-bold">Ringkasan terbaru</h2>
-            <span v-if="ringkasan.ai" class="rounded-full border border-ember-400/40 bg-ember-400/10 px-2.5 py-0.5 text-xs font-semibold text-flare">Dibuat AI</span>
+            <!-- <span v-if="ringkasan.ai" class="rounded-full border border-ember-400/40 bg-ember-400/10 px-2.5 py-0.5 text-xs font-semibold text-flare">Dibuat AI</span> -->
           </div>
           <p class="mt-1 text-sm text-mist">{{ periode(ringkasan.facts.periode) }}</p>
           <p class="mt-5 max-w-[62ch] text-xl leading-relaxed text-paper">{{ ringkasan.text }}</p>
