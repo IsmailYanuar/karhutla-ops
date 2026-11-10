@@ -29,6 +29,7 @@ const faqs = [
   { q: 'Apakah lokasi saya disimpan?', a: 'Tidak. KarhutlaTracker tidak menyimpan lokasi Anda. Koordinat hanya dikirim ke Open-Meteo untuk mengambil kualitas udara dan ke OpenStreetMap untuk mencari nama tempat.' },
   { q: 'Saya melihat api atau asap. Harus lapor ke mana?', a: 'Utamakan keselamatan dan jauhi api. Hubungi 112 (darurat) atau 113 (pemadam kebakaran). Untuk aduan ke pemerintah, gunakan SP4N-LAPOR!. Panduan lengkapnya ada di halaman Siaga Asap.' },
   { q: 'Bisakah saya mengunduh datanya?', a: 'Bisa. Halaman Peta menyediakan unduhan CSV titik panas sesuai filter provinsi dan tingkat kepercayaan, dan halaman Tren menyediakan unduhan data harian serta tabel 38 provinsi.' },
+  { q: 'Kenapa jumlah titik di Peta berbeda dengan Tren dan Profil Daerah?', a: 'Peta menampilkan deteksi langsung 7 hari terakhir sampai saat ini, termasuk hari ini yang datanya belum lengkap. Tren dan Profil Daerah memakai 7 hari yang sudah lengkap (sampai kemarin lusa) supaya perbandingan antarminggu adil. Karena rentangnya berbeda, angkanya bisa selisih sedikit.' },
 ]
 const openFaq = ref(0)
 </script>
