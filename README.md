@@ -21,6 +21,40 @@ Website transparansi titik panas kebakaran hutan dan lahan (karhutla) di Indones
 - **Tema terang dan gelap**, responsif di HP, dan pratinjau tautan saat dibagikan.
 
 ## Use Case
+
+```mermaid
+flowchart LR
+    W(["👤 Warga umum"])
+    J(["👤 Jurnalis, peneliti, LSM"])
+    R(["👤 Warga di daerah rawan asap"])
+    S(["⚙️ Sistem GitHub Actions"])
+
+    subgraph KT["KarhutlaTracker"]
+        UC1(["Melihat kondisi karhutla nasional"])
+        UC2(["Menyaring titik panas per provinsi"])
+        UC5(["Membagikan profil daerah"])
+        UC4(["Melihat profil dan lembaga daerah"])
+        UC3(["Membandingkan tren dan rapor provinsi"])
+        UC9(["Mengunduh data CSV"])
+        UC6(["Mengecek titik panas dan ISPU di sekitar"])
+        UC7(["Membaca panduan Siaga Asap"])
+        UC8(["Mencari kanal lapor dan dasar hukum"])
+        UC10(["Memperbarui data dan ringkasan AI"])
+    end
+
+    W --- UC1
+    W --- UC2
+    W --- UC5
+    W --- UC4
+    J --- UC4
+    J --- UC3
+    J --- UC9
+    R --- UC6
+    R --- UC7
+    R --- UC8
+    S --- UC10
+```
+
 | Aktor | Kebutuhan | Fitur yang dipakai |
 | --- | --- | --- |
 | Warga umum | Mengetahui kondisi karhutla di Indonesia hari ini | Beranda, Peta Titik Panas |
