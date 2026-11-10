@@ -78,6 +78,9 @@ File `.env` jangan di-commit. Di GitHub, kedua key disimpan di **Settings > Secr
 - ✅ Unduh data (CSV) dari Peta dan Tren
 - ✅ Desain ulang tampilan dan responsif di HP
 - ✅ Profil Daerah dengan ringkasan AI per provinsi
+- ✅ Profil Daerah (kepadatan per 1.000 km², tren provinsi, kanal pelaporan, tombol Bagikan)
+- ✅ Rapor 4 minggu per provinsi di halaman Tren
+- ✅ Siaga Asap: panduan ISPU, nomor darurat, dan dasar hukum
 - ✅ Siaga Asap: panduan perlindungan diri sesuai ISPU, pertolongan pertama, dan nomor darurat
 - ✅ Tema terang dan gelap, dengan animasi saat scroll
 
