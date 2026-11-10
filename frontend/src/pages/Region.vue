@@ -21,6 +21,7 @@ const error = ref('')
 const province = ref('')
 const range = ref(30)
 const shown = ref(8)
+const copied = ref(false)
 const mapEl = ref(null)
 let map = null
 let layer = null
@@ -59,12 +60,12 @@ onMounted(async () => {
 onBeforeUnmount(() => map?.remove())
 
 const rows = computed(() => {
-  if (!wilayah.value || !data.value) return []
+  if (!wilayah.value || !data.value || !history.value) return []
   const counts = {}
   for (const h of data.value.hotspots) counts[h.province] = (counts[h.province] || 0) + 1
   return wilayah.value.provinsi
     .map((p) => {
-      const n = counts[p.name] || 0
+      const n = anchor.value ? sumRange(days.value, addDays(anchor.value, -6), anchor.value, p.name).total : counts[p.name] || 0
       return { name: p.name, area: p.areaKm2, n, density: (n / p.areaKm2) * 1000 }
     })
     .sort((a, b) => b.n - a.n || a.name.localeCompare(b.name, 'id'))
@@ -87,7 +88,6 @@ const confidenceMix = computed(() =>
   }),
 )
 
-// Tren harian dari riwayat. Hari terakhir belum lengkap, jadi diabaikan seperti di halaman Tren.
 const days = computed(() => history.value?.days ?? {})
 const dates = computed(() => Object.keys(days.value))
 const firstDate = computed(() => dates.value[0])
@@ -140,7 +140,6 @@ const week = computed(() => {
   return { text: `${p > 0 ? '+' : ''}${p.toLocaleString('id-ID')}%`, dir: p > 0 ? 'up' : p < 0 ? 'down' : 'flat', before }
 })
 
-// Ringkasan: pakai teks per provinsi dari ringkasan.json bila tersedia, jika tidak disusun dari angka yang sama.
 const summary = computed(() => {
   const r = ringkasan.value?.provinsi?.[province.value]
   const ready = typeof r === 'string' ? r : r?.text
@@ -148,7 +147,7 @@ const summary = computed(() => {
   if (!me.value) return ''
   const n = me.value.n
   if (!n) return `Tidak ada titik panas terdeteksi di ${province.value} dalam 7 hari terakhir.`
-  let text = `Dalam 7 hari terakhir terdeteksi ${fmt(n)} titik panas di ${province.value}, peringkat ${rank.value} dari ${rows.value.length} provinsi, ${fmt(high.value)} di antaranya berkepercayaan tinggi.`
+  let text = `Dalam 7 hari terakhir terdeteksi ${fmt(n)} titik panas di ${province.value}, peringkat ${rank.value} dari ${rows.value.length} provinsi.`
   if (week.value) {
     const { dir, before } = week.value
     if (dir === 'up') text += before ? ` Jumlahnya naik ${week.value.text.replace('+', '')} dibanding 7 hari sebelumnya.` : ' Pada 7 hari sebelumnya belum ada titik panas.'
@@ -181,6 +180,24 @@ const coordText = (lat, lng) => `${Math.abs(lat).toFixed(3)}° ${lat < 0 ? 'LS' 
 function unduh() {
   const date = new Date().toISOString().slice(0, 10)
   downloadCsv(latest.value, `karhutlatracker-titik-panas-${slugify(province.value)}-${date}.csv`)
+}
+
+async function share() {
+  if (!me.value) return
+  const parts = [`${province.value}: ${fmt(me.value.n)} titik panas dalam 7 hari sampai ${formatShortDate(anchor.value)}`]
+  if (week.value && week.value.dir !== 'flat') parts.push(`${week.value.text} dibanding minggu sebelumnya`)
+  parts.push(`peringkat ${rank.value} dari ${rows.value.length} provinsi`)
+  const text = `${parts.join(', ')}. Sumber: KarhutlaTracker (data satelit NASA FIRMS)`
+  const url = location.href
+  try {
+    if (navigator.share) {
+      await navigator.share({ title: `Profil ${province.value} · KarhutlaTracker`, text, url })
+    } else {
+      await navigator.clipboard.writeText(`${text}\n${url}`)
+      copied.value = true
+      setTimeout(() => (copied.value = false), 2500)
+    }
+  } catch { }
 }
 
 function fromRoute() {
@@ -256,26 +273,31 @@ function drawMap() {
         <h1 class="page-title mt-1">{{ province ? `Profil ${province}` : 'Profil daerah' }}</h1>
         <p class="lede !mt-2 text-base">Ringkasan kondisi karhutla per provinsi, lengkap dengan tren dan titik panas terbaru.</p>
       </div>
-      <label class="flex w-full flex-col gap-1.5 sm:w-auto">
-        <span class="label">Pilih provinsi</span>
-        <select v-model="province" class="field sm:min-w-64" :disabled="!options.length">
-          <option value="" disabled>Pilih provinsi</option>
-          <option v-for="r in options" :key="r.name" :value="r.name">{{ r.name }} ({{ fmt(r.n) }})</option>
-        </select>
-      </label>
+      <div class="flex w-full flex-wrap items-end gap-2 sm:w-auto">
+        <label class="flex min-w-0 flex-1 flex-col gap-1.5 sm:flex-none">
+          <span class="label">Pilih provinsi</span>
+          <select v-model="province" class="field sm:min-w-64" :disabled="!options.length">
+            <option value="" disabled>Pilih provinsi</option>
+            <option v-for="r in options" :key="r.name" :value="r.name">{{ r.name }} ({{ fmt(r.n) }})</option>
+          </select>
+        </label>
+        <button type="button" class="btn-ghost !px-4 !py-2.5" :disabled="!me" @click="share">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4" /></svg>
+          {{ copied ? 'Tautan disalin' : 'Bagikan' }}
+        </button>
+      </div>
     </div>
 
     <div v-if="error" class="glass mt-8 grid min-h-64 place-items-center p-10 text-center text-mist">{{ error }}</div>
     <div v-else-if="!me" class="glass mt-8 grid min-h-64 place-items-center p-10 text-center text-mist">Memuat profil daerah…</div>
 
     <template v-else>
-      <!-- Ringkasan -->
       <article class="glass relative mt-8 overflow-hidden p-6 md:p-8">
         <div class="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-ember-500/20 blur-3xl"></div>
         <div class="relative">
           <h2 class="font-display text-2xl font-bold">Ringkasan {{ province }}</h2>
           <p class="mt-1 text-sm text-mist">
-            7 hari terakhir<template v-if="lastDetected">, deteksi terakhir {{ formatDate(lastDetected) }}</template>
+            7 hari sampai {{ formatShortDate(anchor) }}<template v-if="lastDetected">, deteksi terakhir {{ formatDate(lastDetected) }}</template>
           </p>
           <p class="mt-5 max-w-[62ch] text-xl leading-relaxed text-paper">{{ summary }}</p>
           <div class="mt-5 flex flex-wrap gap-2 text-sm">
@@ -290,15 +312,14 @@ function drawMap() {
         </div>
       </article>
 
-      <!-- Angka utama -->
       <div class="mt-4 grid gap-4 md:grid-cols-3">
-        <StatCard label="Total titik panas" :value="me.n" note="7 hari terakhir" />
+        <StatCard label="Total titik panas" :value="me.n" :note="`7 hari sampai ${formatShortDate(anchor)}`" />
         <StatCard
           label="Peringkat"
           :value="me.n ? `#${rank}` : '–'"
           :note="me.n ? `dari ${rows.length} provinsi menurut jumlah titik` : 'Tidak ada titik panas terdeteksi'"
         />
-        <StatCard label="Kepercayaan tinggi" :value="high" :note="me.n ? `${fmtDecimal((high / me.n) * 100)}% dari seluruh titik` : '7 hari terakhir'" />
+        <StatCard label="Kepercayaan tinggi" :value="high" :note="mine.length ? `${fmtDecimal((high / mine.length) * 100)}% dari deteksi terbaru` : 'Deteksi satelit terbaru'" />
       </div>
 
       <!-- Tren harian -->
@@ -345,13 +366,12 @@ function drawMap() {
         <p v-if="!hasPrior" class="mt-4 text-xs text-mist">Garis tahun lalu belum bisa ditampilkan karena riwayat data belum cukup panjang.</p>
       </div>
 
-      <!-- Titik panas terbaru dan peta -->
       <div class="mt-6 grid gap-4 lg:grid-cols-[1.1fr_1fr]">
         <div class="glass min-w-0 p-5 md:p-6">
           <div class="flex flex-wrap items-start justify-between gap-3">
             <div>
               <h2 class="font-display text-xl font-bold tracking-tight">Titik panas terbaru</h2>
-              <p class="label">{{ fmt(latest.length) }} titik dalam 7 hari terakhir</p>
+              <p class="label">{{ fmt(latest.length) }} titik, data langsung sampai {{ formatDate(lastDetected) }}</p>
             </div>
             <button type="button" class="btn-ghost !px-4 !py-2 text-sm" :disabled="!latest.length" @click="unduh">Unduh CSV</button>
           </div>
@@ -393,7 +413,6 @@ function drawMap() {
         </div>
       </div>
 
-      <!-- Lembaga dan kanal pelaporan -->
       <div class="glass mt-6 p-5 md:p-7">
         <h2 class="font-display text-2xl font-bold">Lembaga dan kanal pelaporan</h2>
         <p class="mt-1 text-mist">Siapa yang bertanggung jawab di {{ province }} dan ke mana melapor saat melihat api atau asap.</p>

@@ -49,6 +49,56 @@ const contacts = [
   { number: '1500-567', name: 'Halo Kemenkes', text: 'Informasi dan konsultasi kesehatan dari Kementerian Kesehatan.' },
 ]
 
+const laws = [
+  {
+    who: 'Pemerintah daerah dan BPBD',
+    name: 'UU No. 24 Tahun 2007 tentang Penanggulangan Bencana',
+    points: [
+      'Pemerintah dan pemerintah daerah menjadi penanggung jawab penanggulangan bencana (Pasal 5).',
+      'Pemerintah daerah membentuk Badan Penanggulangan Bencana Daerah atau BPBD (Pasal 18).',
+      'Setiap orang berhak mendapat informasi tentang kebijakan penanggulangan bencana (Pasal 26).',
+    ],
+    url: 'https://peraturan.bpk.go.id/Details/39901/uu-no-24',
+  },
+  {
+    who: 'Gubernur, bupati, dan wali kota',
+    name: 'Instruksi Presiden No. 3 Tahun 2020 tentang Penanggulangan Kebakaran Hutan dan Lahan',
+    points: [
+      'Presiden menginstruksikan para menteri, Panglima TNI, Kapolri, Kepala BNPB, Kepala BMKG, serta para gubernur dan bupati/wali kota.',
+      'Tugasnya meliputi pencegahan, pemadaman, penanganan pascakebakaran, dan penegakan hukum terhadap pelaku pembakaran.',
+    ],
+    url: 'https://setkab.go.id/?p=185074',
+  },
+  {
+    who: 'Kabupaten/kota, provinsi, dan Manggala Agni',
+    name: 'Peraturan Menteri LHK No. P.32/MENLHK/SETJEN/KUM.1/3/2016 tentang Pengendalian Kebakaran Hutan dan Lahan',
+    points: [
+      'Pemerintah kabupaten/kota bertanggung jawab atas pengendalian karhutla di wilayahnya (Pasal 6).',
+      'Manggala Agni adalah brigade pengendalian karhutla milik pemerintah (Pasal 9).',
+      'Provinsi dan kabupaten/kota yang rawan karhutla wajib menganggarkan dana pengendalian dalam APBD (Pasal 109).',
+    ],
+    url: 'https://pasal.id/peraturan/permen/permenlh-no-p-32-menlhk-setjen-kum-1-3-2016-tahun-2016',
+  },
+  {
+    who: 'Setiap orang dan pelaku usaha',
+    name: 'UU No. 32 Tahun 2009 tentang Perlindungan dan Pengelolaan Lingkungan Hidup',
+    points: [
+      'Setiap orang dilarang membuka lahan dengan cara membakar (Pasal 69 ayat 1 huruf h), dan pelanggarnya diancam pidana penjara dan denda.',
+      'Larangan serupa juga ada di UU Kehutanan (membakar hutan) dan UU Perkebunan (membuka lahan kebun dengan membakar).',
+    ],
+    url: 'https://peraturan.bpk.go.id/Details/38771/uu-no-32-tahun-2009',
+  },
+  {
+    who: 'Hak Anda atas informasi',
+    name: 'UU No. 14 Tahun 2008 tentang Keterbukaan Informasi Publik',
+    points: [
+      'Setiap orang berhak memperoleh informasi publik (Pasal 4).',
+      'Badan publik wajib segera mengumumkan informasi yang dapat mengancam hajat hidup orang banyak (Pasal 10), misalnya bahaya kabut asap.',
+    ],
+    url: 'https://peraturan.bpk.go.id/Details/39047/uu-no-14-tahun-2008',
+  },
+]
+
 const sources = [
   { name: 'Tips mitigasi dan adaptasi asap karhutla', org: 'Kementerian Lingkungan Hidup, 24 September 2026', url: 'https://www.kemenlh.go.id/news/detail/tips-mitigasi-dan-adaptasi-asap-karhutla-jaga-udara-lindungi-keluarga-kita' },
   { name: 'Menkes: pakai masker dan pantau kualitas udara', org: 'Kementerian Kesehatan, 21 Agustus 2026', url: 'https://kemkes.go.id/id/menkes-pakai-masker-dan-pantau-kualitas-udara-untuk-cegah-dampak-asap-karhutla' },
@@ -206,6 +256,25 @@ const sources = [
           <a href="https://www.lapor.go.id/" target="_blank" rel="noopener" class="btn-ember">Buka LAPOR!</a>
         </div>
       </div>
+    </div>
+
+    <!-- Dasar hukum -->
+    <div id="dasar-hukum" class="mt-10 scroll-mt-24">
+      <h2 class="font-display text-2xl font-bold">Dasar hukum: siapa yang wajib bertindak</h2>
+      <p class="mt-1 max-w-3xl text-mist">
+        Penanganan karhutla bukan sekadar imbauan. Peraturan berikut menetapkan siapa yang bertanggung jawab, sehingga warga bisa menagih tindakan dengan dasar yang jelas.
+      </p>
+      <ul class="mt-5 grid gap-3 md:grid-cols-2">
+        <li v-for="l in laws" :key="l.name" class="glass-sm flex flex-col p-5">
+          <p class="text-xs font-semibold uppercase tracking-wide text-flare">{{ l.who }}</p>
+          <p class="mt-1 font-display text-lg font-bold leading-snug">{{ l.name }}</p>
+          <ul class="mt-3 flex flex-1 flex-col gap-2 text-sm">
+            <li v-for="pt in l.points" :key="pt" class="flex gap-3"><span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-ember-400"></span><span>{{ pt }}</span></li>
+          </ul>
+          <a :href="l.url" target="_blank" rel="noopener" class="mt-4 text-sm font-semibold text-flare hover:underline">Baca peraturannya</a>
+        </li>
+      </ul>
+      <p class="mt-3 text-xs text-mist">Ringkasan ini disederhanakan agar mudah dipahami dan bukan nasihat hukum. Rujuk teks resmi peraturan untuk keperluan hukum.</p>
     </div>
 
     <!-- Sumber -->

@@ -144,8 +144,32 @@ const cur30 = computed(() => win(anchor.value, 30))
 const year30 = computed(() => win(addDays(anchor.value, -365), 30))
 const hasYear30 = computed(() => year30.value.from >= firstDate.value)
 
+const weeks4 = computed(() => [0, 1, 2, 3].map((i) => win(addDays(anchor.value, -7 * i), 7)))
+const weeksCovered = computed(() => weeks4.value.map((r) => sumRange(days.value, r.from, r.to).covered >= 6))
+function weekDir(now, before) {
+  const gap = Math.max(3, Math.ceil(before * 0.15))
+  return now - before >= gap ? 'up' : before - now >= gap ? 'down' : 'flat'
+}
+function report(series) {
+  if (series.every((v) => v === 0)) return { key: 'none', text: 'Tidak ada titik panas', score: 0 }
+  const dirs = []
+  for (let i = 0; i < 3; i++) {
+    if (!weeksCovered.value[i] || !weeksCovered.value[i + 1]) break
+    dirs.push(weekDir(series[i], series[i + 1]))
+  }
+  if (!dirs.length) return { key: 'na', text: 'Data belum cukup', score: 0 }
+  const first = dirs[0]
+  if (first === 'flat') return { key: 'flat', text: 'Stabil', score: 0 }
+  let n = 0
+  while (n < dirs.length && dirs[n] === first) n++
+  const word = first === 'up' ? 'Memburuk' : 'Membaik'
+  return { key: first, text: n >= 2 ? `${word} ${n} minggu berturut-turut` : `${word} minggu ini`, streak: n, score: first === 'up' ? n : -n }
+}
+
 const rows = computed(() =>
   provinces.value.map((province) => {
+    const series = weeks4.value.map((r) => total(r, province))
+    const rep = report(series)
     const w = total(cur7.value, province)
     const pw = total(prev7.value, province)
     const d30 = total(cur30.value, province)
@@ -161,9 +185,23 @@ const rows = computed(() =>
       y30,
       yearPct: y30 == null ? null : percentChange(d30, y30),
       yearChange: change(d30, y30),
+      series,
+      report: rep,
+      trend: rep.score,
     }
   }),
 )
+
+const worsening = computed(() => rows.value.filter((r) => r.report.key === 'up' && r.report.streak >= 2).length)
+const improving = computed(() => rows.value.filter((r) => r.report.key === 'down' && r.report.streak >= 2).length)
+const REPORT_CHIP = {
+  up: 'bg-ember-500/15 text-ember-400',
+  down: 'bg-emerald-300/15 text-emerald-300',
+  flat: 'bg-veil/5 text-mist',
+  none: 'bg-veil/5 text-mist',
+  na: 'bg-veil/5 text-mist',
+}
+const sparkMax = (r) => Math.max(1, ...r.series)
 
 const topRising = computed(() =>
   rows.value
@@ -234,8 +272,10 @@ function downloadProvinces() {
       `titik_30_hari (${cur30.value.from} s.d. ${cur30.value.to})`,
       `titik_30_hari_tahun_lalu (${year30.value.from} s.d. ${year30.value.to})`,
       'perubahan_tahunan_persen',
+      'titik_per_minggu_4_minggu_terakhir (lama ke baru)',
+      'rapor_4_minggu',
     ],
-    filteredRows.value.map((r) => [r.province, r.w, r.pw, r.weekPct, r.d30, r.y30, r.yearPct]),
+    filteredRows.value.map((r) => [r.province, r.w, r.pw, r.weekPct, r.d30, r.y30, r.yearPct, [...r.series].reverse().join(' | '), r.report.text]),
     `karhutlatracker-tren-provinsi-sampai-${anchor.value}.csv`,
   )
 }
@@ -246,6 +286,7 @@ const COLUMNS = [
   { key: 'weekPct', label: 'vs minggu lalu', align: 'text-right' },
   { key: 'd30', label: '30 hari', align: 'text-right' },
   { key: 'yearPct', label: 'vs tahun lalu', align: 'text-right' },
+  { key: 'trend', label: 'Rapor 4 minggu', align: 'text-left' },
 ]
 </script>
 
@@ -366,6 +407,14 @@ const COLUMNS = [
           <div>
             <h2 class="font-display text-xl font-bold tracking-tight">Semua provinsi</h2>
             <p class="label">{{ filteredRows.length }} dari {{ rows.length }} provinsi · klik judul kolom untuk mengurutkan</p>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <button type="button" class="rounded-full bg-ember-500/15 px-3 py-1 text-xs font-semibold text-ember-400 transition sm:text-sm hover:bg-ember-500/25" @click="sortKey = 'trend'; sortDir = 'desc'">
+                ▲ {{ worsening }} provinsi memburuk 2+ minggu beruntun
+              </button>
+              <button type="button" class="rounded-full bg-emerald-300/15 px-3 py-1 text-xs font-semibold text-emerald-300 transition sm:text-sm hover:bg-emerald-300/25" @click="sortKey = 'trend'; sortDir = 'asc'">
+                ▼ {{ improving }} provinsi membaik 2+ minggu beruntun
+              </button>
+            </div>
           </div>
           <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
             <input
@@ -382,7 +431,7 @@ const COLUMNS = [
         </div>
 
         <div class="mt-4 max-h-[34rem] overflow-auto rounded-xl border border-line">
-          <table class="w-full min-w-[600px] text-sm">
+          <table class="w-full min-w-[820px] text-sm">
             <thead class="sticky top-0 z-10 bg-smoke">
               <tr class="border-b border-line text-mist">
                 <th
@@ -421,9 +470,24 @@ const COLUMNS = [
                     {{ r.yearChange.text }}
                   </span>
                 </td>
+                <td class="px-4 py-2.5">
+                  <div class="flex items-center gap-3">
+                    <span class="flex h-6 shrink-0 items-end gap-0.5" :title="`Per minggu: ${[...r.series].reverse().map(fmt).join(' → ')} titik`">
+                      <span
+                        v-for="(v, i) in [...r.series].reverse()" :key="i"
+                        class="w-1.5 rounded-sm"
+                        :class="i === 3 ? (r.report.key === 'up' ? 'bg-ember-400' : r.report.key === 'down' ? 'bg-emerald-300' : 'bg-mist') : 'bg-veil/20'"
+                        :style="{ height: Math.max(8, (v / sparkMax(r)) * 100) + '%' }"
+                      ></span>
+                    </span>
+                    <span class="whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-semibold" :class="REPORT_CHIP[r.report.key]">
+                      {{ r.report.key === 'up' ? '▲ ' : r.report.key === 'down' ? '▼ ' : '' }}{{ r.report.text }}
+                    </span>
+                  </div>
+                </td>
               </tr>
               <tr v-if="!filteredRows.length">
-                <td colspan="5" class="px-4 py-8 text-center text-mist">Provinsi tidak ditemukan.</td>
+                <td colspan="6" class="px-4 py-8 text-center text-mist">Provinsi tidak ditemukan.</td>
               </tr>
             </tbody>
           </table>
