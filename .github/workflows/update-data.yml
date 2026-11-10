@@ -36,6 +36,7 @@ jobs:
         
       - name: Buat ringkasan harian (AI)
         continue-on-error: true
+        timeout-minutes: 6
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: node scripts/ringkasan-ai.mjs

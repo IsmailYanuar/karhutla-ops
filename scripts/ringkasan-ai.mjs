@@ -68,10 +68,9 @@ function templateText(f) {
     (rise ? ` Kenaikan terbesar terjadi di ${rise.provinsi} (+${fmt(rise.tambahanTitik)} titik).` : '')
 }
 
-// Daftar model Flash yang tersedia, terbaru dulu, karena nama model Gemini sering berganti.
 async function listModels(key) {
   if (process.env.GEMINI_MODEL) return [process.env.GEMINI_MODEL]
-  const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200', { headers: { 'x-goog-api-key': key } })
+  const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200', { headers: { 'x-goog-api-key': key }, signal: AbortSignal.timeout(20_000) })
   if (!res.ok) throw new Error(`Gagal membaca daftar model (HTTP ${res.status})`)
   const { models = [] } = await res.json()
   const ok = models
@@ -102,18 +101,31 @@ function forAi(f) {
   }
 }
 
+const REQUEST_TIMEOUT_MS = 60_000
+const CALL_BUDGET_MS = 2 * 60_000
+
 async function callGemini(prompt, asJson = false) {
   const key = process.env.GEMINI_API_KEY?.trim()
   if (!key) throw new Error('GEMINI_API_KEY belum diatur')
   const generationConfig = { temperature: 0.3, ...(asJson ? { responseMimeType: 'application/json' } : {}) }
   let lastError = 'tidak diketahui'
+  const deadline = Date.now() + CALL_BUDGET_MS
   for (const model of await listModels(key)) {
-    for (let attempt = 1; attempt <= 3; attempt++) {
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
-        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig }),
-      })
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      if (Date.now() > deadline) throw new Error(`waktu habis (${lastError})`)
+      let res
+      try {
+        res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+          body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig }),
+          signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+        })
+      } catch (e) {
+        lastError = `${model}: ${e.name === 'TimeoutError' ? 'tidak menjawab dalam 60 detik' : e.message}`
+        console.warn(`Percobaan ${attempt} gagal: ${lastError}`)
+        continue
+      }
       if (res.ok) {
         const json = await res.json()
         const text = json.candidates?.[0]?.content?.parts?.map((p) => p.text).join('').trim()
@@ -124,7 +136,7 @@ async function callGemini(prompt, asJson = false) {
       lastError = `${model} HTTP ${res.status}: ${(await res.text()).slice(0, 150)}`
       console.warn(`Percobaan ${attempt} gagal: ${lastError.slice(0, 80)}`)
       if (![429, 500, 503].includes(res.status)) break
-      await sleep(attempt * 10000)
+      await sleep(attempt * 5000)
     }
   }
   throw new Error(`Gemini gagal: ${lastError}`)
