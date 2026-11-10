@@ -28,7 +28,7 @@ let layer = null
 let geo = null
 
 const RANGES = [30, 90]
-const PAGE_SIZE = 8
+const PAGE_SIZE = 20
 const INDONESIA = L.latLngBounds([-11, 95], [6, 141])
 const GEO_ALIAS = { 'DI Yogyakarta': 'Daerah Istimewa Yogyakarta' }
 const CHIP = {
@@ -140,10 +140,15 @@ const week = computed(() => {
   return { text: `${p > 0 ? '+' : ''}${p.toLocaleString('id-ID')}%`, dir: p > 0 ? 'up' : p < 0 ? 'down' : 'flat', before }
 })
 
+const ready = computed(() => {
+  const r = ringkasan.value
+  if (!r?.provinsi || r.provinsiSampai !== anchor.value) return null
+  const p = r.provinsi[province.value]
+  return p?.text ? p : null
+})
+
 const summary = computed(() => {
-  const r = ringkasan.value?.provinsi?.[province.value]
-  const ready = typeof r === 'string' ? r : r?.text
-  if (ready) return ready
+  if (ready.value) return ready.value.text
   if (!me.value) return ''
   const n = me.value.n
   if (!n) return `Tidak ada titik panas terdeteksi di ${province.value} dalam 7 hari terakhir.`
@@ -176,6 +181,11 @@ function timeAgo(iso) {
 }
 
 const coordText = (lat, lng) => `${Math.abs(lat).toFixed(3)}° ${lat < 0 ? 'LS' : 'LU'}, ${lng.toFixed(3)}° BT`
+
+function onListScroll(e) {
+  const el = e.target
+  if (shown.value < latest.value.length && el.scrollTop + el.clientHeight >= el.scrollHeight - 120) shown.value += PAGE_SIZE
+}
 
 function unduh() {
   const date = new Date().toISOString().slice(0, 10)
@@ -300,6 +310,7 @@ function drawMap() {
             7 hari sampai {{ formatShortDate(anchor) }}<template v-if="lastDetected">, deteksi terakhir {{ formatDate(lastDetected) }}</template>
           </p>
           <p class="mt-5 max-w-[62ch] text-xl leading-relaxed text-paper">{{ summary }}</p>
+          <p class="mt-2 text-xs text-mist">{{ ready?.ai ? 'Kalimat disusun AI (Google Gemini) dari angka di halaman ini. Angkanya dihitung sistem.' : 'Disusun otomatis dari angka di halaman ini.' }}</p>
           <div class="mt-5 flex flex-wrap gap-2 text-sm">
             <span class="glass-sm px-3 py-1.5"><span class="font-semibold tabular-nums">{{ fmtDecimal(me.density) }}</span> <span class="text-mist">titik per 1.000 km²</span></span>
             <span class="glass-sm px-3 py-1.5"><span class="text-mist">Peringkat kepadatan</span> <span class="font-semibold tabular-nums">#{{ densityRank }}</span></span>
@@ -386,7 +397,7 @@ function drawMap() {
               </li>
             </ul>
 
-            <ul class="mt-4 divide-y divide-line/60">
+            <ul class="mt-4 max-h-[30rem] divide-y divide-line/60 overflow-y-auto pr-3" @scroll="onListScroll">
               <li v-for="h in latest.slice(0, shown)" :key="h.id" class="flex items-center gap-3 py-3">
                 <span class="h-3 w-3 shrink-0 rounded-full ring-1 ring-veil/20" :style="{ background: CONFIDENCE[h.confidence].color }" :title="`Kepercayaan ${CONFIDENCE[h.confidence].label.toLowerCase()}`"></span>
                 <div class="min-w-0 flex-1">
@@ -399,17 +410,18 @@ function drawMap() {
                 </div>
               </li>
             </ul>
-            <button v-if="shown < latest.length" type="button" class="btn-ghost mt-3 w-full !py-2.5 text-sm" @click="shown += PAGE_SIZE">
-              Tampilkan lebih banyak ({{ fmt(latest.length - shown) }} lagi)
-            </button>
           </div>
           <p v-else class="mt-5 text-sm text-mist">Tidak ada titik panas terdeteksi di {{ province }} dalam 7 hari terakhir.</p>
         </div>
 
-        <div class="glass min-w-0 p-5 md:p-6">
+        <div class="glass flex min-w-0 flex-col p-5 md:p-6">
           <h2 class="font-display text-xl font-bold tracking-tight">Sebaran titik panas</h2>
           <p class="label">Garis oranye menandai batas {{ province }}.</p>
-          <div ref="mapEl" class="mt-4 h-[320px] w-full overflow-hidden rounded-xl md:h-[420px] lg:h-[calc(100%-4rem)] lg:min-h-[320px]"></div>
+          <div ref="mapEl" class="mt-4 h-[280px] w-full overflow-hidden rounded-xl md:h-[320px] lg:h-auto lg:min-h-[280px] lg:flex-1"></div>
+          <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
+            <p class="text-sm text-mist">Saring per tingkat kepercayaan dan lihat setiap titik di halaman Peta.</p>
+            <RouterLink :to="{ name: 'dashboard', query: { p: slugify(province) } }" class="btn-ghost !px-4 !py-2 text-sm">Lihat semua titik di Peta →</RouterLink>
+          </div>
         </div>
       </div>
 
@@ -436,8 +448,7 @@ function drawMap() {
               <p class="font-semibold">SP4N-LAPOR!</p>
               <p class="mt-1 text-sm text-mist">Aduan resmi ke pemerintah, termasuk dugaan pembakaran lahan.</p>
               <div class="mt-3 flex flex-wrap gap-2">
-                <a href="https://www.lapor.go.id/" target="_blank" rel="noopener" class="btn-ember !px-4 !py-2 text-sm">Buka LAPOR!</a>
-                <RouterLink to="/siaga" class="btn-ghost !px-4 !py-2 text-sm">Panduan Siaga Asap</RouterLink>
+                <a href="https://www.lapor.go.id/" target="_blank" rel="noopener" class="btn-ember !px-4 !py-2 text-sm">Buka LAPOR!</a>          
               </div>
             </div>
           </div>

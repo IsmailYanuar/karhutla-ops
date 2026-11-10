@@ -1,7 +1,11 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import DailyChart from '../components/DailyChart.vue'
-import { getHistory, addDays, sumRange, percentChange, formatShortDate, formatDate } from '../services/hotspots.js'
+import { getHistory, addDays, sumRange, percentChange, formatShortDate, formatDate, slugify } from '../services/hotspots.js'
+
+const router = useRouter()
+const profil = (province) => ({ path: '/daerah', query: { p: slugify(province) } })
 
 const history = ref(null)
 const error = ref('')
@@ -386,7 +390,7 @@ const COLUMNS = [
             </span>
             <div class="min-w-0 flex-1">
               <div class="flex items-baseline justify-between gap-3">
-                <span class="truncate font-semibold">{{ r.province }}</span>
+                  <RouterLink :to="profil(r.province)" class="truncate font-semibold hover:text-flare">{{ r.province }}</RouterLink>
                 <span class="shrink-0 font-display text-lg font-bold tabular-nums text-ember-400">+{{ fmt(r.diff) }}</span>
               </div>
               <div class="mt-1.5 h-2 overflow-hidden rounded-full bg-veil/10">
@@ -449,8 +453,19 @@ const COLUMNS = [
               </tr>
             </thead>
             <tbody>
-              <tr v-for="r in filteredRows" :key="r.province" class="border-b border-line/60 transition last:border-0 hover:bg-veil/5">
-                <td class="px-4 py-2.5 font-medium">{{ r.province }}</td>
+              <tr
+                v-for="r in filteredRows"
+                :key="r.province"
+                class="group cursor-pointer border-b border-line/60 transition last:border-0 hover:bg-veil/5"
+                :title="`Lihat profil ${r.province}`"
+                @click="router.push(profil(r.province))"
+              >
+                <td class="px-4 py-2.5 font-medium">
+                  <RouterLink :to="profil(r.province)" class="inline-flex items-center gap-1.5 group-hover:text-flare" @click.stop>
+                    {{ r.province }}
+                    <span class="text-xs opacity-0 transition group-hover:opacity-100" aria-hidden="true">→</span>
+                  </RouterLink>
+                </td>
                 <td class="px-4 py-2.5">
                   <div class="flex items-center justify-end gap-3 tabular-nums">
                     <span class="hidden h-1.5 w-24 overflow-hidden rounded-full bg-veil/10 sm:block">

@@ -131,22 +131,44 @@ async function useLocation() {
   )
 }
 
+const PROVINCES = CITIES.map((c) => {
+  const [, city, province] = c.name.match(/^(.*) \((.*)\)$/)
+  return { ...c, city, province }
+})
+
+const ALIAS = {
+  sumut: 'sumatera utara', sumbar: 'sumatera barat', sumsel: 'sumatera selatan', kepri: 'kepulauan riau', babel: 'bangka belitung',
+  dki: 'dki jakarta', jabar: 'jawa barat', jateng: 'jawa tengah', jatim: 'jawa timur', diy: 'di yogyakarta', jogja: 'di yogyakarta',
+  ntb: 'nusa tenggara barat', ntt: 'nusa tenggara timur', kalbar: 'kalimantan barat', kalteng: 'kalimantan tengah',
+  kalsel: 'kalimantan selatan', kaltim: 'kalimantan timur', kaltara: 'kalimantan utara', sulut: 'sulawesi utara',
+  sulteng: 'sulawesi tengah', sulbar: 'sulawesi barat', sulsel: 'sulawesi selatan', sultra: 'sulawesi tenggara', malut: 'maluku utara',
+}
+const norm = (t) => t.toLowerCase().replace(/^provinsi\s+/, '').replace(/[^a-z0-9 ]/g, '').replace(/\s+/g, ' ').trim()
+
 async function search() {
   const q = query.value.trim()
   if (q.length < 3) return
   searching.value = true
   searchError.value = ''
+  const nq = ALIAS[norm(q)] ?? norm(q)
+  const local = PROVINCES.filter((c) => norm(c.province).includes(nq)).map((c) => ({
+    ...c,
+    label: `Provinsi ${c.province}`,
+    note: `ibu kota ${c.city}`,
+  }))
+  results.value = local
   try {
     const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=6&language=id&countryCode=ID`)
     const json = await res.json()
-    results.value = (json.results ?? []).map((r) => ({
+    const found = (json.results ?? []).map((r) => ({
       name: [r.name, r.admin2, r.admin1].filter((v, i, arr) => v && arr.indexOf(v) === i).join(', '),
       lat: r.latitude,
       lng: r.longitude,
     }))
-    if (!results.value.length) searchError.value = `Tempat "${q}" tidak ditemukan. Coba nama kota atau kabupaten lain.`
+    results.value = [...local, ...found.filter((f) => !local.some((l) => distanceKm(l.lat, l.lng, f.lat, f.lng) < 5))]
+    if (!results.value.length) searchError.value = `Tempat "${q}" tidak ditemukan. Coba nama provinsi, kota, atau kabupaten lain.`
   } catch {
-    searchError.value = 'Pencarian gagal, coba lagi.'
+    if (!local.length) searchError.value = 'Pencarian gagal, coba lagi.'
   } finally {
     searching.value = false
   }
@@ -155,7 +177,7 @@ async function search() {
 function pick(p) {
   results.value = []
   query.value = ''
-  choose(p)
+  choose({ name: p.name, lat: p.lat, lng: p.lng })
 }
 
 async function placeName(lat, lng) {
@@ -255,9 +277,9 @@ const fmtKm = (km) => km.toLocaleString('id-ID', { maximumFractionDigits: 1 })
         {{ locating ? 'Mencari lokasi…' : 'Gunakan lokasi saya' }}
       </button>
       <form class="flex flex-1 flex-col gap-1.5 md:max-w-sm" @submit.prevent="search">
-        <label for="cari-tempat" class="label">atau cari kota atau kabupaten</label>
+        <label for="cari-tempat" class="label">atau cari provinsi, kota, atau kabupaten</label>
         <div class="flex gap-2">
-          <input id="cari-tempat" v-model="query" type="search" placeholder="contoh: Ogan Komering Ilir" class="field min-w-0 flex-1" />
+          <input id="cari-tempat" v-model="query" type="search" placeholder="contoh: Kalimantan Tengah" class="field min-w-0 flex-1" />
           <button type="submit" class="btn-ghost !px-4 !py-2.5" :disabled="searching">{{ searching ? '…' : 'Cari' }}</button>
         </div>
       </form>
@@ -271,7 +293,10 @@ const fmtKm = (km) => km.toLocaleString('id-ID', { maximumFractionDigits: 1 })
     </div>
     <ul v-if="results.length" class="glass-sm mt-3 flex max-w-xl flex-col divide-y divide-veil/5 overflow-hidden">
       <li v-for="r in results" :key="r.name + r.lat">
-        <button class="w-full px-4 py-3 text-left text-sm hover:bg-veil/5" @click="pick(r)">{{ r.name }}</button>
+        <button class="flex w-full items-baseline justify-between gap-3 px-4 py-3 text-left text-sm hover:bg-veil/5" @click="pick(r)">
+          <span><span v-if="r.label" class="font-semibold">{{ r.label }}</span><template v-else>{{ r.name }}</template></span>
+          <span v-if="r.note" class="shrink-0 text-xs text-mist">{{ r.note }}</span>
+        </button>
       </li>
     </ul>
     <p v-if="searchError" class="mt-3 text-sm text-red-300">{{ searchError }}</p>

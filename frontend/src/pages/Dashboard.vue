@@ -1,8 +1,11 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import L from 'leaflet'
+import { useRoute, useRouter } from 'vue-router'
 import { getHotspotData, getWilayah, countByProvince, CONFIDENCE, BASEMAP, formatDate, slugify, downloadCsv } from '../services/hotspots'
 
+const route = useRoute()
+const router = useRouter()
 const mapEl = ref(null)
 const data = ref(null)
 const loading = ref(true)
@@ -98,6 +101,16 @@ watch(filtered, () => {
   if (!map) return
   fitToData()
   draw()
+})
+
+watch([provinces, () => route.query.p], () => {
+  const name = provinces.value.find((p) => slugify(p.name) === route.query.p)?.name
+  if (name && name !== province.value) province.value = name
+}, { immediate: true })
+
+watch(province, (name) => {
+  const p = name ? slugify(name) : undefined
+  if (p !== route.query.p) router.replace({ query: p ? { p } : {} })
 })
 
 onBeforeUnmount(() => map?.remove())

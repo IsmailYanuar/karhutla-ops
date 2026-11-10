@@ -102,9 +102,35 @@ function forAi(f) {
   }
 }
 
-async function aiText(f) {
+async function callGemini(prompt, asJson = false) {
   const key = process.env.GEMINI_API_KEY?.trim()
   if (!key) throw new Error('GEMINI_API_KEY belum diatur')
+  const generationConfig = { temperature: 0.3, ...(asJson ? { responseMimeType: 'application/json' } : {}) }
+  let lastError = 'tidak diketahui'
+  for (const model of await listModels(key)) {
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig }),
+      })
+      if (res.ok) {
+        const json = await res.json()
+        const text = json.candidates?.[0]?.content?.parts?.map((p) => p.text).join('').trim()
+        if (text) return { text, model }
+        lastError = `${model} tidak mengembalikan teks`
+        break
+      }
+      lastError = `${model} HTTP ${res.status}: ${(await res.text()).slice(0, 150)}`
+      console.warn(`Percobaan ${attempt} gagal: ${lastError.slice(0, 80)}`)
+      if (![429, 500, 503].includes(res.status)) break
+      await sleep(attempt * 10000)
+    }
+  }
+  throw new Error(`Gemini gagal: ${lastError}`)
+}
+
+async function aiText(f) {
   const prompt = `Kamu menulis ringkasan harian untuk website publik KarhutlaTracker tentang titik panas kebakaran hutan dan lahan di Indonesia.
 Tulis 2 sampai 3 kalimat dalam bahasa Indonesia yang jelas untuk masyarakat umum.
 Aturan:
@@ -119,29 +145,76 @@ Aturan:
 Data:
 ${JSON.stringify(forAi(f), null, 2)}`
 
+  const { text, model } = await callGemini(prompt)
+  return { text: text.replace(/\s*—\s*/g, ', '), model }
+}
 
-  let lastError = 'tidak diketahui'
-  for (const model of await listModels(key)) {
-    for (let attempt = 1; attempt <= 3; attempt++) {
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
-        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.3 } }),
-      })
-      if (res.ok) {
-        const json = await res.json()
-        const text = json.candidates?.[0]?.content?.parts?.map((p) => p.text).join('').trim()
-        if (text) return { text: text.replace(/\s*—\s*/g, ', '), model }
-        lastError = `${model} tidak mengembalikan teks`
-        break
-      }
-      lastError = `${model} HTTP ${res.status}: ${(await res.text()).slice(0, 150)}`
-      console.warn(`Percobaan ${attempt} gagal: ${lastError.slice(0, 80)}`)
-      if (![429, 500, 503].includes(res.status)) break
-      await sleep(attempt * 10000)
-    }
+const histDates = Object.keys(days).sort()
+const anchor = histDates.at(-2) ?? histDates.at(-1)
+const week = sumRange(addDays(anchor, -6), anchor)
+const prevWeek = sumRange(addDays(anchor, -13), addDays(anchor, -7))
+const tglPendek = (s) => new Date(`${s}T00:00:00Z`).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', timeZone: 'UTC' })
+const provRows = wilayah.provinsi.map(({ name, areaKm2 }) => {
+  const n = week.byProvince[name] || 0
+  return { name, n, before: prevWeek.byProvince[name] || 0, density: (n / areaKm2) * 1000 }
+})
+const rankOf = (key, row) => 1 + provRows.filter((r) => r[key] > row[key]).length
+const fmtDec = (v) => v.toLocaleString('id-ID', { maximumFractionDigits: 1 })
+const provFacts = Object.fromEntries(provRows.map((r) => {
+  const change = r.before ? Math.round(((r.n - r.before) / r.before) * 100) : null
+  return [r.name, {
+    titik7Hari: fmt(r.n),
+    titik7HariSebelumnya: fmt(r.before),
+    perubahan: r.before === 0 ? (r.n ? 'sebelumnya tidak ada titik panas' : 'sama-sama nol') : `${change > 0 ? 'naik' : change < 0 ? 'turun' : 'tetap'} ${Math.abs(change)}%`,
+    peringkatJumlah: `${rankOf('n', r)} dari ${provRows.length}`,
+    kepadatanPer1000km2: fmtDec(r.density),
+    peringkatKepadatan: `${rankOf('density', r)} dari ${provRows.length}`,
+  }]
+}))
+
+function provTemplate(name) {
+  const f = provFacts[name]
+  if (f.titik7Hari === '0') return `Tidak ada titik panas terdeteksi di ${name} dalam 7 hari sampai ${tglPendek(anchor)}.`
+  let text = `Dalam 7 hari sampai ${tglPendek(anchor)} terdeteksi ${f.titik7Hari} titik panas di ${name}, peringkat ${f.peringkatJumlah} provinsi.`
+  if (f.perubahan.startsWith('naik') || f.perubahan.startsWith('turun')) text += ` Jumlahnya ${f.perubahan} dibanding 7 hari sebelumnya.`
+  else if (f.perubahan === 'sebelumnya tidak ada titik panas') text += ' Pada 7 hari sebelumnya belum ada titik panas.'
+  return text + ` Kepadatannya ${f.kepadatanPer1000km2} titik per 1.000 km².`
+}
+
+async function aiProvinces() {
+  const prompt = `Kamu menulis ringkasan singkat per provinsi untuk website publik KarhutlaTracker tentang titik panas kebakaran hutan dan lahan di Indonesia.
+Periode: 7 hari sampai ${tglPendek(anchor)}, dibanding 7 hari sebelumnya.
+Untuk SETIAP provinsi di data, tulis 2 kalimat bahasa Indonesia yang jelas untuk masyarakat umum.
+Aturan:
+- Pakai HANYA angka dari data provinsi itu, tulis persis seperti di data. Jangan menambah angka, penyebab, atau prediksi.
+- Kalimat pertama WAJIB memuat jumlah titik7Hari persis seperti tertulis.
+- Sebut "titik panas", bukan "kebakaran".
+- Nada netral dan informatif, tanpa menyalahkan pihak mana pun.
+- Jika titik7Hari 0, cukup satu kalimat bahwa tidak ada titik panas terdeteksi.
+- Variasikan susunan kalimat antarprovinsi, tapi tetap ringkas.
+- Tanpa judul, tanpa emoji, tanpa tanda pisah panjang.
+Balas HANYA dengan objek JSON: kunci = nama provinsi persis seperti di data, nilai = teks ringkasan.
+Data:
+${JSON.stringify(provFacts, null, 1)}`
+  const { text, model } = await callGemini(prompt, true)
+  const parsed = JSON.parse(text.replace(/^```(json)?|```$/g, '').trim())
+  return { parsed, model }
+}
+
+const hasNumber = (text, num) => new RegExp(`(^|[^\\d.,])${num.replace(/\./g, '\\.')}(?![\\d]|[.,]\\d)`).test(text)
+const provinsi = {}
+let provModel = null
+try {
+  const { parsed, model } = await aiProvinces()
+  provModel = model
+  for (const name of Object.keys(provFacts)) {
+    const t = typeof parsed[name] === 'string' ? parsed[name].replace(/\s*—\s*/g, ', ').trim() : ''
+    provinsi[name] = t && hasNumber(t, provFacts[name].titik7Hari) ? { text: t, ai: true } : { text: provTemplate(name), ai: false }
   }
-  throw new Error(`Gemini gagal: ${lastError}`)
+  console.log(`Ringkasan provinsi AI: ${Object.values(provinsi).filter((p) => p.ai).length} dari ${provRows.length} provinsi (${model}).`)
+} catch (e) {
+  console.warn(`Ringkasan provinsi AI tidak dipakai: ${e.message}. Memakai templat.`)
+  for (const name of Object.keys(provFacts)) provinsi[name] = { text: provTemplate(name), ai: false }
 }
 
 let result
@@ -153,5 +226,5 @@ try {
   result = { text: templateText(facts), model: null, ai: false }
 }
 
-writeFileSync(`${DATA_DIR}/ringkasan.json`, JSON.stringify({ ...result, facts, generatedAt: new Date().toISOString() }, null, 2))
+writeFileSync(`${DATA_DIR}/ringkasan.json`, JSON.stringify({ ...result, facts, provinsi, provinsiModel: provModel, provinsiSampai: anchor, generatedAt: new Date().toISOString() }, null, 2))
 console.log(result.text)
