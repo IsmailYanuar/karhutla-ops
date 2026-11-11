@@ -269,7 +269,7 @@ const fmtKm = (km) => km.toLocaleString('id-ID', { maximumFractionDigits: 1 })
       <p class="mt-1">{{ status.text }}</p>
     </div>
 
-    <div class="mt-4 grid gap-4 lg:grid-cols-[1fr_360px]" :class="!place && 'mt-8'">
+    <div class="mt-4 grid gap-4 lg:grid-cols-[1fr_360px] lg:items-start" :class="!place && 'mt-8'">
       <div class="glass min-w-0 p-5">
         <h2 class="font-display text-2xl font-bold">{{ place ? 'Titik panas di sekitar' : 'Atau pilih langsung di peta' }}</h2>
         <template v-if="place">

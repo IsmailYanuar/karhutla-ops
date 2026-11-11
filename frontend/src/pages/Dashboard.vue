@@ -66,13 +66,13 @@ function draw() {
   }
 }
 
+// Peta mengikuti provinsi yang dipilih, bukan filter lain. Jadi saat filter kepercayaan atau tanggal
+// membuat titik kosong, peta tetap di provinsi itu.
 function fitToData() {
-  if (!province.value) {
-    map.fitBounds(INDONESIA, { animate: false })
-    return
-  }
-  if (!filtered.value.length) return map.fitBounds(INDONESIA, { animate: false })
-  map.fitBounds(L.latLngBounds(filtered.value.map((h) => [h.lat, h.lng])).pad(0.2), { maxZoom: 8, animate: false })
+  if (!map) return
+  const pts = province.value ? all.value.filter((h) => h.province === province.value) : []
+  if (!pts.length) return map.fitBounds(INDONESIA, { animate: false })
+  map.fitBounds(L.latLngBounds(pts.map((h) => [h.lat, h.lng])).pad(0.2), { maxZoom: 8, animate: false })
 }
 
 onMounted(async () => {
@@ -108,11 +108,8 @@ onMounted(async () => {
   }
 })
 
-watch(filtered, () => {
-  if (!map) return
-  fitToData()
-  draw()
-})
+watch(filtered, () => draw())
+watch([province, () => all.value.length], () => fitToData())
 
 watch([provinces, () => route.query.p], () => {
   const name = provinces.value.find((p) => slugify(p.name) === route.query.p)?.name
@@ -190,40 +187,44 @@ async function search() {
       <p v-if="data?.source?.startsWith('DATA CONTOH')" class="rounded-full bg-ember-400/15 px-3 py-1 text-xs font-medium text-flare">Masih memakai data contoh</p>
     </div>
 
-    <div class="glass mt-6 flex flex-wrap items-end gap-3 p-4">
-      <label class="flex flex-col gap-1.5">
-        <span class="label">Provinsi</span>
-        <select id="filter-province" v-model="province" class="field">
-          <option value="">Semua provinsi</option>
-          <option v-for="p in provinces" :key="p.name" :value="p.name">{{ p.name }} ({{ p.n.toLocaleString('id-ID') }})</option>
-        </select>
-      </label>
-      <label class="flex flex-col gap-1.5">
-        <span class="label">Tingkat kepercayaan</span>
-        <select id="filter-confidence" v-model="confidence" class="field">
-          <option value="">Semua</option>
-          <option v-for="(c, key) in CONFIDENCE" :key="key" :value="key">{{ c.label }}</option>
-        </select>
-      </label>
-            <label class="flex flex-col gap-1.5">
-        <span class="label">Tanggal</span>
-        <select id="filter-day" v-model="day" class="field">
-          <option value="">7 hari terakhir</option>
-          <option v-for="d in days" :key="d" :value="d">{{ formatShortDate(d) }}</option>
-        </select>
-      </label>
-      <form class="flex flex-col gap-1.5" @submit.prevent="search">
-        <label for="cari-peta" class="label">Cari lokasi</label>
-        <div class="flex gap-2">
-          <input id="cari-peta" v-model="query" type="search" class="field w-48" placeholder="provinsi atau kota" />
-          <button type="submit" class="btn-ghost !px-4 !py-2.5 text-sm" :disabled="searching">{{ searching ? '…' : 'Cari' }}</button>
-        </div>
-      </form>
-      <button v-if="province || confidence || day || query"  class="rounded-full px-4 py-2.5 text-sm font-semibold text-flare hover:bg-veil/5" @click="reset">Reset filter</button>
-      <RouterLink v-if="province" :to="{ name: 'region', query: { p: slugify(province) } }" class="rounded-full px-4 py-2.5 text-sm font-semibold text-flare hover:bg-veil/5">Lihat profil {{ province }}</RouterLink>
-      <button class="btn-ghost ml-auto !py-2.5 text-sm" :disabled="!filtered.length" @click="unduh">
-        Unduh CSV ({{ filtered.length.toLocaleString('id-ID') }} titik)
-      </button>
+    <div class="glass mt-6 p-4">
+      <div class="flex flex-wrap items-end gap-3">
+        <label class="flex flex-col gap-1.5">
+          <span class="label">Provinsi</span>
+          <select id="filter-province" v-model="province" class="field h-11 w-56 !py-0">
+            <option value="">Semua provinsi</option>
+            <option v-for="p in provinces" :key="p.name" :value="p.name">{{ p.name }} ({{ p.n.toLocaleString('id-ID') }})</option>
+          </select>
+        </label>
+        <label class="flex flex-col gap-1.5">
+          <span class="label">Tingkat kepercayaan</span>
+          <select id="filter-confidence" v-model="confidence" class="field h-11 !py-0">
+            <option value="">Semua</option>
+            <option v-for="(c, key) in CONFIDENCE" :key="key" :value="key">{{ c.label }}</option>
+          </select>
+        </label>
+        <label class="flex flex-col gap-1.5">
+          <span class="label">Tanggal</span>
+          <select id="filter-day" v-model="day" class="field h-11 !py-0">
+            <option value="">7 hari terakhir</option>
+            <option v-for="d in days" :key="d" :value="d">{{ formatShortDate(d) }}</option>
+          </select>
+        </label>
+        <form class="flex flex-col gap-1.5" @submit.prevent="search">
+          <label for="cari-peta" class="label">Cari lokasi</label>
+          <div class="flex gap-2">
+            <input id="cari-peta" v-model="query" type="search" class="field h-11 w-48 !py-0" placeholder="provinsi atau kota" />
+            <button type="submit" class="btn-ghost h-11 !px-4 !py-0 text-sm" :disabled="searching">{{ searching ? '…' : 'Cari' }}</button>
+          </div>
+        </form>
+        <button class="btn-ghost h-11 !py-0 text-sm lg:ml-auto" :disabled="!filtered.length" @click="unduh">
+          Unduh CSV ({{ filtered.length.toLocaleString('id-ID') }} titik)
+        </button>
+      </div>
+      <div v-if="province || confidence || day || query" class="mt-3 flex flex-wrap gap-2">
+        <button class="rounded-full px-4 py-2 text-sm font-semibold text-flare hover:bg-veil/5" @click="reset">Reset filter</button>
+        <RouterLink v-if="province" :to="{ name: 'region', query: { p: slugify(province) } }" class="rounded-full px-4 py-2 text-sm font-semibold text-flare hover:bg-veil/5">Lihat profil {{ province }} →</RouterLink>
+      </div>
     </div>
 
     <div class="mt-4 grid gap-4 lg:grid-cols-[1fr_320px]">

@@ -408,7 +408,7 @@ const COLUMNS = [
       </div>
 
       <div class="glass mt-6 p-5 md:p-6">
-        <div class="flex flex-wrap items-end justify-between gap-3">
+        <div class="grid gap-3 lg:grid-cols-[1fr_auto] lg:items-end">
           <div>
             <h2 class="font-display text-xl font-bold tracking-tight">Semua provinsi</h2>
             <p class="label">{{ filteredRows.length }} dari {{ rows.length }} provinsi · klik judul kolom untuk mengurutkan</p>
@@ -429,7 +429,7 @@ const COLUMNS = [
               placeholder="Cari provinsi…"
               aria-label="Cari provinsi"
             />
-            <button type="button" class="btn-ghost !px-4 !py-2.5 text-sm" :disabled="!filteredRows.length" @click="downloadProvinces">
+            <button type="button" class="btn-ghost !px-4 !py-2.5 text-sm sm:w-56" :disabled="!filteredRows.length" @click="downloadProvinces">
               Unduh CSV ({{ filteredRows.length }} provinsi)
             </button>
           </div>
