@@ -3,7 +3,7 @@
 **Titik api Indonesia, terpantau dari orbit.**
 
 **Demo:** https://karhutla-tracker.vercel.app
-**Video pitching:** (tautan YouTube)
+**Video pitching:** https://youtu.be/EbBtgxuw3ZE
 
 Website transparansi titik panas kebakaran hutan dan lahan (karhutla) di Indonesia. KarhutlaTracker mengolah data satelit terbuka NASA menjadi peta, tren, rapor per provinsi, cek lokasi, dan panduan Siaga Asap yang bisa dipahami masyarakat umum. Semua angka berasal dari data asli, bukan simulasi, dan diperbarui otomatis setiap 3 jam.
 
