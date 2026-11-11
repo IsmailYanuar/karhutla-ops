@@ -152,6 +152,7 @@ const week = computed(() => {
   const before = sumRange(days.value, addDays(anchor.value, -13), addDays(anchor.value, -7), province.value).total
   if (!before) return now ? { text: 'Baru', dir: 'up', before } : { text: '0%', dir: 'flat', before }
   const p = percentChange(now, before)
+  if (p >= 500) return { text: `${Math.round(now / before).toLocaleString('id-ID')}× lipat`, dir: 'up', before }
   return { text: `${p > 0 ? '+' : ''}${p.toLocaleString('id-ID')}%`, dir: p > 0 ? 'up' : p < 0 ? 'down' : 'flat', before }
 })
 

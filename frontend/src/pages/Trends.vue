@@ -47,6 +47,7 @@ function change(now, before) {
   if (before == null) return { text: '–', dir: 'na' }
   if (before === 0) return now === 0 ? { text: '0%', dir: 'flat' } : { text: 'Baru', dir: 'up' }
   const p = percentChange(now, before)
+  if (p >= 500) return { text: `${Math.round(now / before).toLocaleString('id-ID')}× lipat`, dir: 'up' }
   return {
     text: `${p > 0 ? '+' : ''}${p.toLocaleString('id-ID')}%`,
     dir: p > 0 ? 'up' : p < 0 ? 'down' : 'flat',
@@ -476,13 +477,13 @@ const COLUMNS = [
                   </div>
                 </td>
                 <td class="px-4 py-2.5 text-right">
-                  <span class="inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold tabular-nums" :class="CHIP[r.weekChange.dir]">
+                  <span class="inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold tabular-nums" :class="CHIP[r.weekChange.dir]" :title="`${fmt(r.pw)} → ${fmt(r.w)} titik`">
                     {{ r.weekChange.text }}
                   </span>
                 </td>
                 <td class="px-4 py-2.5 text-right tabular-nums">{{ fmt(r.d30) }}</td>
                 <td class="px-4 py-2.5 text-right">
-                  <span class="inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold tabular-nums" :class="CHIP[r.yearChange.dir]">
+                  <span class="inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold tabular-nums" :class="CHIP[r.yearChange.dir]" :title="`${fmt(r.y30)} → ${fmt(r.d30)} titik`">
                     {{ r.yearChange.text }}
                   </span>
                 </td>

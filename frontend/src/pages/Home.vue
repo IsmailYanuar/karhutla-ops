@@ -63,6 +63,11 @@ const steps = [
               <RouterLink to="/peta" class="btn-ember">Buka peta titik panas</RouterLink>
               <RouterLink to="/sekitar" class="btn-ghost">Cek sekitar saya</RouterLink>
             </div>
+            <p class="mt-5 text-sm text-mist">
+              Bukan sekadar peta: ada <RouterLink to="/tren" class="font-semibold text-flare hover:underline">rapor mingguan 38 provinsi</RouterLink>
+              dan <RouterLink to="/daerah" class="font-semibold text-flare hover:underline">kepadatan titik per 1.000 km²</RouterLink>
+              agar provinsi besar dan kecil bisa dibandingkan secara adil.
+            </p>
           </div>
         </div>
       </div>
