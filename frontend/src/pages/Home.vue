@@ -42,7 +42,7 @@ const range = computed(() => {
 
 const steps = [
   { title: 'Satelit memotret panas', text: 'Sensor VIIRS di satelit Suomi NPP, NOAA-20, dan NOAA-21 menangkap titik yang jauh lebih panas dari sekitarnya, siang dan malam.' },
-  { title: 'Diolah otomatis', text: 'Setiap 6 jam, data NASA FIRMS ditarik, dicocokkan ke 38 provinsi, dan dihitung kepadatannya dengan luas resmi BIG.' },
+  { title: 'Diolah otomatis', text: 'Setiap 3 jam, data NASA FIRMS ditarik, dicocokkan ke 38 provinsi, dan dihitung kepadatannya dengan luas resmi BIG.' },
   { title: 'Siap dibaca publik', text: 'Hasilnya tampil sebagai peta, ringkasan, dan cek lokasi yang bisa dipahami siapa saja tanpa membaca tabel mentah.' },
 ]
 </script>
@@ -50,14 +50,14 @@ const steps = [
 <template>
   <div>
     <section class="relative">
-      <div class="mx-auto max-w-6xl px-4 pt-12 md:pt-20">
+      <div class="mx-auto max-w-6xl px-4 pt-8 md:pt-16">
         <div class="grid items-end gap-8 md:grid-cols-[1.25fr_1fr]">
           <h1 class="font-display text-5xl font-extrabold leading-[0.95] tracking-tight md:text-7xl">
             Titik api Indonesia, terpantau dari orbit.
           </h1>
           <div>
             <p class="text-lg text-mist">
-              Setiap titik oranye di bawah adalah panas yang ditangkap satelit dalam 7 hari terakhir. KarhutlaTracker mengubahnya jadi peta, tren, dan peringatan yang bisa dibaca siapa saja.
+              Setiap titik oranye pada peta di bawah adalah panas yang ditangkap satelit dalam 7 hari terakhir. KarhutlaTracker mengubahnya jadi peta, tren, dan peringatan yang bisa dibaca siapa saja.
             </p>
             <div class="mt-6 flex flex-wrap gap-3">
               <RouterLink to="/peta" class="btn-ember">Buka peta titik panas</RouterLink>
@@ -67,7 +67,7 @@ const steps = [
         </div>
       </div>
 
-      <div class="mx-auto mt-10 flex max-w-6xl flex-wrap items-center gap-2 px-4">
+      <div class="mx-auto mt-6 md:mt-10 flex max-w-6xl flex-wrap items-center gap-2 px-4">
         <p v-if="freshness" class="glass-sm inline-flex items-center gap-2 px-3 py-1.5 text-xs sm:text-sm" :title="`Data diambil ${freshness.at}`">
           <span class="relative flex h-2.5 w-2.5 shrink-0">
             <span v-if="freshness.fresh" class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
@@ -84,6 +84,7 @@ const steps = [
 
       <div class="relative mx-auto mt-2 aspect-[2/1] max-w-6xl px-4 md:aspect-[21/9]">
         <HotspotSky :hotspots="hotspots" />
+        <p v-if="!hotspots.length" class="absolute inset-0 grid place-items-center text-sm text-mist">{{ error ? 'Peta belum bisa dimuat.' : 'Memuat peta titik panas dari satelit…' }}</p>
       </div>
 
       <div class="relative mx-auto mt-4 grid max-w-6xl gap-4 px-4 sm:grid-cols-3 md:mt-2">
@@ -104,8 +105,8 @@ const steps = [
           <p class="mt-1 text-sm text-mist">{{ periode(ringkasan.facts.periode) }}</p>
           <p class="mt-5 max-w-[62ch] text-xl leading-relaxed text-paper">{{ ringkasan.text }}</p>
           <p class="mt-5 text-xs text-mist">
-            <template v-if="ringkasan.ai">Kalimat disusun AI ({{ ringkasan.model }}) dari angka data NASA FIRMS dan diperbarui setiap 6 jam. Semua angka dihitung sistem, bukan AI.</template>
-            <template v-else>Disusun otomatis dari data NASA FIRMS dan diperbarui setiap 6 jam.</template>
+            <template v-if="ringkasan.ai">Kalimat disusun AI ({{ ringkasan.model }}) dari angka data NASA FIRMS dan diperbarui setiap 3 jam. Semua angka dihitung sistem, bukan AI.</template>
+            <template v-else>Disusun otomatis dari data NASA FIRMS dan diperbarui setiap 3 jam.</template>
           </p>
         </div>
       </article>

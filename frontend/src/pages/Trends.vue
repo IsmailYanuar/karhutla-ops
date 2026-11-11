@@ -336,7 +336,7 @@ const COLUMNS = [
                 v-for="r in RANGES"
                 :key="r"
                 type="button"
-                class="rounded-full px-4 py-1.5 text-sm font-semibold transition"
+                class="rounded-full px-4 py-2 text-sm font-semibold transition"
                 :class="range === r ? 'bg-ember-500 text-night' : 'text-mist hover:text-paper'"
                 :aria-pressed="range === r"
                 @click="range = r"
@@ -412,10 +412,10 @@ const COLUMNS = [
             <h2 class="font-display text-xl font-bold tracking-tight">Semua provinsi</h2>
             <p class="label">{{ filteredRows.length }} dari {{ rows.length }} provinsi · klik judul kolom untuk mengurutkan</p>
             <div class="mt-3 flex flex-wrap gap-2">
-              <button type="button" class="rounded-full bg-ember-500/15 px-3 py-1 text-xs font-semibold text-ember-400 transition sm:text-sm hover:bg-ember-500/25" @click="sortKey = 'trend'; sortDir = 'desc'">
+              <button type="button" class="rounded-full bg-ember-500/15 px-3 py-2 text-xs font-semibold text-ember-400 transition sm:text-sm hover:bg-ember-500/25" @click="sortKey = 'trend'; sortDir = 'desc'">
                 ▲ {{ worsening }} provinsi memburuk 2+ minggu beruntun
               </button>
-              <button type="button" class="rounded-full bg-emerald-300/15 px-3 py-1 text-xs font-semibold text-emerald-300 transition sm:text-sm hover:bg-emerald-300/25" @click="sortKey = 'trend'; sortDir = 'asc'">
+              <button type="button" class="rounded-full bg-emerald-300/15 px-3 py-2 text-xs font-semibold text-emerald-300 transition sm:text-sm hover:bg-emerald-300/25" @click="sortKey = 'trend'; sortDir = 'asc'">
                 ▼ {{ improving }} provinsi membaik 2+ minggu beruntun
               </button>
             </div>
@@ -434,16 +434,17 @@ const COLUMNS = [
           </div>
         </div>
 
-        <div class="mt-4 max-h-[34rem] overflow-auto rounded-xl border border-line">
+        <p class="mt-4 text-xs text-mist md:hidden">Geser tabel ke samping untuk melihat kolom lain. Kolom provinsi tetap terlihat.</p>
+        <div class="mt-2 max-h-[34rem] overflow-auto rounded-xl border border-line md:mt-4">
           <table class="w-full min-w-[820px] text-sm">
             <thead class="sticky top-0 z-10 bg-smoke">
               <tr class="border-b border-line text-mist">
                 <th
-                  v-for="c in COLUMNS"
+                  v-for="(c, i) in COLUMNS"
                   :key="c.key"
                   scope="col"
                   class="px-4 py-3 font-medium"
-                  :class="c.align"
+                  :class="[c.align, i === 0 && 'sticky left-0 z-20 bg-smoke']"
                   :aria-sort="ariaSort(c.key)"
                 >
                   <button type="button" class="transition hover:text-paper" :class="sortKey === c.key ? 'text-paper' : ''" @click="sortBy(c.key)">
@@ -460,7 +461,7 @@ const COLUMNS = [
                 :title="`Lihat profil ${r.province}`"
                 @click="router.push(profil(r.province))"
               >
-                <td class="px-4 py-2.5 font-medium">
+                <td class="sticky left-0 z-[1] bg-smoke px-4 py-2.5 font-medium">
                   <RouterLink :to="profil(r.province)" class="inline-flex items-center gap-1.5 group-hover:text-flare" @click.stop>
                     {{ r.province }}
                     <span class="text-xs opacity-0 transition group-hover:opacity-100" aria-hidden="true">→</span>

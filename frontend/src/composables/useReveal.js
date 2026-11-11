@@ -6,6 +6,13 @@ export function useReveal(rootRef) {
   let io, mo
   const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 
+  function show(el) {
+    if (!el.classList.contains('reveal') || el.classList.contains('reveal-in')) return
+    el.classList.add('reveal-in')
+    io?.unobserve(el)
+    setTimeout(() => el.classList.remove('reveal', 'reveal-in'), 800)
+  }
+
   function prepare(el) {
     if (el.dataset.revealed || el.closest('header, nav, [data-no-reveal]')) return
     el.dataset.revealed = '1'
@@ -13,6 +20,7 @@ export function useReveal(rootRef) {
     el.style.setProperty('--reveal-delay', `${Math.min(siblings.indexOf(el), 5) * 70}ms`)
     el.classList.add('reveal')
     io.observe(el)
+    setTimeout(() => show(el), 1500)
   }
 
   function scan(node) {
@@ -24,12 +32,7 @@ export function useReveal(rootRef) {
   onMounted(() => {
     if (reduce || !('IntersectionObserver' in window)) return
     io = new IntersectionObserver((entries) => {
-      for (const e of entries) {
-        if (!e.isIntersecting) continue
-        e.target.classList.add('reveal-in')
-        io.unobserve(e.target)
-        setTimeout(() => e.target.classList.remove('reveal', 'reveal-in'), 1200)
-      }
+      for (const e of entries) if (e.isIntersecting) show(e.target)
     }, { rootMargin: '0px 0px -40px 0px', threshold: 0.05 })
     scan(rootRef.value)
     mo = new MutationObserver((list) => list.forEach((m) => m.addedNodes.forEach(scan)))
