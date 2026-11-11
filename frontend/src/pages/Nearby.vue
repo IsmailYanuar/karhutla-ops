@@ -4,47 +4,8 @@ import L from 'leaflet'
 import { getHotspotData, CONFIDENCE, BASEMAP, formatDate } from '../services/hotspots'
 import { getAirQuality, getAirQualityMany, distanceKm, direction, ISPU_CATEGORIES } from '../services/udara'
 import { theme, cssColor } from '../composables/useTheme'
+import { CITIES } from '../services/kota'
 
-const CITIES = [
-  { name: 'Banda Aceh (Aceh)', lat: 5.548, lng: 95.323 },
-  { name: 'Medan (Sumatera Utara)', lat: 3.595, lng: 98.672 },
-  { name: 'Padang (Sumatera Barat)', lat: -0.947, lng: 100.417 },
-  { name: 'Pekanbaru (Riau)', lat: 0.507, lng: 101.448 },
-  { name: 'Tanjung Pinang (Kepulauan Riau)', lat: 0.918, lng: 104.459 },
-  { name: 'Jambi (Jambi)', lat: -1.61, lng: 103.613 },
-  { name: 'Bengkulu (Bengkulu)', lat: -3.8, lng: 102.266 },
-  { name: 'Palembang (Sumatera Selatan)', lat: -2.976, lng: 104.775 },
-  { name: 'Pangkal Pinang (Kep. Bangka Belitung)', lat: -2.129, lng: 106.11 },
-  { name: 'Bandar Lampung (Lampung)', lat: -5.397, lng: 105.266 },
-  { name: 'Serang (Banten)', lat: -6.12, lng: 106.15 },
-  { name: 'Jakarta (DKI Jakarta)', lat: -6.2, lng: 106.817 },
-  { name: 'Bandung (Jawa Barat)', lat: -6.917, lng: 107.619 },
-  { name: 'Semarang (Jawa Tengah)', lat: -6.967, lng: 110.417 },
-  { name: 'Yogyakarta (DI Yogyakarta)', lat: -7.797, lng: 110.37 },
-  { name: 'Surabaya (Jawa Timur)', lat: -7.257, lng: 112.752 },
-  { name: 'Denpasar (Bali)', lat: -8.65, lng: 115.217 },
-  { name: 'Mataram (Nusa Tenggara Barat)', lat: -8.583, lng: 116.117 },
-  { name: 'Kupang (Nusa Tenggara Timur)', lat: -10.178, lng: 123.607 },
-  { name: 'Pontianak (Kalimantan Barat)', lat: -0.026, lng: 109.342 },
-  { name: 'Palangka Raya (Kalimantan Tengah)', lat: -2.208, lng: 113.917 },
-  { name: 'Banjarbaru (Kalimantan Selatan)', lat: -3.442, lng: 114.833 },
-  { name: 'Samarinda (Kalimantan Timur)', lat: -0.502, lng: 117.153 },
-  { name: 'Tanjung Selor (Kalimantan Utara)', lat: 2.837, lng: 117.367 },
-  { name: 'Manado (Sulawesi Utara)', lat: 1.474, lng: 124.842 },
-  { name: 'Gorontalo (Gorontalo)', lat: 0.543, lng: 123.059 },
-  { name: 'Palu (Sulawesi Tengah)', lat: -0.898, lng: 119.87 },
-  { name: 'Mamuju (Sulawesi Barat)', lat: -2.677, lng: 118.889 },
-  { name: 'Makassar (Sulawesi Selatan)', lat: -5.148, lng: 119.432 },
-  { name: 'Kendari (Sulawesi Tenggara)', lat: -3.997, lng: 122.513 },
-  { name: 'Sofifi (Maluku Utara)', lat: 0.737, lng: 127.557 },
-  { name: 'Ambon (Maluku)', lat: -3.695, lng: 128.181 },
-  { name: 'Manokwari (Papua Barat)', lat: -0.862, lng: 134.064 },
-  { name: 'Sorong (Papua Barat Daya)', lat: -0.876, lng: 131.256 },
-  { name: 'Jayapura (Papua)', lat: -2.533, lng: 140.717 },
-  { name: 'Nabire (Papua Tengah)', lat: -3.367, lng: 135.483 },
-  { name: 'Wamena (Papua Pegunungan)', lat: -4.093, lng: 138.951 },
-  { name: 'Merauke (Papua Selatan)', lat: -8.493, lng: 140.401 },
-]
 const RADII = [10, 25, 50]
 
 const data = ref(null)

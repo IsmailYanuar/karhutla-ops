@@ -1,8 +1,8 @@
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
 import L from 'leaflet'
 import { useRoute, useRouter } from 'vue-router'
-import { getHotspotData, getWilayah, countByProvince, CONFIDENCE, BASEMAP, formatDate, slugify, downloadCsv } from '../services/hotspots'
+import { getHotspotData, getWilayah, countByProvince, CONFIDENCE, BASEMAP, formatDate, formatShortDate, slugify, downloadCsv } from '../services/hotspots'
 
 const route = useRoute()
 const router = useRouter()
@@ -12,6 +12,11 @@ const loading = ref(true)
 const error = ref('')
 const province = ref('')
 const confidence = ref('')
+const day = ref('')
+const query = ref('')
+const searching = ref(false)
+const searchMsg = ref('')
+let searchMarker = null
 let map = null
 let layer = null
 let currentRadius = null
@@ -25,8 +30,14 @@ const provinces = computed(() => {
   return [...names].sort((a, b) => a.localeCompare(b, 'id')).map((name) => ({ name, n: counts.value[name] ?? 0 }))
 })
 
+const dayOf = (iso) => new Date(iso).toLocaleDateString('sv-SE', { timeZone: 'Asia/Jakarta' })
+const days = computed(() => [...new Set(all.value.map((h) => dayOf(h.detectedAt)))].sort().reverse())
+
 const filtered = computed(() =>
-  all.value.filter((h) => (!province.value || h.province === province.value) && (!confidence.value || h.confidence === confidence.value)),
+  all.value.filter((h) =>
+    (!province.value || h.province === province.value) &&
+    (!confidence.value || h.confidence === confidence.value) &&
+    (!day.value || dayOf(h.detectedAt) === day.value)),
 )
 
 const ranking = computed(() => countByProvince(filtered.value))
@@ -124,7 +135,46 @@ function unduh() {
 function reset() {
   province.value = ''
   confidence.value = ''
+  day.value = ''
+  query.value = ''
+  searchMsg.value = ''
+  searchMarker?.remove()
+  searchMarker = null
 }
+
+// Cari lokasi: nama provinsi langsung menyaring peta, nama kota atau kabupaten memindahkan peta ke lokasinya.
+async function search() {
+  const q = query.value.trim()
+  if (q.length < 3 || !map) return
+  searchMsg.value = ''
+  const norm = (t) => t.toLowerCase().replace(/^provinsi\s+/, '').trim()
+  const prov = provinces.value.find((p) => norm(p.name).includes(norm(q)))
+  if (prov) {
+    province.value = prov.name
+    return
+  }
+  searching.value = true
+  try {
+    const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=1&language=id&countryCode=ID`)
+    const r = (await res.json()).results?.[0]
+    if (!r) {
+      searchMsg.value = `Lokasi "${q}" tidak ditemukan.`
+      return
+    }
+    if (province.value) {
+      province.value = ''
+      await nextTick()
+    }
+    searchMarker?.remove()
+    searchMarker = L.circleMarker([r.latitude, r.longitude], { radius: 9, color: '#2563eb', weight: 3, fillColor: '#ffffff', fillOpacity: 1 }).addTo(map).bindPopup(`<strong>${r.name}</strong>${r.admin1 ? `<br>${r.admin1}` : ''}`).openPopup()
+    map.flyTo([r.latitude, r.longitude], 9, { duration: 0.8 })
+  } catch {
+    searchMsg.value = 'Pencarian gagal, coba lagi.'
+  } finally {
+    searching.value = false
+  }
+}
+
 </script>
 
 <template>
@@ -155,7 +205,21 @@ function reset() {
           <option v-for="(c, key) in CONFIDENCE" :key="key" :value="key">{{ c.label }}</option>
         </select>
       </label>
-      <button v-if="province || confidence" class="rounded-full px-4 py-2.5 text-sm font-semibold text-flare hover:bg-veil/5" @click="reset">Reset filter</button>
+            <label class="flex flex-col gap-1.5">
+        <span class="label">Tanggal</span>
+        <select id="filter-day" v-model="day" class="field">
+          <option value="">7 hari terakhir</option>
+          <option v-for="d in days" :key="d" :value="d">{{ formatShortDate(d) }}</option>
+        </select>
+      </label>
+      <form class="flex flex-col gap-1.5" @submit.prevent="search">
+        <label for="cari-peta" class="label">Cari lokasi</label>
+        <div class="flex gap-2">
+          <input id="cari-peta" v-model="query" type="search" class="field w-48" placeholder="provinsi atau kota" />
+          <button type="submit" class="btn-ghost !px-4 !py-2.5 text-sm" :disabled="searching">{{ searching ? '…' : 'Cari' }}</button>
+        </div>
+      </form>
+      <button v-if="province || confidence || day || query"  class="rounded-full px-4 py-2.5 text-sm font-semibold text-flare hover:bg-veil/5" @click="reset">Reset filter</button>
       <RouterLink v-if="province" :to="{ name: 'region', query: { p: slugify(province) } }" class="rounded-full px-4 py-2.5 text-sm font-semibold text-flare hover:bg-veil/5">Lihat profil {{ province }}</RouterLink>
       <button class="btn-ghost ml-auto !py-2.5 text-sm" :disabled="!filtered.length" @click="unduh">
         Unduh CSV ({{ filtered.length.toLocaleString('id-ID') }} titik)
@@ -176,6 +240,7 @@ function reset() {
           </span>
           <span v-if="data" class="sm:ml-auto">Data diambil {{ formatDate(data.updatedAt) }}</span>
         </div>
+        <p v-if="searchMsg" class="mt-3 text-sm text-flare">{{ searchMsg }}</p>
         <p v-if="error" class="mt-3 text-sm text-red-300">{{ error }}. Pastikan file public/data/hotspots.json ada.</p>
       </div>
 

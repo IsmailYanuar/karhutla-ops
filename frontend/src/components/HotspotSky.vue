@@ -92,6 +92,7 @@ function newEmber(anywhere) {
 
 function resize() {
   const rect = wrap.value.getBoundingClientRect()
+  if (!rect.width || !rect.height) return
   w = rect.width
   h = rect.height
   dpr = Math.min(window.devicePixelRatio || 1, 2)
@@ -108,6 +109,7 @@ function frame(now) {
   const box = fit()
   const sweepX = box.ox + eased * (box.x1 - box.ox)
 
+  if (!coast?.width || !coast?.height) { raf = requestAnimationFrame(frame); return }
   ctx.clearRect(0, 0, w, h)
   ctx.drawImage(coast, 0, 0, w, h)
 

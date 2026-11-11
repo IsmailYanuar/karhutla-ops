@@ -8,7 +8,20 @@ import {
   getHotspotData, getHistory, getWilayah, getRingkasan,
   CONFIDENCE, BASEMAP, formatDate, formatShortDate, addDays, sumRange, percentChange, slugify, downloadCsv,
 } from '../services/hotspots'
+
 import { theme, cssColor } from '../composables/useTheme'
+import { CITIES } from '../services/kota'
+import { distanceKm, direction } from '../services/udara'
+
+function nearPlace(lat, lng) {
+  let best = null
+  for (const c of CITIES) {
+    const km = distanceKm(c.lat, c.lng, lat, lng)
+    if (!best || km < best.km) best = { c, km }
+  }
+  const city = best.c.name.replace(/ \(.*\)$/, '')
+  return best.km < 3 ? `dekat pusat ${city}` : `±${Math.round(best.km).toLocaleString('id-ID')} km ${direction(best.c.lat, best.c.lng, lat, lng)} ${city}`
+}
 
 const route = useRoute()
 const router = useRouter()
@@ -22,6 +35,7 @@ const province = ref('')
 const range = ref(30)
 const shown = ref(8)
 const copied = ref(false)
+const unknown = ref('')
 const mapEl = ref(null)
 let map = null
 let layer = null
@@ -53,6 +67,7 @@ onMounted(async () => {
     return
   }
   province.value = fromRoute() ?? rows.value[0]?.name ?? ''
+  if (route.query.p && !fromRoute()) unknown.value = String(route.query.p)
   await nextTick()
   await initMap()
 })
@@ -298,6 +313,10 @@ function drawMap() {
       </div>
     </div>
 
+    <div v-if="unknown && me" class="mt-6 flex items-start justify-between gap-3 rounded-2xl border border-ember-400/40 bg-ember-400/10 p-4 text-sm text-flare">
+      <p>Provinsi "{{ unknown }}" tidak ditemukan, jadi yang ditampilkan adalah {{ province }}. Pilih provinsi lain lewat menu di atas.</p>
+      <button type="button" class="shrink-0 font-semibold hover:underline" @click="unknown = ''">Tutup</button>
+    </div>
     <div v-if="error" class="glass mt-8 grid min-h-64 place-items-center p-10 text-center text-mist">{{ error }}</div>
     <div v-else-if="!me" class="glass mt-8 grid min-h-64 place-items-center p-10 text-center text-mist">Memuat profil daerah…</div>
 
@@ -382,7 +401,7 @@ function drawMap() {
           <div class="flex flex-wrap items-start justify-between gap-3">
             <div>
               <h2 class="font-display text-xl font-bold tracking-tight">Titik panas terbaru</h2>
-              <p class="label">{{ fmt(latest.length) }} titik, data langsung sampai {{ formatDate(lastDetected) }}</p>
+              <p class="label">{{ lastDetected ? `${fmt(latest.length)} titik, data langsung sampai ${formatDate(lastDetected)}` : 'Tidak ada titik panas dalam 7 hari terakhir' }}</p>
             </div>
             <button type="button" class="btn-ghost !px-4 !py-2 text-sm" :disabled="!latest.length" @click="unduh">Unduh CSV</button>
           </div>
@@ -401,8 +420,8 @@ function drawMap() {
               <li v-for="h in latest.slice(0, shown)" :key="h.id" class="flex items-center gap-3 py-3">
                 <span class="h-3 w-3 shrink-0 rounded-full ring-1 ring-veil/20" :style="{ background: CONFIDENCE[h.confidence].color }" :title="`Kepercayaan ${CONFIDENCE[h.confidence].label.toLowerCase()}`"></span>
                 <div class="min-w-0 flex-1">
-                  <p class="truncate font-semibold tabular-nums">{{ coordText(h.lat, h.lng) }}</p>
-                  <p class="truncate text-xs text-mist">{{ h.satellite }} · {{ formatDate(h.detectedAt) }}</p>
+                  <p class="truncate font-semibold">{{ nearPlace(h.lat, h.lng) }}</p>
+                  <p class="truncate text-xs text-mist"><span class="tabular-nums">{{ coordText(h.lat, h.lng) }}</span> · {{ h.satellite }} · {{ formatDate(h.detectedAt) }}</p>
                 </div>
                 <div class="shrink-0 text-right">
                   <p class="text-sm font-semibold text-flare">{{ timeAgo(h.detectedAt) }}</p>
