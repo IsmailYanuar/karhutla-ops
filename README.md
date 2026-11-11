@@ -5,7 +5,7 @@
 **Demo:** https://karhutla-tracker.vercel.app
 **Video pitching:** (tautan YouTube)
 
-Website transparansi titik panas kebakaran hutan dan lahan (karhutla) di Indonesia. KarhutlaTracker mengolah data satelit terbuka NASA menjadi peta, tren, rapor per provinsi, cek lokasi, dan panduan Siaga Asap yang bisa dipahami masyarakat umum. Semua angka berasal dari data asli, bukan simulasi, dan diperbarui otomatis setiap 6 jam.
+Website transparansi titik panas kebakaran hutan dan lahan (karhutla) di Indonesia. KarhutlaTracker mengolah data satelit terbuka NASA menjadi peta, tren, rapor per provinsi, cek lokasi, dan panduan Siaga Asap yang bisa dipahami masyarakat umum. Semua angka berasal dari data asli, bukan simulasi, dan diperbarui otomatis setiap 3 jam.
 
 **Subtema:** Open Government Data (Web In Action, MIA 2026)
 **Tim:** KarhutlaOps
@@ -63,14 +63,14 @@ flowchart LR
 | Warga yang melihat api atau asap | Tahu ke mana harus melapor | Profil Daerah (lembaga dan kanal), Siaga Asap (nomor darurat, LAPOR!) |
 | Jurnalis, peneliti, dan LSM | Data dan perbandingan antardaerah yang bisa diperiksa ulang | Tren, rapor 4 minggu, Profil Daerah, unduh CSV |
 | Warga yang ingin menagih tanggung jawab pemerintah | Bukti kondisi daerahnya dan dasar hukum kewajiban pemerintah | Profil Daerah (Bagikan), Siaga Asap (dasar hukum) |
-| Sistem (GitHub Actions) | Memperbarui data dan ringkasan tanpa campur tangan manual | Pipeline data setiap 6 jam |
+| Sistem (GitHub Actions) | Memperbarui data dan ringkasan tanpa campur tangan manual | Pipeline data setiap 3 jam |
 
 ## Arsitektur
 ```mermaid
 flowchart LR
     FIRMS["NASA FIRMS<br/>titik panas VIIRS"]
     GEMINI["Google Gemini<br/>penyusun kalimat"]
-    subgraph GHA["GitHub Actions, setiap 6 jam"]
+    subgraph GHA["GitHub Actions, setiap 3 jam"]
         F["fetch-firms.mjs<br/>ambil, cocokkan ke 38 provinsi"]
         R["ringkasan-ai.mjs<br/>hitung angka, susun ringkasan"]
         F --> R
@@ -115,7 +115,7 @@ Satu tanggal hanya memakai satu satelit (Suomi NPP diutamakan) supaya titik yang
 ## Tech Stack
 - **Frontend:** Vue 3, Vite, Vue Router, Tailwind CSS v4
 - **Peta dan grafik:** Leaflet, Chart.js
-- **Pengolahan data:** script Node.js yang dijalankan GitHub Actions setiap 6 jam
+- **Pengolahan data:** script Node.js yang dijalankan GitHub Actions setiap 3 jam
 - **Ringkasan AI:** Google Gemini (model Flash) untuk ringkasan harian nasional dan ringkasan 38 provinsi. Semua angka dihitung sistem, AI hanya menyusun kalimat. Setiap ringkasan provinsi dicek otomatis: jika tidak memuat jumlah titik yang benar, atau jika AI gagal, dipakai ringkasan templat.
 - **Deploy dan analitik:** Vercel, Vercel Web Analytics
 
@@ -123,7 +123,7 @@ Satu tanggal hanya memakai satu satelit (Suomi NPP diutamakan) supaya titik yang
 ```
 karhutla-ops/
 ├── .github/workflows/
-│   └── update-data.yml        # jadwal pembaruan data setiap 6 jam
+│   └── update-data.yml        # jadwal pembaruan data setiap 3 jam
 ├── scripts/                   # pengolahan data (Node.js)
 │   ├── fetch-firms.mjs        # ambil titik panas NASA FIRMS, cocokkan ke provinsi
 │   ├── ringkasan-ai.mjs       # angka utama dan ringkasan AI (nasional dan per provinsi)
@@ -179,7 +179,7 @@ node scripts/ringkasan-ai.mjs
 File `.env` jangan di-commit. Di GitHub, kedua key disimpan di **Settings > Secrets and variables > Actions**.
 
 ## Progress
-- ✅ Pipeline data otomatis NASA FIRMS lewat GitHub Actions (setiap 6 jam, 3 satelit VIIRS)
+- ✅ Pipeline data otomatis NASA FIRMS lewat GitHub Actions (setiap 3 jam, 3 satelit VIIRS)
 - ✅ Riwayat harian sekitar 400 hari dan luas resmi provinsi dari BIG
 - ✅ Beranda dengan animasi titik panas dan ringkasan AI harian
 - ✅ Peta Titik Panas dengan filter provinsi dan tingkat kepercayaan
