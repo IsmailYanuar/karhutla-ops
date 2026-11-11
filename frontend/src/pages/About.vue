@@ -28,10 +28,34 @@ const faqs = [
   { q: 'Apakah AI yang menghitung angka di website ini?', a: 'Tidak. Semua angka dihitung oleh sistem dari data satelit dan luas resmi provinsi. AI (Google Gemini) hanya menyusun kalimat ringkasan dari angka yang sudah jadi. Jika AI gagal, ringkasan disusun otomatis dengan templat.' },
   { q: 'Apakah lokasi saya disimpan?', a: 'Tidak. KarhutlaTracker tidak menyimpan lokasi Anda. Koordinat hanya dikirim ke Open-Meteo untuk mengambil kualitas udara dan ke OpenStreetMap untuk mencari nama tempat.' },
   { q: 'Saya melihat api atau asap. Harus lapor ke mana?', a: 'Utamakan keselamatan dan jauhi api. Hubungi 112 (darurat) atau 113 (pemadam kebakaran). Untuk aduan ke pemerintah, gunakan SP4N-LAPOR!. Panduan lengkapnya ada di halaman Siaga Asap.' },
-  { q: 'Bisakah saya mengunduh datanya?', a: 'Bisa. Halaman Peta menyediakan unduhan CSV titik panas sesuai filter provinsi dan tingkat kepercayaan, dan halaman Tren menyediakan unduhan data harian serta tabel 38 provinsi.' },
+  { q: 'Bisakah saya mengunduh datanya?', a: 'Bisa. Halaman Peta menyediakan unduhan CSV titik panas sesuai filter provinsi dan tingkat kepercayaan, dan halaman Tren menyediakan unduhan data harian serta tabel 38 provinsi. Penjelasan kolom, berkas JSON, dan lisensinya ada di bagian Data terbuka di halaman ini.' },
   { q: 'Kenapa jumlah titik di Peta berbeda dengan Tren dan Profil Daerah?', a: 'Peta menampilkan deteksi langsung 7 hari terakhir sampai saat ini, termasuk hari ini yang datanya belum lengkap. Tren dan Profil Daerah memakai 7 hari yang sudah lengkap (sampai kemarin lusa) supaya perbandingan antarminggu adil. Karena rentangnya berbeda, angkanya bisa selisih sedikit.' },
 ]
 const openFaq = ref(0)
+
+const columns = [
+  { col: 'latitude', type: 'angka', text: 'Lintang titik panas, derajat desimal (WGS84).' },
+  { col: 'longitude', type: 'angka', text: 'Bujur titik panas, derajat desimal (WGS84).' },
+  { col: 'provinsi', type: 'teks', text: 'Nama provinsi hasil pencocokan koordinat dengan batas 38 provinsi.' },
+  { col: 'kepercayaan', type: 'teks', text: 'Tingkat kepercayaan deteksi dari NASA FIRMS: high (tinggi), nominal (sedang), low (rendah).' },
+  { col: 'satelit', type: 'teks', text: 'Sensor dan satelit yang mendeteksi, misalnya VIIRS NOAA-20.' },
+  { col: 'waktu_deteksi_utc', type: 'tanggal-waktu', text: 'Waktu satelit melintas, format ISO 8601 dalam UTC. Tambahkan 7 jam untuk WIB.' },
+  { col: 'frp_mw', type: 'angka', text: 'Fire Radiative Power dalam megawatt, perkiraan kekuatan panas api. Makin besar, makin kuat.' },
+]
+
+const files = [
+  { path: '/data/hotspots.json', text: 'Titik panas 7 hari terakhir. Isi: hotspots (lat, lng, province, confidence, satellite, detectedAt, frp), summary (total, high, byProvince, byDate), updatedAt, source.' },
+  { path: '/data/history.json', text: 'Riwayat harian. Isi: days, berupa daftar per tanggal (UTC) dengan count, high, dan byProvince.' },
+  { path: '/data/wilayah.json', text: 'Daftar 38 provinsi dengan kode wilayah Kemendagri (code) dan luas resmi dalam km² (areaKm2).' },
+  { path: '/data/ringkasan.json', text: 'Ringkasan nasional dan per provinsi, beserta angka dasar (facts) yang dipakai menyusunnya.' },
+  { path: '/data/batas-provinsi.geojson', text: 'Batas 38 provinsi dalam format GeoJSON.' },
+]
+
+const portals = [
+  { name: 'Portal Satu Data Indonesia', url: 'https://data.go.id/', text: 'Portal data terbuka resmi pemerintah. Cari kata kunci "kebakaran hutan" atau "titik panas" untuk dataset kementerian dan daerah.' },
+  { name: 'SiPongi KLHK', url: 'https://sipongi.menlhk.go.id/', text: 'Rekap resmi titik panas dan luas karhutla dari Kementerian Lingkungan Hidup dan Kehutanan.' },
+  { name: 'Geoportal BIG (Ina-Geoportal)', url: 'https://tanahair.indonesia.go.id/', text: 'Data geospasial resmi Badan Informasi Geospasial, termasuk batas wilayah.' },
+]
 </script>
 
 <template>
@@ -44,6 +68,42 @@ const openFaq = ref(0)
       <li v-for="s in sources" :key="s.name" class="glass p-5">
         <a :href="s.url" target="_blank" rel="noopener" class="font-display text-lg font-bold text-flare hover:underline">{{ s.name }}</a>
         <p class="mt-2 text-mist">{{ s.text }}</p>
+      </li>
+    </ul>
+
+    <h2 id="data-terbuka" class="mt-12 scroll-mt-24 font-display text-2xl font-bold">Data terbuka: kamus, berkas, dan lisensi</h2>
+    <p class="mt-2 text-mist">Semua data olahan KarhutlaTracker boleh diunduh dan dipakai ulang.</p>
+
+    <h3 class="mt-6 font-display text-lg font-bold">Kamus data unduhan CSV titik panas</h3>
+    <dl class="glass mt-3 divide-y divide-veil/5">
+      <div v-for="c in columns" :key="c.col" class="grid gap-1 p-5 md:grid-cols-[200px_110px_1fr] md:gap-6">
+        <dt class="font-mono text-sm font-semibold text-flare">{{ c.col }}</dt>
+        <dd class="text-sm text-mist">{{ c.type }}</dd>
+        <dd>{{ c.text }}</dd>
+      </div>
+    </dl>
+    <p class="mt-2 text-sm text-mist">Unduhan di halaman Tren memakai nama kolom yang menjelaskan dirinya sendiri, termasuk rentang tanggal di judul kolom.</p>
+
+    <h3 class="mt-8 font-display text-lg font-bold">Berkas JSON</h3>
+    <p class="mt-1 text-mist">Data yang sama dengan yang tampil di website, diperbarui otomatis kurang lebih setiap 3 jam. Bisa diambil langsung oleh aplikasi lain tanpa kunci API.</p>
+    <ul class="glass mt-3 divide-y divide-veil/5">
+      <li v-for="f in files" :key="f.path" class="grid gap-1 p-5 md:grid-cols-[240px_1fr] md:gap-6">
+        <a :href="f.path" target="_blank" rel="noopener" class="font-mono text-sm font-semibold text-flare hover:underline">{{ f.path }}</a>
+        <p class="text-mist">{{ f.text }}</p>
+      </li>
+    </ul>
+
+    <h3 class="mt-8 font-display text-lg font-bold">Lisensi</h3>
+    <div class="glass mt-3 p-5 text-mist">
+      <p>Data olahan KarhutlaTracker (CSV dan JSON) dibagikan dengan lisensi <a href="https://creativecommons.org/licenses/by/4.0/deed.id" target="_blank" rel="noopener" class="font-semibold text-flare hover:underline">Creative Commons Atribusi 4.0 (CC BY 4.0)</a>: boleh disalin, diolah, dan dipakai ulang, termasuk untuk keperluan komersial, asalkan mencantumkan sumber.</p>
+      <p class="mt-3">Contoh atribusi: "Sumber: KarhutlaTracker, diolah dari NASA FIRMS (VIIRS)." Data mentah NASA FIRMS terbuka untuk umum sesuai kebijakan data terbuka NASA, dan batas provinsi berlisensi CC BY 4.0.</p>
+    </div>
+
+    <h3 class="mt-8 font-display text-lg font-bold">Portal data pemerintah terkait</h3>
+    <ul class="mt-3 grid gap-4 md:grid-cols-3">
+      <li v-for="p in portals" :key="p.name" class="glass p-5">
+        <a :href="p.url" target="_blank" rel="noopener" class="font-display text-base font-bold text-flare hover:underline">{{ p.name }}</a>
+        <p class="mt-2 text-sm text-mist">{{ p.text }}</p>
       </li>
     </ul>
 
