@@ -1,53 +1,53 @@
 {
-  "text": "Selama periode 7 November 2026 sampai 13 November 2026 (7 hari), terdeteksi total 7.785 titik panas dengan 139 di antaranya memiliki kepercayaan tinggi. Jumlah tersebut turun 52% dibanding periode sebelumnya. Adapun daerah dengan jumlah titik panas terbanyak tercatat di Papua Selatan (1.690 titik).",
-  "model": "gemini-3.6-flash",
+  "text": "Pada periode 7 November 2026 sampai 13 November 2026 (7 hari), terdeteksi sebanyak 8.098 titik panas di Indonesia dengan 138 titik memiliki tingkat kepercayaan tinggi. Jumlah tersebut turun 51% dibandingkan periode 7 hari sebelumnya. Dari seluruh wilayah, sebaran titik panas terbanyak tercatat di Papua Selatan (1.669 titik).",
+  "model": "gemini-3.8-flash",
   "ai": true,
   "facts": {
     "jumlahHari": 7,
     "periode": "2026-11-07 s.d. 2026-11-13",
-    "totalTitik": 7785,
-    "kepercayaanTinggi": 139,
-    "perubahanPeriodeSebelumnyaPersen": -52,
-    "perubahanTahunLaluPersen": 876,
+    "totalTitik": 8098,
+    "kepercayaanTinggi": 138,
+    "perubahanPeriodeSebelumnyaPersen": -51,
+    "perubahanTahunLaluPersen": 915,
     "terbanyak": [
       {
         "provinsi": "Papua Selatan",
-        "titik": 1690
+        "titik": 1669
       },
       {
         "provinsi": "Sulawesi Tenggara",
-        "titik": 1017
+        "titik": 1065
       },
       {
         "provinsi": "Kalimantan Timur",
-        "titik": 702
+        "titik": 708
       }
     ],
     "terpadat": [
       {
         "provinsi": "Sulawesi Tenggara",
-        "per1000km2": 28.1
-      },
-      {
-        "provinsi": "Papua Selatan",
-        "per1000km2": 14.3
+        "per1000km2": 29.5
       },
       {
         "provinsi": "Maluku",
-        "per1000km2": 13.6
+        "per1000km2": 14.2
+      },
+      {
+        "provinsi": "Papua Selatan",
+        "per1000km2": 14.2
       }
     ],
     "kenaikanTerbesar": [
       {
+        "provinsi": "Sulawesi Tenggara",
+        "tambahanTitik": 20
+      },
+      {
         "provinsi": "Papua Barat Daya",
-        "tambahanTitik": 15
+        "tambahanTitik": 17
       },
       {
         "provinsi": "Bali",
-        "tambahanTitik": 4
-      },
-      {
-        "provinsi": "Sulawesi Barat",
         "tambahanTitik": 4
       }
     ]
@@ -208,5 +208,5 @@
   },
   "provinsiModel": null,
   "provinsiSampai": "2026-11-12",
-  "generatedAt": "2026-11-13T06:46:33.685Z"
+  "generatedAt": "2026-11-13T17:15:14.144Z"
 }
