@@ -1,212 +1,208 @@
 {
-  "text": "Dalam 7 hari terakhir terdeteksi 8.316 titik panas di Indonesia, turun 49% dibanding 7 hari sebelumnya, 138 di antaranya berkepercayaan tinggi. Terbanyak di Papua Selatan (1.708), Sulawesi Tenggara (1.080), Kalimantan Timur (773). Kenaikan terbesar terjadi di Sulawesi Tenggara (+35 titik).",
+  "text": "Dalam 7 hari terakhir terdeteksi 6.500 titik panas di Indonesia, turun 61% dibanding 7 hari sebelumnya, 111 di antaranya berkepercayaan tinggi. Terbanyak di Papua Selatan (1.600), Sulawesi Tenggara (842), Kalimantan Timur (591). Kenaikan terbesar terjadi di Papua Barat Daya (+2 titik).",
   "model": null,
   "ai": false,
   "facts": {
     "jumlahHari": 7,
-    "periode": "2026-11-07 s.d. 2026-11-13",
-    "totalTitik": 8316,
-    "kepercayaanTinggi": 138,
-    "perubahanPeriodeSebelumnyaPersen": -49,
-    "perubahanTahunLaluPersen": 942,
+    "periode": "2026-11-08 s.d. 2026-11-14",
+    "totalTitik": 6500,
+    "kepercayaanTinggi": 111,
+    "perubahanPeriodeSebelumnyaPersen": -61,
+    "perubahanTahunLaluPersen": 1122,
     "terbanyak": [
       {
         "provinsi": "Papua Selatan",
-        "titik": 1708
+        "titik": 1600
       },
       {
         "provinsi": "Sulawesi Tenggara",
-        "titik": 1080
+        "titik": 842
       },
       {
         "provinsi": "Kalimantan Timur",
-        "titik": 773
+        "titik": 591
       }
     ],
     "terpadat": [
       {
         "provinsi": "Sulawesi Tenggara",
-        "per1000km2": 29.9
+        "per1000km2": 23.3
       },
       {
         "provinsi": "Papua Selatan",
-        "per1000km2": 14.5
+        "per1000km2": 13.6
       },
       {
-        "provinsi": "Maluku",
-        "per1000km2": 14.4
+        "provinsi": "Nusa Tenggara Timur",
+        "per1000km2": 10.2
       }
     ],
     "kenaikanTerbesar": [
       {
-        "provinsi": "Sulawesi Tenggara",
-        "tambahanTitik": 35
-      },
-      {
         "provinsi": "Papua Barat Daya",
-        "tambahanTitik": 18
+        "tambahanTitik": 2
       },
       {
-        "provinsi": "Bali",
-        "tambahanTitik": 4
+        "provinsi": "Sulawesi Barat",
+        "tambahanTitik": 2
       }
     ]
   },
   "provinsi": {
     "Aceh": {
-      "text": "Terdeteksi 8 titik panas di Provinsi Aceh pada pemantauan terkini. Jumlah ini turun 47% dibandingkan 15 titik panas pada periode sebelumnya.",
+      "text": "Tercatat 9 titik panas di Aceh dalam 7 hari terakhir. Jumlah ini menunjukkan perubahan turun 40% dibandingkan 7 hari sebelumnya yang sebanyak 15 titik panas.",
       "ai": true
     },
     "Bali": {
-      "text": "Terdapat 4 titik panas yang teramati di wilayah Bali. Angka tersebut naik 33% dari 3 titik panas pada periode sebelumnya.",
+      "text": "Dalam 7 hari terakhir, Bali mencatatkan 4 titik panas. Catatan ini menunjukkan perubahan karena sebelumnya tidak ada titik panas dengan 0 titik panas pada 7 hari sebelumnya.",
       "ai": true
     },
     "Banten": {
-      "text": "Banten mencatatkan 46 titik panas pada pemantauan terbaru. Jumlah ini naik 10% dibanding 42 titik panas sebelumnya.",
+      "text": "Banten mencatatkan 40 titik panas selama periode 7 hari terakhir. Jumlah tersebut menunjukkan penurunan dengan perubahan turun 25% dari 7 hari sebelumnya yang tercatat 53 titik panas.",
       "ai": true
     },
     "Bengkulu": {
-      "text": "Di Bengkulu, terdeteksi 10 titik panas pada periode saat ini. Capaian ini turun 23% dari 13 titik panas pada periode sebelumnya.",
+      "text": "Sebanyak 10 titik panas terdeteksi di Bengkulu dalam kurun 7 hari terakhir. Angka ini mengalami perubahan turun 23% dibandingkan 7 hari sebelumnya yang berjumlah 13 titik panas.",
       "ai": true
     },
     "DI Yogyakarta": {
-      "text": "Pemantauan di DI Yogyakarta mendeteksi 4 titik panas. Jumlah ini naik 300% dari 1 titik panas sebelumnya.",
+      "text": "Di Provinsi DI Yogyakarta, terdeteksi 3 titik panas pada 7 hari terakhir. Jumlah ini mengalami perubahan naik 50% jika dibandingkan dengan 7 hari sebelumnya yang tercatat 2 titik panas.",
       "ai": true
     },
     "DKI Jakarta": {
-      "text": "Tidak ada titik panas terdeteksi di DKI Jakarta dalam 7 hari sampai 12 November.",
-      "ai": false
+      "text": "Tidak ada titik panas terdeteksi di DKI Jakarta dengan jumlah 0 titik panas pada periode ini.",
+      "ai": true
     },
     "Gorontalo": {
-      "text": "Gorontalo mencatat 114 titik panas pada periode ini. Angka ini turun 52% dibandingkan 239 titik panas sebelumnya.",
+      "text": "Gorontalo mencatat 108 titik panas dalam 7 hari terakhir. Angka tersebut menunjukkan perubahan turun 45% dari 195 titik panas pada 7 hari sebelumnya.",
       "ai": true
     },
     "Jambi": {
-      "text": "Terdapat 65 titik panas yang terdeteksi di Jambi. Jumlah tersebut turun 82% dari 360 titik panas pada periode terdahulu.",
+      "text": "Dalam periode 7 hari terakhir, terdapat 26 titik panas yang terpantau di Jambi. Angka ini mengalami perubahan turun 93% dari 393 titik panas pada 7 hari sebelumnya.",
       "ai": true
     },
     "Jawa Barat": {
-      "text": "Sebanyak 50 titik panas teramati di Jawa Barat. Capaian ini turun 11% dari 56 titik panas sebelumnya.",
+      "text": "Sebanyak 39 titik panas terpantau di Jawa Barat selama 7 hari terakhir. Jumlah ini mengalami perubahan turun 45% dibandingkan 7 hari sebelumnya yang mencapai 71 titik panas.",
       "ai": true
     },
     "Jawa Tengah": {
-      "text": "Jawa Tengah mencatatkan 27 titik panas pada pemantauan terkini. Jumlah ini turun 13% dibandingkan 31 titik panas pada periode lalu.",
+      "text": "Provinsi Jawa Tengah mencatatkan 22 titik panas dalam 7 hari terakhir. Angka tersebut menunjukkan perubahan turun 37% dari 35 titik panas pada 7 hari sebelumnya.",
       "ai": true
     },
     "Jawa Timur": {
-      "text": "Terdeteksi 170 titik panas di wilayah Jawa Timur. Angka tersebut naik 10% dari 155 titik panas sebelumnya.",
+      "text": "Terdeteksi 160 titik panas di Jawa Timur selama kurun 7 hari terakhir. Jumlah ini mengalami perubahan turun 8% dibanding 7 hari sebelumnya yang berjumlah 173 titik panas.",
       "ai": true
     },
     "Kalimantan Barat": {
-      "text": "Kalimantan Barat mencatat keberadaan 38 titik panas. Hasil pemantauan ini turun 75% dari 154 titik panas pada periode sebelumnya.",
+      "text": "Sebanyak 47 titik panas tercatat di Kalimantan Barat pada 7 hari terakhir. Angka ini menunjukkan perubahan turun 67% dari 144 titik panas pada 7 hari sebelumnya.",
       "ai": true
     },
     "Kalimantan Selatan": {
-      "text": "Pemantauan di Kalimantan Selatan mencatatkan 286 titik panas. Jumlah tersebut turun 39% dibanding 471 titik panas terdahulu.",
+      "text": "Kalimantan Selatan mencatatkan 251 titik panas dalam periode 7 hari terakhir. Jumlah tersebut mengalami perubahan turun 35% dibandingkan 389 titik panas pada 7 hari sebelumnya.",
       "ai": true
     },
     "Kalimantan Tengah": {
-      "text": "Terdeteksi sebanyak 762 titik panas di Kalimantan Tengah. Angka ini turun 79% dari 3.620 titik panas pada periode sebelumnya.",
+      "text": "Terpantau 523 titik panas di Kalimantan Tengah selama 7 hari terakhir. Angka ini menunjukkan perubahan turun 85% dari 3.589 titik panas pada 7 hari sebelumnya.",
       "ai": true
     },
     "Kalimantan Timur": {
-      "text": "Kalimantan Timur mencatatkan 802 titik panas saat ini. Jumlah tersebut turun 38% dari 1.294 titik panas sebelumnya.",
+      "text": "Di Kalimantan Timur, terdeteksi 773 titik panas dalam kurun 7 hari terakhir. Jumlah ini mengalami perubahan turun 23% dibandingkan 1.009 titik panas pada 7 hari sebelumnya.",
       "ai": true
     },
     "Kalimantan Utara": {
-      "text": "Terdapat 40 titik panas yang teramati di Kalimantan Utara. Capaian ini turun 56% dibandingkan 91 titik panas pada periode lalu.",
+      "text": "Sebanyak 23 titik panas terpantau di Kalimantan Utara selama 7 hari terakhir. Angka tersebut menunjukkan perubahan turun 75% dari 91 titik panas pada 7 hari sebelumnya.",
       "ai": true
     },
     "Kepulauan Bangka Belitung": {
-      "text": "Terdeteksi 99 titik panas di Kepulauan Bangka Belitung. Angka ini turun 58% dari 234 titik panas pada pemantauan sebelumnya.",
+      "text": "Kepulauan Bangka Belitung mencatatkan 90 titik panas dalam 7 hari terakhir. Jumlah ini mengalami perubahan turun 62% dibanding 7 hari sebelumnya yang tercatat 240 titik panas.",
       "ai": true
     },
     "Kepulauan Riau": {
-      "text": "Kepulauan Riau mencatatkan 4 titik panas pada periode ini. Jumlah tersebut tetap 0% dibandingkan 4 titik panas sebelumnya.",
+      "text": "Terdeteksi 3 titik panas di Kepulauan Riau selama kurun 7 hari terakhir. Angka ini menunjukkan perubahan turun 40% dari 5 titik panas pada 7 hari sebelumnya.",
       "ai": true
     },
     "Lampung": {
-      "text": "Sebanyak 181 titik panas teridentifikasi di Lampung. Angka ini naik 115% dari 84 titik panas pada periode terdahulu.",
+      "text": "Sebanyak 136 titik panas terpantau di Lampung dalam 7 hari terakhir. Terjadi peningkatan dengan perubahan naik 2% dibandingkan 133 titik panas pada 7 hari sebelumnya.",
       "ai": true
     },
     "Maluku": {
-      "text": "Maluku mencatat adanya 725 titik panas pada pemantauan terkini. Jumlah tersebut naik 13% dibanding 640 titik panas sebelumnya.",
+      "text": "Provinsi Maluku mencatatkan 664 titik panas pada 7 hari terakhir. Jumlah tersebut mengalami perubahan turun 7% dari 711 titik panas pada 7 hari sebelumnya.",
       "ai": true
     },
     "Maluku Utara": {
-      "text": "Pemantauan di Maluku Utara menemukan 343 titik panas. Capaian ini tetap 0% dari 344 titik panas pada periode lalu.",
+      "text": "Sebanyak 312 titik panas terdeteksi di Maluku Utara dalam kurun 7 hari terakhir. Angka ini menunjukkan perubahan turun 16% dibanding 372 titik panas pada 7 hari sebelumnya.",
       "ai": true
     },
     "Nusa Tenggara Barat": {
-      "text": "Wilayah Nusa Tenggara Barat mencatatkan 280 titik panas. Angka ini turun 24% dari 370 titik panas sebelumnya.",
+      "text": "Di Nusa Tenggara Barat, terpantau 241 titik panas selama 7 hari terakhir. Jumlah ini mengalami perubahan turun 31% dari 351 titik panas pada 7 hari sebelumnya.",
       "ai": true
     },
     "Nusa Tenggara Timur": {
-      "text": "Terdeteksi 565 titik panas di Nusa Tenggara Timur saat ini. Jumlah tersebut turun 44% dibandingkan 1.013 titik panas pada periode terdahulu.",
+      "text": "Terdeteksi 616 titik panas di Nusa Tenggara Timur dalam periode 7 hari terakhir. Angka ini mengalami perubahan turun 39% dibandingkan 1.002 titik panas pada 7 hari sebelumnya.",
       "ai": true
     },
     "Papua": {
-      "text": "Papua mencatat 28 titik panas pada periode pemantauan ini. Capaian ini turun 10% dari 31 titik panas sebelumnya.",
+      "text": "Sebanyak 26 titik panas terpantau di Papua selama kurun 7 hari terakhir. Jumlah ini menunjukkan perubahan turun 21% dibanding 33 titik panas pada 7 hari sebelumnya.",
       "ai": true
     },
     "Papua Barat": {
-      "text": "Terdapat 29 titik panas yang teridentifikasi di Papua Barat. Jumlah tersebut turun 79% dari 141 titik panas pada periode lalu.",
+      "text": "Papua Barat mencatatkan 28 titik panas dalam kurun 7 hari terakhir. Angka ini mengalami perubahan turun 73% dari 105 titik panas pada 7 hari sebelumnya.",
       "ai": true
     },
     "Papua Barat Daya": {
-      "text": "Pemantauan di Papua Barat Daya menunjukkan 52 titik panas. Angka tersebut naik 58% dibanding 33 titik panas sebelumnya.",
+      "text": "Sebanyak 54 titik panas terdeteksi di Papua Barat Daya pada 7 hari terakhir. Jumlah ini menunjukkan peningkatan dengan perubahan naik 50% dari 36 titik panas pada 7 hari sebelumnya.",
       "ai": true
     },
     "Papua Pegunungan": {
-      "text": "Di Papua Pegunungan terdeteksi sebanyak 11 titik panas. Hasil ini turun 78% dari 49 titik panas pada periode terdahulu.",
+      "text": "Terpantau 10 titik panas di Papua Pegunungan selama 7 hari terakhir. Angka tersebut mengalami perubahan turun 81% dibanding 52 titik panas pada 7 hari sebelumnya.",
       "ai": true
     },
     "Papua Selatan": {
-      "text": "Papua Selatan mencatatkan 2.314 titik panas dalam pemantauan saat ini. Jumlah ini turun 37% dari 3.679 titik panas pada periode sebelumnya.",
+      "text": "Provinsi Papua Selatan mencatatkan 1.708 titik panas dalam 7 hari terakhir. Jumlah ini mengalami perubahan turun 59% dari 4.158 titik panas pada 7 hari sebelumnya.",
       "ai": true
     },
     "Papua Tengah": {
-      "text": "Terdapat 10 titik panas di wilayah Papua Tengah. Angka ini naik 100% dibandingkan 5 titik panas sebelumnya.",
+      "text": "Sebanyak 6 titik panas terdeteksi di Papua Tengah selama 7 hari terakhir. Angka ini mengalami perubahan turun 33% dibandingkan 9 titik panas pada 7 hari sebelumnya.",
       "ai": true
     },
     "Riau": {
-      "text": "Terdeteksi 4 titik panas di Riau pada periode ini. Capaian tersebut turun 84% dari 25 titik panas pada pemantauan terdahulu.",
+      "text": "Terpantau 4 titik panas di Riau dalam periode 7 hari terakhir. Jumlah tersebut menunjukkan perubahan turun 82% dari 22 titik panas pada 7 hari sebelumnya.",
       "ai": true
     },
     "Sulawesi Barat": {
-      "text": "Sulawesi Barat mencatatkan 30 titik panas saat ini. Jumlah ini turun 6% dibandingkan 32 titik panas sebelumnya.",
+      "text": "Sulawesi Barat mencatatkan 28 titik panas pada 7 hari terakhir. Terjadi peningkatan dengan perubahan naik 17% dari 24 titik panas pada 7 hari sebelumnya.",
       "ai": true
     },
     "Sulawesi Selatan": {
-      "text": "Sebanyak 436 titik panas terdeteksi di Sulawesi Selatan. Angka tersebut turun 23% dari 569 titik panas pada periode lalu.",
+      "text": "Sebanyak 427 titik panas terdeteksi di Sulawesi Selatan dalam kurun 7 hari terakhir. Angka ini mengalami perubahan turun 12% dibandingkan 483 titik panas pada 7 hari sebelumnya.",
       "ai": true
     },
     "Sulawesi Tengah": {
-      "text": "Pemantauan di Sulawesi Tengah menemukan 556 titik panas. Jumlah ini turun 38% dibanding 891 titik panas sebelumnya.",
+      "text": "Terpantau 489 titik panas di Sulawesi Tengah selama 7 hari terakhir. Jumlah ini menunjukkan perubahan turun 37% dari 775 titik panas pada 7 hari sebelumnya.",
       "ai": true
     },
     "Sulawesi Tenggara": {
-      "text": "Terdeteksi 1.115 titik panas di Sulawesi Tenggara. Capaian ini naik 3% dari 1.082 titik panas pada periode terdahulu.",
+      "text": "Sebanyak 1.080 titik panas tercatat di Sulawesi Tenggara dalam periode 7 hari terakhir. Jumlah ini mengalami perubahan naik 3% dibandingkan 1.045 titik panas pada 7 hari sebelumnya.",
       "ai": true
     },
     "Sulawesi Utara": {
-      "text": "Sulawesi Utara mencatat 28 titik panas pada pemantauan terbaru. Angka ini turun 74% dari 107 titik panas sebelumnya.",
+      "text": "Provinsi Sulawesi Utara mencatatkan 20 titik panas selama 7 hari terakhir. Angka ini mengalami perubahan turun 81% dari 108 titik panas pada 7 hari sebelumnya.",
       "ai": true
     },
     "Sumatera Barat": {
-      "text": "Tidak ada titik panas terdeteksi di Sumatera Barat dalam 7 hari sampai 12 November.",
-      "ai": false
+      "text": "Tidak ada titik panas terdeteksi di Sumatera Barat dengan jumlah 0 titik panas pada periode ini.",
+      "ai": true
     },
     "Sumatera Selatan": {
-      "text": "Terdapat 399 titik panas yang teridentifikasi di Sumatera Selatan. Jumlah tersebut turun 19% dari 492 titik panas pada periode lalu.",
+      "text": "Sebanyak 334 titik panas terdeteksi di Sumatera Selatan dalam 7 hari terakhir. Jumlah tersebut menunjukkan perubahan turun 35% dari 512 titik panas pada 7 hari sebelumnya.",
       "ai": true
     },
     "Sumatera Utara": {
-      "text": "Sumatera Utara mencatatkan 2 titik panas saat ini. Angka tersebut turun 50% dibandingkan 4 titik panas sebelumnya.",
+      "text": "Terpantau 2 titik panas di Sumatera Utara selama 7 hari terakhir. Angka ini mengalami perubahan turun 33% dibanding 3 titik panas pada 7 hari sebelumnya.",
       "ai": true
     }
   },
   "provinsiModel": "gemini-3.6-flash",
-  "provinsiSampai": "2026-11-12",
-  "generatedAt": "2026-11-13T23:35:59.247Z"
+  "provinsiSampai": "2026-11-13",
+  "generatedAt": "2026-11-14T06:24:43.100Z"
 }
