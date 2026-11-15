@@ -1,40 +1,40 @@
 {
-  "text": "Dalam 7 hari terakhir terdeteksi 6.629 titik panas di Indonesia, turun 59% dibanding 7 hari sebelumnya, 75 di antaranya berkepercayaan tinggi. Terbanyak di Papua Selatan (1.309), Kalimantan Timur (874), Sulawesi Tenggara (836).",
+  "text": "Dalam 7 hari terakhir terdeteksi 6.840 titik panas di Indonesia, turun 58% dibanding 7 hari sebelumnya, 77 di antaranya berkepercayaan tinggi. Terbanyak di Papua Selatan (1.372), Kalimantan Timur (933), Sulawesi Tenggara (844).",
   "model": null,
   "ai": false,
   "facts": {
     "jumlahHari": 7,
     "periode": "2026-11-09 s.d. 2026-11-15",
-    "totalTitik": 6629,
-    "kepercayaanTinggi": 75,
-    "perubahanPeriodeSebelumnyaPersen": -59,
-    "perubahanTahunLaluPersen": 1319,
+    "totalTitik": 6840,
+    "kepercayaanTinggi": 77,
+    "perubahanPeriodeSebelumnyaPersen": -58,
+    "perubahanTahunLaluPersen": 1365,
     "terbanyak": [
       {
         "provinsi": "Papua Selatan",
-        "titik": 1309
+        "titik": 1372
       },
       {
         "provinsi": "Kalimantan Timur",
-        "titik": 874
+        "titik": 933
       },
       {
         "provinsi": "Sulawesi Tenggara",
-        "titik": 836
+        "titik": 844
       }
     ],
     "terpadat": [
       {
         "provinsi": "Sulawesi Tenggara",
-        "per1000km2": 23.1
+        "per1000km2": 23.4
       },
       {
         "provinsi": "Nusa Tenggara Timur",
-        "per1000km2": 13
+        "per1000km2": 13.1
       },
       {
         "provinsi": "Maluku Utara",
-        "per1000km2": 11.4
+        "per1000km2": 11.9
       }
     ],
     "kenaikanTerbesar": []
@@ -195,5 +195,5 @@
   },
   "provinsiModel": null,
   "provinsiSampai": "2026-11-14",
-  "generatedAt": "2026-11-15T16:25:09.388Z"
+  "generatedAt": "2026-11-15T22:52:08.142Z"
 }
