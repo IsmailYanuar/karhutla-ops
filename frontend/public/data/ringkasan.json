@@ -1,54 +1,54 @@
 {
-  "text": "Pada periode 16 November 2026 sampai 22 November 2026 (7 hari), terdapat 4.340 titik panas yang terdeteksi di Indonesia dengan 19 titik berkategori kepercayaan tinggi. Jumlah total ini turun 37% dibanding periode sebelumnya, namun naik 1215% dibanding tahun lalu. Titik panas terbanyak terdeteksi di Kalimantan Timur (1.106 titik) dan Papua Selatan (1.089 titik).",
+  "text": "Pada periode 17 November 2026 sampai 22 November 2026 (6 hari), terdeteksi total 3.668 titik panas di Indonesia, dengan 12 titik memiliki kepercayaan tinggi. Jumlah tersebut turun 30% dibanding periode sebelumnya, namun naik 1350% dibanding tahun lalu. Wilayah dengan titik panas terbanyak terdeteksi di Kalimantan Timur (996 titik), Papua Selatan (887 titik), dan Sulawesi Tenggara (355 titik).",
   "model": "gemini-3.6-flash",
   "ai": true,
   "facts": {
-    "jumlahHari": 7,
-    "periode": "2026-11-16 s.d. 2026-11-22",
-    "totalTitik": 4340,
-    "kepercayaanTinggi": 19,
-    "perubahanPeriodeSebelumnyaPersen": -37,
-    "perubahanTahunLaluPersen": 1215,
+    "jumlahHari": 6,
+    "periode": "2026-11-17 s.d. 2026-11-22",
+    "totalTitik": 3668,
+    "kepercayaanTinggi": 12,
+    "perubahanPeriodeSebelumnyaPersen": -30,
+    "perubahanTahunLaluPersen": 1350,
     "terbanyak": [
       {
         "provinsi": "Kalimantan Timur",
-        "titik": 1106
+        "titik": 996
       },
       {
         "provinsi": "Papua Selatan",
-        "titik": 1089
+        "titik": 887
       },
       {
         "provinsi": "Sulawesi Tenggara",
-        "titik": 402
+        "titik": 355
       }
     ],
     "terpadat": [
       {
         "provinsi": "Sulawesi Tenggara",
-        "per1000km2": 11.1
-      },
-      {
-        "provinsi": "Papua Selatan",
-        "per1000km2": 9.2
+        "per1000km2": 9.8
       },
       {
         "provinsi": "Kalimantan Timur",
-        "per1000km2": 8.7
+        "per1000km2": 7.8
+      },
+      {
+        "provinsi": "Papua Selatan",
+        "per1000km2": 7.5
       }
     ],
     "kenaikanTerbesar": [
       {
         "provinsi": "Kalimantan Timur",
-        "tambahanTitik": 173
+        "tambahanTitik": 67
       },
       {
-        "provinsi": "Sulawesi Utara",
-        "tambahanTitik": 9
+        "provinsi": "Banten",
+        "tambahanTitik": 6
       },
       {
-        "provinsi": "Kepulauan Riau",
-        "tambahanTitik": 2
+        "provinsi": "Kalimantan Barat",
+        "tambahanTitik": 4
       }
     ]
   },
@@ -208,5 +208,5 @@
   },
   "provinsiModel": null,
   "provinsiSampai": "2026-11-21",
-  "generatedAt": "2026-11-22T19:40:18.774Z"
+  "generatedAt": "2026-11-23T01:44:11.711Z"
 }
