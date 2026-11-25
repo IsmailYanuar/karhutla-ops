@@ -1,18 +1,18 @@
 {
-  "text": "Pada periode 19 November 2026 sampai 25 November 2026 (7 hari), terdeteksi sebanyak 4.027 titik panas di Indonesia, termasuk 45 titik dengan kepercayaan tinggi. Jumlah titik panas tersebut turun 23% dibanding periode sebelumnya. Wilayah dengan jumlah titik panas terbanyak tercatat di Papua Selatan sebanyak 1.226 titik.",
+  "text": "Selama periode 19 November 2026 sampai 25 November 2026 (7 hari), terdeteksi 4.150 titik panas di Indonesia dengan 45 titik panas berkepercayaan tinggi. Jumlah ini turun 21% dibanding periode sebelumnya, namun mengalami perubahan naik 833% dibanding tahun lalu. Wilayah dengan jumlah titik panas terbanyak adalah Papua Selatan (1.267 titik).",
   "model": "gemini-3.6-flash",
   "ai": true,
   "facts": {
     "jumlahHari": 7,
     "periode": "2026-11-19 s.d. 2026-11-25",
-    "totalTitik": 4027,
+    "totalTitik": 4150,
     "kepercayaanTinggi": 45,
-    "perubahanPeriodeSebelumnyaPersen": -23,
-    "perubahanTahunLaluPersen": 805,
+    "perubahanPeriodeSebelumnyaPersen": -21,
+    "perubahanTahunLaluPersen": 833,
     "terbanyak": [
       {
         "provinsi": "Papua Selatan",
-        "titik": 1226
+        "titik": 1267
       },
       {
         "provinsi": "Kalimantan Timur",
@@ -20,193 +20,193 @@
       },
       {
         "provinsi": "Sulawesi Tenggara",
-        "titik": 580
+        "titik": 597
       }
     ],
     "terpadat": [
       {
         "provinsi": "Sulawesi Tenggara",
-        "per1000km2": 16
+        "per1000km2": 16.5
       },
       {
         "provinsi": "Papua Selatan",
-        "per1000km2": 10.4
+        "per1000km2": 10.8
       },
       {
-        "provinsi": "Kalimantan Timur",
-        "per1000km2": 5
+        "provinsi": "Maluku",
+        "per1000km2": 5.3
       }
     ],
     "kenaikanTerbesar": [
       {
         "provinsi": "Papua Selatan",
-        "tambahanTitik": 515
+        "tambahanTitik": 556
       },
       {
         "provinsi": "Sumatera Selatan",
-        "tambahanTitik": 38
+        "tambahanTitik": 41
       },
       {
-        "provinsi": "Kalimantan Barat",
-        "tambahanTitik": 7
+        "provinsi": "Sulawesi Tenggara",
+        "tambahanTitik": 21
       }
     ]
   },
   "provinsi": {
     "Aceh": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 6 titik panas di Aceh, peringkat 26 dari 38 provinsi. Jumlahnya naik 50% dibanding 7 hari sebelumnya. Kepadatannya 0,1 titik per 1.000 km².",
-      "ai": false
+      "text": "Terdeteksi 6 titik panas di Aceh selama 7 hari terakhir. Angka ini mencatatkan perubahan naik 50% dibandingkan 4 titik panas pada 7 hari sebelumnya, dengan tingkat kepadatan 0,1 per 1000 km2.",
+      "ai": true
     },
     "Bali": {
       "text": "Tidak ada titik panas terdeteksi di Bali dalam 7 hari sampai 24 November.",
       "ai": false
     },
     "Banten": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 13 titik panas di Banten, peringkat 19 dari 38 provinsi. Jumlahnya turun 50% dibanding 7 hari sebelumnya. Kepadatannya 1,4 titik per 1.000 km².",
-      "ai": false
+      "text": "Banten mencatatkan 13 titik panas selama kurun waktu 7 hari terakhir. Jumlah tersebut turun 50% dari 26 titik panas pada 7 hari sebelumnya, berada pada peringkat jumlah 19 dari 38.",
+      "ai": true
     },
     "Bengkulu": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 4 titik panas di Bengkulu, peringkat 31 dari 38 provinsi. Jumlahnya turun 20% dibanding 7 hari sebelumnya. Kepadatannya 0,2 titik per 1.000 km².",
-      "ai": false
+      "text": "Sebanyak 4 titik panas terpantau di Bengkulu dalam 7 hari terakhir. Hasil ini menunjukkan perubahan turun 20% dibandingkan 5 titik panas pada periode 7 hari sebelumnya.",
+      "ai": true
     },
     "DI Yogyakarta": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 3 titik panas di DI Yogyakarta, peringkat 33 dari 38 provinsi. Jumlahnya naik 50% dibanding 7 hari sebelumnya. Kepadatannya 0,9 titik per 1.000 km².",
-      "ai": false
+      "text": "Wilayah DI Yogyakarta mencatat 3 titik panas dalam 7 hari terakhir. Terjadi perubahan naik 50% dari 2 titik panas pada 7 hari sebelumnya dengan kepadatan 0,9 per 1000 km2.",
+      "ai": true
     },
     "DKI Jakarta": {
       "text": "Tidak ada titik panas terdeteksi di DKI Jakarta dalam 7 hari sampai 24 November.",
       "ai": false
     },
     "Gorontalo": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 27 titik panas di Gorontalo, peringkat 14 dari 38 provinsi. Jumlahnya turun 61% dibanding 7 hari sebelumnya. Kepadatannya 2,2 titik per 1.000 km².",
-      "ai": false
+      "text": "Gorontalo mencatatkan keberadaan 27 titik panas pada periode 7 hari terakhir. Jumlah ini turun 61% dibandingkan 69 titik panas pada 7 hari sebelumnya, dengan tingkat kepadatan 2,2 per 1000 km2.",
+      "ai": true
     },
     "Jambi": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 13 titik panas di Jambi, peringkat 19 dari 38 provinsi. Jumlahnya turun 43% dibanding 7 hari sebelumnya. Kepadatannya 0,3 titik per 1.000 km².",
-      "ai": false
+      "text": "Terpantau 13 titik panas di wilayah Jambi dalam 7 hari terakhir. Terjadi perubahan turun 43% dari 23 titik panas pada 7 hari sebelumnya, menempatkan Jambi pada peringkat jumlah 19 dari 38.",
+      "ai": true
     },
     "Jawa Barat": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 6 titik panas di Jawa Barat, peringkat 26 dari 38 provinsi. Jumlahnya turun 33% dibanding 7 hari sebelumnya. Kepadatannya 0,2 titik per 1.000 km².",
-      "ai": false
+      "text": "Jawa Barat mencatatkan 6 titik panas selama 7 hari terakhir. Catatan ini turun 33% dibandingkan 9 titik panas pada 7 hari sebelumnya dengan kepadatan 0,2 per 1000 km2.",
+      "ai": true
     },
     "Jawa Tengah": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 21 titik panas di Jawa Tengah, peringkat 16 dari 38 provinsi. Jumlahnya turun 25% dibanding 7 hari sebelumnya. Kepadatannya 0,6 titik per 1.000 km².",
-      "ai": false
+      "text": "Sebanyak 21 titik panas terdeteksi di Jawa Tengah dalam kurun 7 hari terakhir. Angka tersebut mengalami perubahan turun 25% dari 28 titik panas pada 7 hari sebelumnya.",
+      "ai": true
     },
     "Jawa Timur": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 37 titik panas di Jawa Timur, peringkat 13 dari 38 provinsi. Jumlahnya turun 53% dibanding 7 hari sebelumnya. Kepadatannya 0,8 titik per 1.000 km².",
-      "ai": false
+      "text": "Terdapat 37 titik panas yang teramati di Jawa Timur selama 7 hari terakhir. Jumlah tersebut turun 53% dari 79 titik panas pada 7 hari sebelumnya, menempatkan provinsi ini pada peringkat kepadatan 17 dari 38.",
+      "ai": true
     },
     "Kalimantan Barat": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 15 titik panas di Kalimantan Barat, peringkat 18 dari 38 provinsi. Jumlahnya turun 6% dibanding 7 hari sebelumnya. Kepadatannya 0,1 titik per 1.000 km².",
-      "ai": false
+      "text": "Dalam periode 7 hari terakhir, Kalimantan Barat mencatat 15 titik panas. Angka ini mengalami penurunan turun 6% dibanding 16 titik panas pada 7 hari sebelumnya.",
+      "ai": true
     },
     "Kalimantan Selatan": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 192 titik panas di Kalimantan Selatan, peringkat 7 dari 38 provinsi. Jumlahnya naik 5% dibanding 7 hari sebelumnya. Kepadatannya 5,2 titik per 1.000 km².",
-      "ai": false
+      "text": "Kalimantan Selatan mendeteksi 192 titik panas dalam kurun waktu 7 hari terakhir. Terjadi perubahan naik 5% dari 183 titik panas pada 7 hari sebelumnya dengan kepadatan 5,2 per 1000 km2.",
+      "ai": true
     },
     "Kalimantan Tengah": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 55 titik panas di Kalimantan Tengah, peringkat 11 dari 38 provinsi. Jumlahnya turun 49% dibanding 7 hari sebelumnya. Kepadatannya 0,4 titik per 1.000 km².",
-      "ai": false
+      "text": "Sebanyak 55 titik panas terpantau di Kalimantan Tengah pada 7 hari terakhir. Jumlah ini menunjukkan perubahan turun 49% dibandingkan 107 titik panas pada 7 hari sebelumnya.",
+      "ai": true
     },
     "Kalimantan Timur": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 706 titik panas di Kalimantan Timur, peringkat 2 dari 38 provinsi. Jumlahnya turun 50% dibanding 7 hari sebelumnya. Kepadatannya 5,6 titik per 1.000 km².",
-      "ai": false
+      "text": "Wilayah Kalimantan Timur mencatat 706 titik panas dalam 7 hari terakhir. Angka ini turun 50% dari 1.415 titik panas pada 7 hari sebelumnya, berada di peringkat jumlah 2 dari 38.",
+      "ai": true
     },
     "Kalimantan Utara": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 8 titik panas di Kalimantan Utara, peringkat 23 dari 38 provinsi. Jumlahnya turun 71% dibanding 7 hari sebelumnya. Kepadatannya 0,1 titik per 1.000 km².",
-      "ai": false
+      "text": "Terdeteksi 8 titik panas di Kalimantan Utara selama 7 hari terakhir. Hasil tersebut menunjukkan perubahan turun 71% dibandingkan 28 titik panas pada 7 hari sebelumnya.",
+      "ai": true
     },
     "Kepulauan Bangka Belitung": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 18 titik panas di Kepulauan Bangka Belitung, peringkat 17 dari 38 provinsi. Jumlahnya turun 51% dibanding 7 hari sebelumnya. Kepadatannya 1,1 titik per 1.000 km².",
-      "ai": false
+      "text": "Kepulauan Bangka Belitung mencatatkan 18 titik panas pada periode 7 hari terakhir. Angka ini mengalami perubahan turun 51% dari 37 titik panas pada 7 hari sebelumnya.",
+      "ai": true
     },
     "Kepulauan Riau": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 4 titik panas di Kepulauan Riau, peringkat 31 dari 38 provinsi. Jumlahnya naik 300% dibanding 7 hari sebelumnya. Kepadatannya 0,5 titik per 1.000 km².",
-      "ai": false
+      "text": "Sebanyak 4 titik panas terpantau di Kepulauan Riau dalam 7 hari terakhir. Terjadi kenaikan naik 300% dibanding 1 titik panas pada 7 hari sebelumnya, dengan kepadatan 0,5 per 1000 km2.",
+      "ai": true
     },
     "Lampung": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 3 titik panas di Lampung, peringkat 33 dari 38 provinsi. Jumlahnya turun 94% dibanding 7 hari sebelumnya. Kepadatannya 0,1 titik per 1.000 km².",
-      "ai": false
+      "text": "Lampung mendeteksi 3 titik panas selama kurun waktu 7 hari mebelakang. Catatan ini mengalami penurunan turun 94% dari 48 titik panas pada 7 hari sebelumnya.",
+      "ai": true
     },
     "Maluku": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 230 titik panas di Maluku, peringkat 6 dari 38 provinsi. Jumlahnya turun 35% dibanding 7 hari sebelumnya. Kepadatannya 5 titik per 1.000 km².",
-      "ai": false
+      "text": "Terdapat 230 titik panas yang terdeteksi di Maluku selama 7 hari terakhir. Jumlah tersebut turun 35% dibandingkan 353 titik panas pada 7 hari sebelumnya, menempatkannya pada peringkat jumlah 6 dari 38.",
+      "ai": true
     },
     "Maluku Utara": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 122 titik panas di Maluku Utara, peringkat 9 dari 38 provinsi. Jumlahnya turun 61% dibanding 7 hari sebelumnya. Kepadatannya 3,9 titik per 1.000 km².",
-      "ai": false
+      "text": "Dalam 7 hari terakhir, Maluku Utara mencatat keberadaan 122 titik panas. Terjadi penurunan turun 61% dari 309 titik panas pada 7 hari sebelumnya dengan kepadatan 3,9 per 1000 km2.",
+      "ai": true
     },
     "Nusa Tenggara Barat": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 39 titik panas di Nusa Tenggara Barat, peringkat 12 dari 38 provinsi. Jumlahnya turun 78% dibanding 7 hari sebelumnya. Kepadatannya 2 titik per 1.000 km².",
-      "ai": false
+      "text": "Sebanyak 39 titik panas teramati di Nusa Tenggara Barat pada 7 hari terakhir. Angka ini turun 78% dari 176 titik panas pada 7 hari sebelumnya, berada pada peringkat kepadatan 11 dari 38.",
+      "ai": true
     },
     "Nusa Tenggara Timur": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 234 titik panas di Nusa Tenggara Timur, peringkat 5 dari 38 provinsi. Jumlahnya turun 59% dibanding 7 hari sebelumnya. Kepadatannya 5 titik per 1.000 km².",
-      "ai": false
+      "text": "Nusa Tenggara Timur mencatatkan 234 titik panas dalam kurun 7 hari terakhir. Jumlah ini mengalami perubahan turun 59% dibanding 564 titik panas pada 7 hari sebelumnya.",
+      "ai": true
     },
     "Papua": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 5 titik panas di Papua, peringkat 29 dari 38 provinsi. Jumlahnya turun 44% dibanding 7 hari sebelumnya. Kepadatannya 0,1 titik per 1.000 km².",
-      "ai": false
+      "text": "Terpantau 5 titik panas di wilayah Papua selama 7 hari terakhir. Angka tersebut menunjukkan perubahan turun 44% dari 9 titik panas pada 7 hari sebelumnya.",
+      "ai": true
     },
     "Papua Barat": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 11 titik panas di Papua Barat, peringkat 21 dari 38 provinsi. Jumlahnya turun 31% dibanding 7 hari sebelumnya. Kepadatannya 0,2 titik per 1.000 km².",
-      "ai": false
+      "text": "Papua Barat mencatat 11 titik panas dalam periode 7 hari terakhir. Catatan ini mengalami penurunan turun 31% dari 16 titik panas pada 7 hari sebelumnya.",
+      "ai": true
     },
     "Papua Barat Daya": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 9 titik panas di Papua Barat Daya, peringkat 22 dari 38 provinsi. Jumlahnya turun 50% dibanding 7 hari sebelumnya. Kepadatannya 0,2 titik per 1.000 km².",
-      "ai": false
+      "text": "Sebanyak 9 titik panas terdeteksi di Papua Barat Daya pada 7 hari terakhir. Angka tersebut mengalami penurunan turun 50% dibandingkan 18 titik panas pada 7 hari sebelumnya.",
+      "ai": true
     },
     "Papua Pegunungan": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 6 titik panas di Papua Pegunungan, peringkat 26 dari 38 provinsi. Jumlahnya turun 14% dibanding 7 hari sebelumnya. Kepadatannya 0,1 titik per 1.000 km².",
-      "ai": false
+      "text": "Wilayah Papua Pegunungan mendeteksi 6 titik panas selama 7 hari terakhir. Hasil ini turun 14% dari 7 titik panas pada 7 hari sebelumnya dengan kepadatan 0,1 per 1000 km2.",
+      "ai": true
     },
     "Papua Selatan": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 1.125 titik panas di Papua Selatan, peringkat 1 dari 38 provinsi. Jumlahnya turun 6% dibanding 7 hari sebelumnya. Kepadatannya 9,5 titik per 1.000 km².",
-      "ai": false
+      "text": "Papua Selatan mencatatkan 1.125 titik panas dalam kurun waktu 7 hari terakhir. Angka tersebut mengalami penurunan turun 6% dari 1.194 titik panas pada 7 hari sebelumnya dan berada di peringkat jumlah 1 dari 38.",
+      "ai": true
     },
     "Papua Tengah": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 5 titik panas di Papua Tengah, peringkat 29 dari 38 provinsi. Jumlahnya naik 150% dibanding 7 hari sebelumnya. Kepadatannya 0,1 titik per 1.000 km².",
-      "ai": false
+      "text": "Terdeteksi 5 titik panas di Papua Tengah dalam 7 hari terakhir. Terjadi kenaikan naik 150% dari 2 titik panas pada 7 hari sebelumnya.",
+      "ai": true
     },
     "Riau": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 8 titik panas di Riau, peringkat 23 dari 38 provinsi. Jumlahnya naik 60% dibanding 7 hari sebelumnya. Kepadatannya 0,1 titik per 1.000 km².",
-      "ai": false
+      "text": "Provinsi Riau mencatat 8 titik panas selama kurun 7 hari terakhir. Jumlah ini mengalami perubahan naik 60% dibandingkan 5 titik panas pada 7 hari sebelumnya.",
+      "ai": true
     },
     "Sulawesi Barat": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 8 titik panas di Sulawesi Barat, peringkat 23 dari 38 provinsi. Jumlahnya turun 33% dibanding 7 hari sebelumnya. Kepadatannya 0,5 titik per 1.000 km².",
-      "ai": false
+      "text": "Sebanyak 8 titik panas terpantau di Sulawesi Barat pada periode 7 hari terakhir. Catatan tersebut turun 33% dari 12 titik panas pada 7 hari sebelumnya dengan kepadatan 0,5 per 1000 km2.",
+      "ai": true
     },
     "Sulawesi Selatan": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 190 titik panas di Sulawesi Selatan, peringkat 8 dari 38 provinsi. Jumlahnya turun 27% dibanding 7 hari sebelumnya. Kepadatannya 4,2 titik per 1.000 km².",
-      "ai": false
+      "text": "Sulawesi Selatan mendeteksi keberadaan 190 titik panas dalam 7 hari terakhir. Angka ini mengalami penurunan turun 27% dibandingkan 260 titik panas pada 7 hari sebelumnya.",
+      "ai": true
     },
     "Sulawesi Tengah": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 272 titik panas di Sulawesi Tengah, peringkat 4 dari 38 provinsi. Jumlahnya turun 41% dibanding 7 hari sebelumnya. Kepadatannya 4,4 titik per 1.000 km².",
-      "ai": false
+      "text": "Wilayah Sulawesi Tengah mencatatkan 272 titik panas selama 7 hari terakhir. Jumlah ini turun 41% dari 463 titik panas pada 7 hari sebelumnya, menempatkan provinsi ini di peringkat jumlah 4 dari 38.",
+      "ai": true
     },
     "Sulawesi Tenggara": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 528 titik panas di Sulawesi Tenggara, peringkat 3 dari 38 provinsi. Jumlahnya turun 23% dibanding 7 hari sebelumnya. Kepadatannya 14,6 titik per 1.000 km².",
-      "ai": false
+      "text": "Terpantau 528 titik panas di Sulawesi Tenggara dalam 7 hari terakhir. Angka tersebut menunjukkan perubahan turun 23% dari 685 titik panas pada 7 hari sebelumnya dengan kepadatan 14,6 per 1000 km2.",
+      "ai": true
     },
     "Sulawesi Utara": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 25 titik panas di Sulawesi Utara, peringkat 15 dari 38 provinsi. Jumlahnya turun 14% dibanding 7 hari sebelumnya. Kepadatannya 1,7 titik per 1.000 km².",
-      "ai": false
+      "text": "Sulawesi Utara mencatat 25 titik panas selama periode 7 hari terakhir. Catatan ini turun 14% dibandingkan 29 titik panas pada 7 hari sebelumnya.",
+      "ai": true
     },
     "Sumatera Barat": {
       "text": "Tidak ada titik panas terdeteksi di Sumatera Barat dalam 7 hari sampai 24 November.",
       "ai": false
     },
     "Sumatera Selatan": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 121 titik panas di Sumatera Selatan, peringkat 10 dari 38 provinsi. Jumlahnya turun 10% dibanding 7 hari sebelumnya. Kepadatannya 1,4 titik per 1.000 km².",
-      "ai": false
+      "text": "Terdapat 121 titik panas yang terpantau di Sumatera Selatan selama 7 hari terakhir. Jumlah tersebut mengalami penurunan turun 10% dari 134 titik panas pada 7 hari sebelumnya.",
+      "ai": true
     },
     "Sumatera Utara": {
-      "text": "Dalam 7 hari sampai 24 November terdeteksi 2 titik panas di Sumatera Utara, peringkat 35 dari 38 provinsi. Pada 7 hari sebelumnya belum ada titik panas. Kepadatannya 0 titik per 1.000 km².",
-      "ai": false
+      "text": "Sumatera Utara mencatatkan 2 titik panas dalam periode 7 hari terakhir. Catatan ini muncul setelah sebelumnya tidak ada titik panas pada 7 hari sebelumnya, menempatkan wilayah ini di peringkat jumlah 35 dari 38.",
+      "ai": true
     }
   },
-  "provinsiModel": null,
+  "provinsiModel": "gemini-3.6-flash",
   "provinsiSampai": "2026-11-24",
-  "generatedAt": "2026-11-25T08:34:24.780Z"
+  "generatedAt": "2026-11-25T19:17:19.879Z"
 }
